@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import PostForm from "@/components/PostForm.vue";
-import PostList from "@/components/PostList.vue";
+import PostForm from "@/components/UI/PostForm.vue";
+import PostList from "@/components/UI/PostList.vue";
 import axios from "axios";
 
 export default {

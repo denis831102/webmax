@@ -30,10 +30,9 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);
 }
 
-app.use(ElementPlus);
-
-app.use(pluginWord, dictonary).use(router).use(store).mount("#app");
-// app.use(router).use(store).mount("#app");
-// app.use(pluginW, dictonary).mount("#app");
-
-//console.log(app);
+app
+  .use(pluginWord, dictonary)
+  .use(router)
+  .use(store)
+  .use(ElementPlus)
+  .mount("#app");

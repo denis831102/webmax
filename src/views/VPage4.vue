@@ -29,8 +29,8 @@
 <script>
 /* eslint-disable */
 
-import PostForm from "@/components/PostForm4.vue";
-import PostList from "@/components/PostList4.vue";
+import PostForm from "@/components/UI/PostForm4.vue";
+import PostList from "@/components/UI/PostList4.vue";
 import axios from "axios";
 
 export default {

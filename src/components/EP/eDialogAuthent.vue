@@ -68,11 +68,10 @@ const getAuthenticated = computed(() => store.getters.getAuthenticated);
 const router = useRouter();
 
 const enter = () => {
-  emit("update:visible", false);
-
   checkAuthenticated(form);
 
   if (getAuthenticated.value) {
+    emit("update:visible", false);
     router.push({ name: "crm" });
   } else {
     ElMessage.error("Oops, пароль не вірний");
@@ -81,7 +80,7 @@ const enter = () => {
 };
 
 const close = () => {
-  router.push({ name: "profile" });
+  // router.push({ name: "authent" });
 };
 
 const handleClose = () => {
