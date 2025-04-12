@@ -33,7 +33,7 @@ const handleCommand = (command) => {
   ElMessage(`команда: ${command}`);
   switch (command) {
     case "exit":
-      router.push({ name: "profile" });
+      router.push({ name: "authent" });
       break;
   }
 };
