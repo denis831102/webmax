@@ -107,6 +107,10 @@ const setting = ref({
       numRec: 0,
       data: [],
     },
+    tabResurs: {
+      numRec: 2,
+      data: [],
+    },
   },
 });
 
