@@ -1,6 +1,6 @@
 <template>
   <div>
-    <eDialogAuthent v-model:visible="dialog['authet'].visible" />
+    <eDialog_Authent v-model:visible="dialog['authet'].visible" />
   </div>
 </template>
 
@@ -10,7 +10,7 @@
 import "element-plus/dist/index.css";
 import { ref } from "vue";
 // import { ElNotification } from "element-plus";
-import eDialogAuthent from "@/components/EP/eDialogAuthent";
+import eDialog_Authent from "@/components/EP/eDialog_Authent";
 
 const dialog = ref({
   authet: { visible: true },

@@ -1,6 +1,5 @@
 <template>
   <!-- eslint-disable -->
-  <!-- <el-button plain @click="open"> Success </el-button> -->
   <el-row :gutter="10">
     <el-col :span="24">
       <eDialog
@@ -10,11 +9,11 @@
         :argFunc="arg"
       />
 
-      <eDialogEdit v-model:visible="setting.dialog['edit'].visible" />
+      <eDialog_Edit v-model:visible="setting.dialog['edit'].visible" />
 
-      <eDialogUser v-model:visible="setting.dialog['user'].visible" />
+      <eDialog_User v-model:visible="setting.dialog['user'].visible" />
 
-      <eMenuG />
+      <eMenu_G />
 
       <el-card class="box-card" style="max-width: 50%; margin-top: 20px">
         <el-button
@@ -37,12 +36,12 @@
         <el-container class="layout-container-demo" style="min-height: 500px">
           <el-aside width="50">
             <!-- v-model="setting.curId" -->
-            <eMenuV :open="open" />
+            <eMenu_V :open="open" />
           </el-aside>
 
           <el-container>
             <el-header style="text-align: right; font-size: 12px">
-              <eUserDrop :name="getCurUser.PIB" />
+              <eDrop_User :name="getCurUser.PIB" />
             </el-header>
 
             <el-main>
@@ -65,14 +64,15 @@ import { ref, computed, provide } from "vue";
 import { useStore } from "vuex";
 import { ElNotification } from "element-plus";
 import { Search } from "@element-plus/icons-vue";
-import eMenuV from "@/components/EP/eMenuV";
-import eMenuG from "@/components/EP/eMenuG";
-import eUserDrop from "@/components/EP/eUserDrop";
+import eMenu_V from "@/components/EP/eMenu_V";
+import eMenu_G from "@/components/EP/eMenu_G";
+import eDrop_User from "@/components/EP/eDrop_User";
 import eDialog from "@/components/EP/eDialog";
-import eDialogEdit from "@/components/EP/eDialogEdit";
-import eDialogUser from "@/components/EP/eDialogUser";
-import eTable_1 from "@/components/EP/eTable_1";
-import eTable_2 from "@/components/EP/eTable_2";
+import eDialog_Edit from "@/components/EP/eDialog_Edit";
+import eDialog_User from "@/components/EP/eDialog_User";
+import eTable_Operation from "@/components/EP/eTable_Operation";
+import eTable_User from "@/components/EP/eTable_User";
+import eAvatar from "@/components/EP/eAvatar";
 
 const arg = ref({
   text: "222",
@@ -91,40 +91,28 @@ const open = (obj) => {
 
 const setting = ref({
   name: "Денис Ратов",
+  server: `https://webmax.lond.lg.ua/php/Server.php`,
+  key: "123456",
   dialog: {
     main: { visible: false, text: "" },
     edit: { visible: false },
     user: { visible: false },
   },
-  compTable: [eTable_1, eTable_2],
-  curComp: 1,
-  numRec: 0,
-  tableData: [
-    {
-      date: "2025-03-03",
-      name: "Ігор",
-      address: "No. 189, Grove St, Los Angeles",
+  comps: {
+    list: [eAvatar, eTable_User, eTable_Operation],
+    curComp: 0,
+  },
+  tables: {
+    tabUser: {
+      numRec: 0,
+      data: [],
     },
-    {
-      date: "2025-03-02",
-      name: "Петро",
-      address: "No. 189, Grove St, Los Angeles",
-    },
-    {
-      date: "2025-03-04",
-      name: "Василь",
-      address: "No. 189, Grove St, Los Angeles",
-    },
-    {
-      date: "2025-03-01",
-      name: "Олег",
-      address: "No. 189, Grove St, Los Angeles",
-    },
-  ],
+  },
 });
 
 const curComponent = computed(() => {
-  return setting.value.compTable[setting.value.curComp];
+  let comps = setting.value.comps;
+  return comps.list[comps.curComp];
 });
 
 provide("setting", setting);

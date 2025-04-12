@@ -23,17 +23,14 @@
           <span>Користувачі</span>
         </template>
         <el-menu-item-group>
-          <template #title><span>Користувачі системи </span></template>
           <el-menu-item index="1-1">Список користувачів</el-menu-item>
-          <el-menu-item index="1-2">Статуси</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="Редагування">
-          <el-menu-item index="1-3">Форма додавання</el-menu-item>
+          <el-menu-item index="1-2">Статуси користувачів</el-menu-item>
+          <el-menu-item index="1-3">Додати нового</el-menu-item>
         </el-menu-item-group>
         <el-sub-menu index="1-4">
-          <template #title><span>item four</span></template>
-          <el-menu-item index="1-4-1">item 1</el-menu-item>
-          <el-menu-item index="1-4-2">item 2</el-menu-item>
+          <template #title><span>Додатково</span></template>
+          <el-menu-item index="1-4-1">Операція 1</el-menu-item>
+          <el-menu-item index="1-4-2">Операція 2</el-menu-item>
         </el-sub-menu>
       </el-sub-menu>
       <el-menu-item index="2">
@@ -65,7 +62,6 @@ import {
 
 const props = defineProps({
   open: Function,
-  // modelValue: Number,
 });
 
 const setting = inject("setting");
@@ -83,22 +79,23 @@ const handleClose = (key, keyPath) => {
 const handleSelect = (key, keyPath) => {
   console.log(key);
   switch (key) {
+    case "1-1":
+      // emit("update:modelValue", 1);
+      setting.value.comps.curComp = 1;
+      break;
+    case "1-3":
+      setting.value.dialog["user"].visible = true;
+      break;
+    case "2":
+      setting.value.comps.curComp = 2;
+      break;
     case "4":
       props.open({
         text: `${key} ${keyPath}`,
       });
       break;
-    case "1-1":
-      // emit("update:modelValue", 0);
-      setting.value.curComp = 0;
-      break;
-    case "1-2":
-      // emit("update:modelValue", 1);
-      setting.value.curComp = 1;
-      break;
-    case "1-3":
-      setting.value.dialog["user"].visible = true;
-      break;
+    default:
+      setting.value.comps.curComp = 0;
   }
 };
 </script>

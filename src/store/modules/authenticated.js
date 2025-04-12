@@ -22,16 +22,38 @@ export default {
         // state.users = response.data;
         commit("setUsers", response.data);
       } catch (e) {
-        alert("Помилка");
+        alert("Помилка одержання користувачів");
       }
     },
-    checkAuthenticated({ state, commit }, form) {
+
+    async changeDateUser({ state }, data) {
+      try {
+        await axios.get(state.server, {
+          params: {
+            _key: state.key,
+            _method: "changeDateUser",
+            _id: data.id,
+            _date: data.curDate,
+            _time: data.curTime,
+          },
+        });
+        //
+      } catch (e) {
+        alert("Помилка збереження змін у користувача");
+      }
+    },
+
+    checkAuthenticated({ state, commit, dispatch }, form) {
+      let curDate = new Date(),
+        curTime = `${curDate.getHours()}:${curDate.getMinutes()}:${curDate.getSeconds()}`;
+
       commit("changeAuthenticated", false);
       commit("setCurUser", {});
       state.users.forEach((user) => {
         if (form.password == user.password) {
           commit("changeAuthenticated", true);
           commit("setCurUser", user);
+          dispatch("changeDateUser", { id: user.id, curDate, curTime });
         }
       });
     },
