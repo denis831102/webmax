@@ -1,4 +1,4 @@
-# project-02
+# WebMax
 
 ## Project setup
 ```
