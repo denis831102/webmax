@@ -23,11 +23,11 @@
           <span>Користувачі</span>
         </template>
         <el-menu-item-group>
-          <template #title><span>Користувачі системи </span></template>
+          <template #title><span>1. Користувачі системи </span></template>
           <el-menu-item index="1-1">Список користувачів</el-menu-item>
-          <el-menu-item index="1-2">Статуси</el-menu-item>
+          <el-menu-item index="1-2">Операцї</el-menu-item>
         </el-menu-item-group>
-        <el-menu-item-group title="Редагування">
+        <el-menu-item-group title="2. Додатково">
           <el-menu-item index="1-3">Форма додавання</el-menu-item>
         </el-menu-item-group>
         <el-sub-menu index="1-4">
@@ -38,15 +38,15 @@
       </el-sub-menu>
       <el-menu-item index="2">
         <el-icon><icon-menu /></el-icon>
-        <template #title>Операції</template>
+        <template #title>Navigator Two</template>
       </el-menu-item>
       <el-menu-item index="3" disabled>
         <el-icon><document /></el-icon>
-        <template #title>Звіти</template>
+        <template #title>Navigator Three</template>
       </el-menu-item>
       <el-menu-item index="4">
         <el-icon><Setting /></el-icon>
-        <template #title>Налаштування</template>
+        <template #title>Navigator Four</template>
       </el-menu-item>
     </el-menu>
   </div>

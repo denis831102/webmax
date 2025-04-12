@@ -1,21 +1,8 @@
 export const routes = [
   {
-    path: "/",
-    name: "crm",
-    component: () => import("@/views/VWorkSpace.vue"),
-    meta: {
-      requiresAuth: true,
-    },
-  },
-  {
-    path: "/authent",
-    name: "authent",
-    component: () => import("@/views/VAuthend.vue"),
-  },
-  {
     name: "profile",
-    path: "/home",
-    alias: "/home",
+    path: "/",
+    alias: "/main",
     component: () => import("@/views/VHome.vue"),
   },
   {
@@ -41,7 +28,7 @@ export const routes = [
   {
     name: "page4i",
     path: "/page4/:id",
-    component: () => import("@/components/UI/PostIdPage.vue"),
+    component: () => import("@/components/PostIdPage.vue"),
   },
   {
     path: "/page5",
@@ -50,5 +37,18 @@ export const routes = [
   {
     path: "/page6",
     component: () => import("@/views/VPage6.vue"),
+  },
+  {
+    path: "/page8",
+    name: "crm",
+    component: () => import("@/views/VPage8.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/authent",
+    name: "authent",
+    component: () => import("@/views/VAuthend.vue"),
   },
 ];

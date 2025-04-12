@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h1 class="hMain" @click.prevent="$router.push({ name: 'crm' })">WebMax</h1>
+    <h1 class="hMain" @click.prevent="$router.push({ name: 'profile' })">
+      Інформаційна система VUE 3
+    </h1>
     <transition name="component-fade" mode="out-in">
       <RouterView class="sRout" />
     </transition>

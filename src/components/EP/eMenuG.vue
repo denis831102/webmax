@@ -42,7 +42,7 @@ const handleSelect = (key, keyPath) => {
       break;
     case "4":
       changeAuthenticated(false);
-      router.push({ name: "authent" });
+      router.push({ name: "profile" });
       break;
   }
 };

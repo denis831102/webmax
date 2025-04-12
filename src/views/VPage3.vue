@@ -43,8 +43,8 @@
 <script>
 /* eslint-disable */
 
-import PostForm from "@/components/UI/PostForm.vue";
-import PostList from "@/components/UI/PostList.vue";
+import PostForm from "@/components/PostForm.vue";
+import PostList from "@/components/PostList.vue";
 import axios from "axios";
 import * as _ from "lodash";
 
