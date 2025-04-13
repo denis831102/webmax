@@ -82,7 +82,7 @@
 <script setup>
 import { inject, onActivated } from "vue";
 import { ElMessage } from "element-plus";
-import axios from "axios";
+import { HTTP } from "@/hooks/http";
 //import { Timer } from "@element-plus/icons-vue";
 
 const setting = inject("setting");
@@ -112,7 +112,7 @@ const handleDelete = (index, row) => {
 
 const fetchUsers = async () => {
   try {
-    const response = await axios.get(setting.value.server, {
+    const response = await HTTP.get("", {
       params: {
         _key: setting.value.key,
         _method: "getUsers",

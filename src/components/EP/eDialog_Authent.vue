@@ -39,7 +39,7 @@ import {
   defineProps,
   defineEmits,
   computed,
-  onMounted,
+  // onMounted,
   ref,
 } from "vue";
 import { ElMessage } from "element-plus";
@@ -61,20 +61,18 @@ const autoFoc = ref(false);
 
 const store = useStore();
 const checkAuthenticated = (val) => store.dispatch("checkAuthenticated", val);
-const fetchUsers = () => store.dispatch("fetchUsers");
 const getAuthenticated = computed(() => store.getters.getAuthenticated);
-//const changeAuthenticated = (val) => store.commit("changeAuthenticated", val);
 
 const router = useRouter();
 
-const enter = () => {
-  checkAuthenticated(form);
+const enter = async () => {
+  await checkAuthenticated(form);
 
   if (getAuthenticated.value) {
     emit("update:visible", false);
     router.push({ name: "crm" });
   } else {
-    ElMessage.error("Oops, пароль не вірний");
+    ElMessage.error("Oops, логін чи пароль не вірний");
     close();
   }
 };
@@ -92,6 +90,4 @@ const changeKey = (event) => {
     enter();
   }
 };
-
-onMounted(fetchUsers);
 </script>

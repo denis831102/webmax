@@ -1,61 +1,45 @@
-import axios from "axios";
+// import axios from "axios";
+import { HTTP } from "@/hooks/http";
 
 export default {
   state: {
-    key: 123,
-    server: `https://webmax.lond.lg.ua/php/Server.php`,
     isAuthenticated: false,
-    // users: [{PIB: "", login: "", password: 123 }],
-    users: [],
     curUser: {},
   },
   actions: {
-    async fetchUsers({ state, commit /*getters, dispatch,*/ }) {
+    async checkAuthenticated({ commit }, form) {
       try {
-        const response = await axios.get(state.server, {
+        const curDate = new Date(),
+          curTime = [
+            curDate.getHours(),
+            curDate.getMinutes(),
+            curDate.getSeconds(),
+          ].join(":");
+
+        const response = await HTTP.get("", {
           params: {
-            _key: state.key,
-            _method: "getUsers",
+            _method: "checkAuthenticated",
+            _login: form.login,
+            _password: form.password,
+            _date: curDate,
+            _time: curTime,
           },
         });
 
-        // state.users = response.data;
-        commit("setUsers", response.data);
-      } catch (e) {
-        alert("Помилка одержання користувачів");
-      }
-    },
-
-    async changeDateUser({ state }, data) {
-      try {
-        await axios.get(state.server, {
-          params: {
-            _key: state.key,
-            _method: "changeDateUser",
-            _id: data.id,
-            _date: data.curDate,
-            _time: data.curTime,
-          },
-        });
-        //
-      } catch (e) {
-        alert("Помилка збереження змін у користувача");
-      }
-    },
-
-    checkAuthenticated({ state, commit, dispatch }, form) {
-      let curDate = new Date(),
-        curTime = `${curDate.getHours()}:${curDate.getMinutes()}:${curDate.getSeconds()}`;
-
-      commit("changeAuthenticated", false);
-      commit("setCurUser", {});
-      state.users.forEach((user) => {
-        if (form.password == user.password) {
+        if (response.data.isSuccesfull) {
           commit("changeAuthenticated", true);
-          commit("setCurUser", user);
-          dispatch("changeDateUser", { id: user.id, curDate, curTime });
+          commit("setCurUser", {
+            PIB: response.data.PIB,
+            login: form.login,
+            password: form.password,
+          });
+        } else {
+          commit("changeAuthenticated", false);
+          commit("setCurUser", { PIB: "", login: "", password: "" });
         }
-      });
+      } catch (e) {
+        alert("Помилка авторизації користувача");
+      }
     },
   },
   mutations: {
@@ -67,6 +51,7 @@ export default {
     },
     setCurUser(state, user) {
       state.curUser = user;
+      HTTP.defaults.headers["token"] = btoa(`${user.login}:${user.password}`);
     },
   },
   getters: {

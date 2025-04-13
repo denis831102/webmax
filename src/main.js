@@ -12,7 +12,7 @@ import componentsUI from "@/components/UI";
 //import VIntersection from "./directives/VIntersection";
 import directives from "./directives";
 
-import pluginWord from "@/plugins/pluginWord";
+import pluginSystem from "@/plugins/pluginSystem";
 import { dictonary } from "@/plugins/dictonary";
 
 const app = createApp(App);
@@ -31,7 +31,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 app
-  .use(pluginWord, dictonary)
+  .use(pluginSystem, dictonary)
   .use(router)
   .use(store)
   .use(ElementPlus)
