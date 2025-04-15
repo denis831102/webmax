@@ -1,15 +1,29 @@
 <template>
-  <div style="margin: 0 0 10px 10px">
-    <el-button @click="addUser()">Додати нового</el-button>
-  </div>
+  <el-row :gutter="10" style="margin: 0 0 10px 10px">
+    <el-col :span="6">
+      <el-button type="primary" :icon="Avatar" @click="addUser()"
+        >Додати нового</el-button
+      >
+    </el-col>
+    <el-col :span="6">
+      <el-input
+        v-model="search"
+        size="small"
+        style="width: 100%; height: 100%"
+        placeholder="Пошук за прізвищем"
+        :prefix-icon="Search"
+      />
+    </el-col>
+  </el-row>
 
   <el-table
-    :data="setting.tables['tabUser'].data"
-    :default-sort="{ prop: 'date', order: 'descending' }"
+    :data="filterTable"
+    :default-sort="{ prop: 'id', order: 'ascending' }"
+    :sort-method="sortMethod"
     highlight-current-row
     style="width: 100%"
   >
-    <el-table-column type="index" width="30" prop="id" />
+    <el-table-column type="index" width="30" />
 
     <el-table-column label="Прізвище" width="180" sortable prop="PIB">
       <template #default="scope">
@@ -25,6 +39,8 @@
         </el-popover>
       </template>
     </el-table-column>
+
+    <el-table-column label="id" width="80" sortable prop="id" />
 
     <el-table-column label="логін" width="100" sortable prop="login">
       <template #default="scope">
@@ -81,9 +97,12 @@
 </template>
 
 <script setup>
-import { inject, onActivated, computed } from "vue";
+/* eslint-disable */
+
+import { inject, onActivated, computed, ref } from "vue";
 import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
+import { Search, Avatar } from "@element-plus/icons-vue";
 import { HTTP } from "@/hooks/http";
 //import { Timer } from "@element-plus/icons-vue";
 
@@ -146,6 +165,23 @@ const addUser = () => {
   setting.value.dialog["edit"].initiator = "table_user_add";
   setting.value.dialog["edit"].visible = true;
 };
+
+const sortMethod = () => {
+  return (a, b) => {
+    // a > b ? 1 : -1;
+    a - b;
+  };
+};
+
+const search = ref("");
+
+const filterTable = computed(() => {
+  const _tabl = setting.value.tables["tabUser"];
+
+  return _tabl.data.filter((row) =>
+    row.PIB.toLowerCase().includes(search.value.toLowerCase())
+  );
+});
 
 onActivated(fetchUsers);
 </script>
