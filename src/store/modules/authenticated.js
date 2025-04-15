@@ -1,4 +1,4 @@
-// import axios from "axios";
+//import axios from "axios";
 import { HTTP } from "@/hooks/http";
 
 export default {
@@ -29,13 +29,14 @@ export default {
         if (response.data.isSuccesfull) {
           commit("changeAuthenticated", true);
           commit("setCurUser", {
+            id: response.data.id,
             PIB: response.data.PIB,
             login: form.login,
             password: form.password,
           });
         } else {
           commit("changeAuthenticated", false);
-          commit("setCurUser", { PIB: "", login: "", password: "" });
+          commit("setCurUser", { id: 0, PIB: "", login: "", password: "" });
         }
       } catch (e) {
         alert("Помилка авторизації користувача");
@@ -46,12 +47,9 @@ export default {
     changeAuthenticated(state, val) {
       state.isAuthenticated = val;
     },
-    setUsers(state, data) {
-      state.users = data;
-    },
     setCurUser(state, user) {
       state.curUser = user;
-      HTTP.defaults.headers["token"] = btoa(`${user.login}:${user.password}`);
+      HTTP.defaults.headers["Token"] = btoa(`${user.login}:${user.password}`);
     },
   },
   getters: {

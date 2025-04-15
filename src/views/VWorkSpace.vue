@@ -41,7 +41,7 @@
 
           <el-container>
             <el-header style="text-align: right; font-size: 12px">
-              <eDrop_User :name="getCurUser.PIB" />
+              <eDrop_User :user="getCurUser" />
             </el-header>
 
             <el-main>
@@ -64,15 +64,19 @@ import { ref, computed, provide } from "vue";
 import { useStore } from "vuex";
 import { ElNotification } from "element-plus";
 import { Search } from "@element-plus/icons-vue";
-import eMenu_V from "@/components/EP/eMenu_V";
-import eMenu_G from "@/components/EP/eMenu_G";
-import eDrop_User from "@/components/EP/eDrop_User";
+
+import eMenu_V from "@/components/EP/WorkSpace/eMenu_V";
+import eMenu_G from "@/components/EP/WorkSpace/eMenu_G";
+import eDrop_User from "@/components/EP/WorkSpace/eDrop_User";
+import eAvatar from "@/components/EP/WorkSpace/eAvatar";
+
 import eDialog from "@/components/EP/eDialog";
-import eDialog_Edit from "@/components/EP/eDialog_Edit";
-import eDialog_User from "@/components/EP/eDialog_User";
-import eTable_Operation from "@/components/EP/eTable_Operation";
-import eTable_User from "@/components/EP/eTable_User";
-import eAvatar from "@/components/EP/eAvatar";
+
+import eDialog_Edit from "@/components/EP/Users/eDialog_Edit";
+import eDialog_User from "@/components/EP/Users/eDialog_User";
+import eTable_User from "@/components/EP/Users/eTable_User";
+
+import eTable_Operation from "@/components/EP/Operation/eTable_Operation";
 
 const arg = ref({
   text: "222",
@@ -91,11 +95,9 @@ const open = (obj) => {
 
 const setting = ref({
   name: "Денис Ратов",
-  server: `https://webmax.lond.lg.ua/php/Server.php`,
-  key: "123456",
   dialog: {
     main: { visible: false, text: "" },
-    edit: { visible: false },
+    edit: { visible: false, initiator: "" },
     user: { visible: false },
   },
   comps: {
