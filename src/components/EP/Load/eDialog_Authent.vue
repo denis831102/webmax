@@ -4,6 +4,7 @@
     title="Авторизація"
     width="400"
     :before-close="handleClose"
+    @keydown="changeKey"
   >
     <el-form
       :model="form"
@@ -16,7 +17,6 @@
       <el-form-item label="Пароль">
         <el-input
           v-model="form.password"
-          @keydown="changeKey"
           type="password"
           show-password="true"
           placeholder="please input"

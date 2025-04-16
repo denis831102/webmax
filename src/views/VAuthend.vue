@@ -10,7 +10,7 @@
 import "element-plus/dist/index.css";
 import { ref } from "vue";
 // import { ElNotification } from "element-plus";
-import eDialog_Authent from "@/components/EP/eDialog_Authent";
+import eDialog_Authent from "@/components/EP/Load/eDialog_Authent";
 
 const dialog = ref({
   authet: { visible: true },

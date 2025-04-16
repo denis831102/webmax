@@ -5,14 +5,19 @@
         v-model="search"
         size="small"
         style="width: 100%; height: 100%"
-        placeholder="Пошук за прізвищем"
+        placeholder="Пошук статусу"
         :prefix-icon="Search"
       />
     </el-col>
-    <el-col :span="4">
-      <el-button type="primary" :icon="Avatar" @click="addUser()"
-        >Додати нового</el-button
-      >
+    <el-col :span="10">
+      <el-button-group class="ml-4">
+        <el-button type="primary" :icon="Avatar" @click="addStatus()"
+          >Додати новий</el-button
+        >
+        <el-button type="primary" :icon="Refresh" @click="getStatuses()">
+          Оновити
+        </el-button>
+      </el-button-group>
     </el-col>
   </el-row>
 
@@ -21,60 +26,59 @@
     :default-sort="{ prop: 'id', order: 'ascending' }"
     :sort-method="sortMethod"
     highlight-current-row
-    table-layout="fixed"
     style="width: 100%"
   >
     <el-table-column type="index" width="30" />
 
-    <el-table-column label="Прізвище" sortable prop="PIB">
-      <template #default="scope">
-        <el-popover effect="light" trigger="hover" placement="top" width="auto">
-          <template #default>
-            <div>користувач: {{ scope.row.PIB }}</div>
-            <div>id: {{ scope.row.id }}</div>
-            <div>статус: {{ scope.row.status }}</div>
-          </template>
-          <template #reference>
-            <el-tag>{{ scope.row.PIB }}</el-tag>
-          </template>
-        </el-popover>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="id" sortable prop="id" />
-
-    <el-table-column label="логін" sortable prop="login">
+    <el-table-column label="Назва" sortable prop="name">
       <template #default="scope">
         <div style="display: flex; align-items: center">
-          <el-icon><Avatar /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.login }}</span>
+          <el-icon><SetUp /></el-icon>
+          <span style="margin-left: 10px">{{ scope.row.name }}</span>
         </div>
       </template>
     </el-table-column>
 
-    <el-table-column label="пароль">
+    <el-table-column label="доступ до користувачів">
       <template #default="scope">
         <div style="display: flex; align-items: center">
-          <el-icon><Key /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.password }}</span>
+          <el-switch
+            :modelValue="scope.row.v1 == 1"
+            @change="changeCheck(scope.row, 1)"
+          />
         </div>
       </template>
     </el-table-column>
 
-    <el-table-column label="Дата активності" sortable prop="date">
+    <el-table-column label="доступ до статусів">
       <template #default="scope">
         <div style="display: flex; align-items: center">
-          <el-icon><Calendar /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <el-switch
+            :modelValue="scope.row.v2 == 1"
+            @change="changeCheck(scope.row, 2)"
+          />
         </div>
       </template>
     </el-table-column>
 
-    <el-table-column label="Час активності">
+    <el-table-column label="доступ 3">
       <template #default="scope">
         <div style="display: flex; align-items: center">
-          <el-icon><timer /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.time }}</span>
+          <el-switch
+            :modelValue="scope.row.v3 == 1"
+            @change="changeCheck(scope.row, 3)"
+          />
+        </div>
+      </template>
+    </el-table-column>
+
+    <el-table-column label="доступ 4">
+      <template #default="scope">
+        <div style="display: flex; align-items: center">
+          <el-switch
+            :modelValue="scope.row.v4 == 1"
+            @change="changeCheck(scope.row, 4)"
+          />
         </div>
       </template>
     </el-table-column>
@@ -101,39 +105,20 @@
 /* eslint-disable */
 
 import { inject, onActivated, computed, ref } from "vue";
-import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
-import { Search, Avatar } from "@element-plus/icons-vue";
+import { Search, Avatar, Refresh } from "@element-plus/icons-vue";
 import { HTTP } from "@/hooks/http";
-//import { Timer } from "@element-plus/icons-vue";
 
 const setting = inject("setting");
-
-const store = useStore();
-const getCurUser = computed(() => store.getters.getCurUser);
+const search = ref("");
 
 const handleEdit = (index) => {
-  // let sRow = "";
-  // for (let key in row) {
-  //   sRow += ` ${key}: ${row[key]} `;
-  // }
-  // ElMessage({
-  //   message: `edit - index: ${index}, row - ${sRow}`,
-  //   type: "success",
-  //   center: true,
-  // });
-
   setting.value.tables["tabUser"].numRec = index;
   setting.value.dialog["edit"].initiator = "table_user_edit";
   setting.value.dialog["edit"].visible = true;
 };
 
 const handleDelete = async (index, row) => {
-  if (row["id"] == getCurUser.value.id) {
-    ElMessage.error("Видаляти поточного не можна");
-    return;
-  }
-
   const response = await HTTP.get("", {
     params: {
       _method: "delUser",
@@ -147,21 +132,21 @@ const handleDelete = async (index, row) => {
   }
 };
 
-const fetchUsers = async () => {
+const getStatuses = async () => {
   try {
     const response = await HTTP.get("", {
       params: {
-        _method: "getUsers",
+        _method: "getStatuses",
       },
     });
 
-    setting.value.tables["tabUser"].data = response.data;
+    setting.value.tables["tabStatus"].data = response.data;
   } catch (e) {
     ElMessage("Помилка завантаження...");
   }
 };
 
-const addUser = () => {
+const addStatus = () => {
   setting.value.dialog["edit"].initiator = "table_user_add";
   setting.value.dialog["edit"].visible = true;
 };
@@ -173,15 +158,34 @@ const sortMethod = () => {
   };
 };
 
-const search = ref("");
-
 const filterTable = computed(() => {
-  const _tabl = setting.value.tables["tabUser"];
+  const _tabl = setting.value.tables["tabStatus"];
 
   return _tabl.data.filter((row) =>
-    row.PIB.toLowerCase().includes(search.value.toLowerCase())
+    row.name.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 
-onActivated(fetchUsers);
+const changeCheck = async (row, atr) => {
+  const _tabl = setting.value.tables["tabStatus"];
+  const curObj = _tabl.data.find((el) => el.id == row.id);
+  const curVal = +curObj[`v${atr}`];
+
+  const response = await HTTP.get("", {
+    params: {
+      _method: "setStatus",
+      _id: row.id,
+      _atr: `v${atr}`,
+      _val: curVal ? 0 : 1,
+    },
+  });
+
+  if (response.data.isSuccesfull) {
+    curObj[`v${atr}`] = !curVal;
+  } else {
+    ElMessage("Помилка зміни");
+  }
+};
+
+onActivated(getStatuses);
 </script>

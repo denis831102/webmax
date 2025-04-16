@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :modelValue="props.visible"
-    title="Tips"
+    title="Параметри"
     width="600"
     :before-close="handleClose"
     style="max-width: 600px"

@@ -70,11 +70,13 @@ import eMenu_G from "@/components/EP/WorkSpace/eMenu_G";
 import eDrop_User from "@/components/EP/WorkSpace/eDrop_User";
 import eAvatar from "@/components/EP/WorkSpace/eAvatar";
 
-import eDialog from "@/components/EP/eDialog";
+import eDialog from "@/components/EP/Load/eDialog";
 
 import eDialog_Edit from "@/components/EP/Users/eDialog_Edit";
 import eDialog_User from "@/components/EP/Users/eDialog_User";
 import eTable_User from "@/components/EP/Users/eTable_User";
+
+import eTable_Status from "@/components/EP/Status/eTable_Status";
 
 import eTable_Operation from "@/components/EP/Operation/eTable_Operation";
 
@@ -101,7 +103,7 @@ const setting = ref({
     user: { visible: false },
   },
   comps: {
-    list: [eAvatar, eTable_User, eTable_Operation],
+    list: [eAvatar, eTable_User, eTable_Status, eTable_Operation],
     curComp: 0,
   },
   tables: {

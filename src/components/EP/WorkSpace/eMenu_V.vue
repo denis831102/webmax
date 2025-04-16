@@ -25,7 +25,7 @@
         <el-menu-item-group>
           <el-menu-item index="1-1">Список користувачів</el-menu-item>
           <el-menu-item index="1-2">Статуси користувачів</el-menu-item>
-          <el-menu-item index="1-3">Додати нового</el-menu-item>
+          <el-menu-item index="1-3">Параметри</el-menu-item>
         </el-menu-item-group>
         <el-sub-menu index="1-4">
           <template #title><span>Додатково</span></template>
@@ -83,11 +83,14 @@ const handleSelect = (key, keyPath) => {
       // emit("update:modelValue", 1);
       setting.value.comps.curComp = 1;
       break;
+    case "1-2":
+      setting.value.comps.curComp = 2;
+      break;
     case "1-3":
       setting.value.dialog["user"].visible = true;
       break;
     case "2":
-      setting.value.comps.curComp = 2;
+      setting.value.comps.curComp = 3;
       break;
     case "4":
       props.open({
