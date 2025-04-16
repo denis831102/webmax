@@ -26,8 +26,27 @@
     :default-sort="{ prop: 'id', order: 'ascending' }"
     :sort-method="sortMethod"
     highlight-current-row
+    preserve-expanded-content="false"
     style="width: 100%"
   >
+    <el-table-column type="expand">
+      <template #default="props">
+        <div style="padding: 20px; background: #c6e2ff69">
+          <h3>Статус: {{ props.row.name }}</h3>
+          <p style="margin: 10px 0 10px 0">Користувачі</p>
+          <el-table
+            :data="props.row.listUser"
+            border="true"
+            style="background: #c6e2ff"
+          >
+            <el-table-column label="прізвище" prop="pib" />
+            <el-table-column label="дата" prop="date" />
+            <el-table-column label="час" prop="time" />
+          </el-table>
+        </div>
+      </template>
+    </el-table-column>
+
     <el-table-column type="index" width="30" />
 
     <el-table-column label="Назва" sortable prop="name">
