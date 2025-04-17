@@ -5,10 +5,15 @@ module.exports = defineConfig({
     client: {
       overlay: {
         runtimeErrors: (error) => {
-          if (error.message === "ResizeObserver loop limit exceeded") {
-            return false;
-          }
-          return true;
+          // if (
+          //   [
+          //     "ResizeObserver loop completed with undelivered notifications",
+          //     "ResizeObserver loop limit exceeded",
+          //   ].includes(error.message)
+          // ) {
+          //   return false;
+          // }
+          return false;
         },
       },
     },
