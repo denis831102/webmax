@@ -32,7 +32,9 @@ const setting = inject("setting");
 const handleCommand = (command) => {
   switch (command) {
     case "data":
-      ElMessage(`Прізвище: ${props.user.PIB}, логін: ${props.user.login}`);
+      ElMessage(
+        `Прізвище: ${props.user.PIB}, статус: ${props.user.nameStatus}, логін: ${props.user.login}`
+      );
       break;
     case "change":
       setting.value.dialog["edit"].visible = true;

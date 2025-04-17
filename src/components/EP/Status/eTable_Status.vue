@@ -12,7 +12,7 @@
     <el-col :span="10">
       <el-button-group class="ml-4">
         <el-button type="primary" :icon="Avatar" @click="addStatus()"
-          >Додати новий</el-button
+          >Додати новий статус</el-button
         >
         <el-button type="primary" :icon="Refresh" @click="getStatuses()">
           Оновити
@@ -32,8 +32,9 @@
     <el-table-column type="expand">
       <template #default="props">
         <div style="padding: 20px; background: #c6e2ff69">
-          <h3>Статус: {{ props.row.name }}</h3>
-          <p style="margin: 10px 0 10px 0">Користувачі</p>
+          <h3 style="margin: 0px 0 10px 0">
+            Користувачі з статусом "{{ props.row.nameStatus }}"
+          </h3>
           <el-table
             :data="props.row.listUser"
             border="true"
@@ -49,11 +50,11 @@
 
     <el-table-column type="index" width="30" />
 
-    <el-table-column label="Назва" sortable prop="name">
+    <el-table-column label="Статус" sortable prop="nameStatus">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-icon><SetUp /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.name }}</span>
+          <span style="margin-left: 10px">{{ scope.row.nameStatus }}</span>
         </div>
       </template>
     </el-table-column>
@@ -104,14 +105,14 @@
 
     <el-table-column label="Операція">
       <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.$index, scope.row)">
+        <el-button size="small" @click="editStatus(scope.$index, scope.row)">
           <el-icon><Edit /></el-icon>
         </el-button>
 
         <el-button
           size="small"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
+          @click="deleteStatus(scope.$index, scope.row)"
         >
           <el-icon><DeleteFilled /></el-icon>
         </el-button>
@@ -131,13 +132,13 @@ import { HTTP } from "@/hooks/http";
 const setting = inject("setting");
 const search = ref("");
 
-const handleEdit = (index) => {
+const editStatus = (index) => {
   setting.value.tables["tabUser"].numRec = index;
   setting.value.dialog["edit"].initiator = "table_user_edit";
   setting.value.dialog["edit"].visible = true;
 };
 
-const handleDelete = async (index, row) => {
+const deleteStatus = async (index, row) => {
   const response = await HTTP.get("", {
     params: {
       _method: "delUser",
@@ -172,8 +173,7 @@ const addStatus = () => {
 
 const sortMethod = () => {
   return (a, b) => {
-    // a > b ? 1 : -1;
-    a - b;
+    a > b ? 1 : -1;
   };
 };
 
@@ -181,7 +181,7 @@ const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabStatus"];
 
   return _tabl.data.filter((row) =>
-    row.name.toLowerCase().includes(search.value.toLowerCase())
+    row.nameStatus.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 

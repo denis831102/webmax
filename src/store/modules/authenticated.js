@@ -31,6 +31,9 @@ export default {
           commit("setCurUser", {
             id: response.data.id,
             PIB: response.data.PIB,
+            idStatus: response.data.idStatus,
+            nameStatus: response.data.nameStatus,
+            listAccess: response.data.listAccess,
             login: form.login,
             password: form.password,
           });
@@ -55,9 +58,6 @@ export default {
   getters: {
     getAuthenticated(state) {
       return state.isAuthenticated;
-    },
-    getUsers(state) {
-      return state.users;
     },
     getCurUser(state) {
       return state.curUser;

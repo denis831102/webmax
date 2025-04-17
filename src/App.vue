@@ -20,8 +20,9 @@
 }
 .hMain {
   padding: 15px;
-  background: #56897847;
+  background: #ecf5ff;
   box-shadow: 1px 0px 9px 3px #568989;
+  text-align: center;
 }
 .sRout {
   display: flex;

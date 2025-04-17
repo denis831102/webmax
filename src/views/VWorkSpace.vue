@@ -15,7 +15,11 @@
 
       <eMenu_G />
 
-      <el-card class="box-card" style="max-width: 50%; margin-top: 20px">
+      <el-card
+        v-if="false"
+        class="box-card"
+        style="max-width: 50%; margin-top: 20px"
+      >
         <el-button
           :icon="Search"
           plain
@@ -25,7 +29,7 @@
             setting.dialog.main.text = 'Перевірка кнопки';
           "
         >
-          Відкрити діалог
+          Відкрити тестувальний діалог
         </el-button>
       </el-card>
 
@@ -109,6 +113,7 @@ const setting = ref({
   tables: {
     tabUser: {
       numRec: 0,
+      curRow: {},
       data: [],
     },
     tabStatus: {

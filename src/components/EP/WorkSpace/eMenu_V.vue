@@ -17,14 +17,18 @@
       @close="handleClose"
       @select="handleSelect"
     >
-      <el-sub-menu index="1">
+      <el-sub-menu index="1" :disabled="isDisabled_UserStatus">
         <template #title>
           <el-icon><User /></el-icon>
           <span>Користувачі</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="1-1">Список користувачів</el-menu-item>
-          <el-menu-item index="1-2">Статуси користувачів</el-menu-item>
+          <el-menu-item index="1-1" :disabled="isDisabled_User"
+            >Список користувачів</el-menu-item
+          >
+          <el-menu-item index="1-2" :disabled="isDisabled_Status"
+            >Статуси користувачів</el-menu-item
+          >
           <el-menu-item index="1-3">Параметри</el-menu-item>
         </el-menu-item-group>
         <el-sub-menu index="1-4">
@@ -52,21 +56,18 @@
 <script setup>
 /* eslint-disable */
 
-import { ref, defineProps, inject } from "vue";
-import {
-  //   Document,
-  Menu as IconMenu,
-  //   Location,
-  Setting,
-} from "@element-plus/icons-vue";
+import { ref, defineProps, inject, computed, onMounted } from "vue";
+import { Menu as IconMenu, Setting } from "@element-plus/icons-vue";
+import { useStore } from "vuex";
+
+const setting = inject("setting");
+const store = useStore();
+const getCurUser = computed(() => store.getters.getCurUser);
+const isCollapse = ref(true);
 
 const props = defineProps({
   open: Function,
 });
-
-const setting = inject("setting");
-
-const isCollapse = ref(true);
 
 const handleOpen = (key, keyPath) => {
   // console.log(key, keyPath);
@@ -101,6 +102,16 @@ const handleSelect = (key, keyPath) => {
       setting.value.comps.curComp = 0;
   }
 };
+
+const isDisabled_UserStatus = computed(() => {
+  return !+getCurUser.value.listAccess[1] && !+getCurUser.value.listAccess[2];
+});
+const isDisabled_User = computed(() => {
+  return !+getCurUser.value.listAccess[1];
+});
+const isDisabled_Status = computed(() => {
+  return !+getCurUser.value.listAccess[2];
+});
 </script>
 
 <style>

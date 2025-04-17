@@ -9,10 +9,15 @@
         :prefix-icon="Search"
       />
     </el-col>
-    <el-col :span="4">
-      <el-button type="primary" :icon="Avatar" @click="addUser()"
-        >Додати нового</el-button
-      >
+    <el-col :span="10">
+      <el-button-group class="ml-4">
+        <el-button type="primary" :icon="Avatar" @click="addUser()"
+          >Додати нового користувача</el-button
+        >
+        <el-button type="primary" :icon="Refresh" @click="getUsers()">
+          Оновити
+        </el-button>
+      </el-button-group>
     </el-col>
   </el-row>
 
@@ -31,8 +36,8 @@
         <el-popover effect="light" trigger="hover" placement="top" width="auto">
           <template #default>
             <div>користувач: {{ scope.row.PIB }}</div>
+            <div>статус: {{ scope.row.nameStatus }}</div>
             <div>id: {{ scope.row.id }}</div>
-            <div>статус: {{ scope.row.status }}</div>
           </template>
           <template #reference>
             <el-tag>{{ scope.row.PIB }}</el-tag>
@@ -41,7 +46,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="id" sortable prop="id" />
+    <!-- <el-table-column label="id" sortable prop="id" /> -->
 
     <el-table-column label="логін" sortable prop="login">
       <template #default="scope">
@@ -81,14 +86,14 @@
 
     <el-table-column label="Операція">
       <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.$index, scope.row)">
+        <el-button size="small" @click="editUser(scope.$index, scope.row)">
           <el-icon><Edit /></el-icon>
         </el-button>
 
         <el-button
           size="small"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
+          @click="deleteUser(scope.$index, scope.row)"
         >
           <el-icon><DeleteFilled /></el-icon>
         </el-button>
@@ -103,16 +108,16 @@
 import { inject, onActivated, computed, ref } from "vue";
 import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
-import { Search, Avatar } from "@element-plus/icons-vue";
+import { Search, Avatar, Refresh } from "@element-plus/icons-vue";
 import { HTTP } from "@/hooks/http";
 //import { Timer } from "@element-plus/icons-vue";
 
 const setting = inject("setting");
-
+const search = ref("");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 
-const handleEdit = (index) => {
+const editUser = (index, row) => {
   // let sRow = "";
   // for (let key in row) {
   //   sRow += ` ${key}: ${row[key]} `;
@@ -123,12 +128,12 @@ const handleEdit = (index) => {
   //   center: true,
   // });
 
-  setting.value.tables["tabUser"].numRec = index;
+  setting.value.tables["tabUser"].curRow = row;
   setting.value.dialog["edit"].initiator = "table_user_edit";
   setting.value.dialog["edit"].visible = true;
 };
 
-const handleDelete = async (index, row) => {
+const deleteUser = async (index, row) => {
   if (row["id"] == getCurUser.value.id) {
     ElMessage.error("Видаляти поточного не можна");
     return;
@@ -143,11 +148,11 @@ const handleDelete = async (index, row) => {
 
   if (response.data.isSuccesfull) {
     const _tab = setting.value.tables["tabUser"];
-    _tab.data = _tab.data.filter((el, i) => i !== index);
+    _tab.data = _tab.data.filter((el) => el.id !== row.id);
   }
 };
 
-const fetchUsers = async () => {
+const getUsers = async () => {
   try {
     const response = await HTTP.get("", {
       params: {
@@ -168,12 +173,9 @@ const addUser = () => {
 
 const sortMethod = () => {
   return (a, b) => {
-    // a > b ? 1 : -1;
-    a - b;
+    a > b ? 1 : -1;
   };
 };
-
-const search = ref("");
 
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabUser"];
@@ -183,5 +185,5 @@ const filterTable = computed(() => {
   );
 });
 
-onActivated(fetchUsers);
+onActivated(getUsers);
 </script>

@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :modelValue="props.visible"
-    :before-close="handleClose"
+    :before-close="closeWindow"
     :title="form.title"
     width="500"
   >
@@ -16,10 +16,13 @@
         <el-input v-model="form.password" autocomplete="off" />
       </el-form-item>
       <el-form-item label="Статус" :label-width="formLabelWidth">
-        <el-select v-model="form.status" placeholder="Оберіть статус">
-          <el-option label="Адміністратор" value="admin" />
-          <el-option label="Менеджер" value="manager" />
-          <el-option label="Торговий представник" value="manager" />
+        <el-select v-model="form.nameStatus" :disabled="form.disabledStatus">
+          <el-option
+            v-for="item in sourceTable"
+            :key="item.idStatus"
+            :label="item.idStatus"
+            :value="item.nameStatus"
+          />
         </el-select>
       </el-form-item>
     </el-form>
@@ -54,15 +57,16 @@ const formLabelWidth = "140px";
 const form = reactive({
   title: "",
   pib: "",
-  status: "",
+  nameStatus: "",
   login: "",
   password: "",
+  disabledStatus: false,
 });
 const store = useStore();
 const setCurUser = (user) => store.commit("setCurUser", user);
 const getCurUser = computed(() => store.getters.getCurUser);
 
-const handleClose = () => {
+const closeWindow = () => {
   emit("update:visible", false);
 };
 
@@ -70,39 +74,45 @@ const save = async () => {
   switch (setting.value.dialog["edit"].initiator) {
     case "table_user_edit": {
       const _tab = setting.value.tables["tabUser"];
+      const idStatus = setting.value.tables["tabStatus"].data.find(
+        (el) => el.nameStatus == form.nameStatus
+      ).id;
 
       const response = await HTTP.get("", {
         params: {
           _method: "changeDateUser",
-          _id: _tab.data[_tab.numRec].id,
+          _id: _tab.curRow.id,
           _pib: form.pib,
           _login: form.login,
           _password: form.password,
+          _idStatus: idStatus,
         },
       });
 
       if (response.data.isSuccesfull) {
-        _tab.data[_tab.numRec].PIB = form.pib;
-        _tab.data[_tab.numRec].login = form.login;
-        _tab.data[_tab.numRec].password = form.password;
+        const user = _tab.data.find((el) => el.id == _tab.curRow.id);
+        [user.PIB, user.idStatus, user.nameStatus, user.login, user.password] =
+          [form.pib, idStatus, form.nameStatus, form.login, form.password];
 
-        if (_tab.data[_tab.numRec].id == getCurUser.value.id) {
+        if (_tab.curRow.id == getCurUser.value.id) {
           setCurUser({
             id: getCurUser.value.id,
+            idStatus,
+            nameStatus: form.nameStatus,
             PIB: form.pib,
             login: form.login,
             password: form.password,
           });
-          ElMessage.success("Дані поточного користувача змінені.");
+          ElMessage.success("Дані поточного користувача змінені");
         }
         emit("update:visible", false);
       } else {
-        ElMessage.error("Дані не змінені.");
+        ElMessage.error("Дані не змінені");
       }
       break;
     }
     case "drop_user": {
-      const _tab = setting.value.tables["tabUser"];
+      const _tab = setting.value.tables["tabUser"].data;
       const user = getCurUser.value;
 
       const response = await HTTP.get("", {
@@ -112,6 +122,7 @@ const save = async () => {
           _pib: form.pib,
           _login: form.login,
           _password: form.password,
+          _idStatus: user.idStatus,
         },
       });
 
@@ -121,26 +132,39 @@ const save = async () => {
           PIB: form.pib,
           login: form.login,
           password: form.password,
+          idStatus: user.idStatus,
+          listAccess: response.data.listAccess,
         });
 
-        _tab.data[_tab.numRec].PIB = form.pib;
-        _tab.data[_tab.numRec].login = form.login;
-        _tab.data[_tab.numRec].password = form.password;
+        if (_tab.length) {
+          const curUser = _tab.find((el) => el.id);
+          [curUser.PIB, curUser.login, curUser.password] = [
+            form.pib,
+            form.login,
+            form.password,
+          ];
+        }
 
-        ElMessage.success("Дані поточного користувача змінені.");
+        ElMessage.success("Дані поточного користувача змінені");
         emit("update:visible", false);
       } else {
-        ElMessage.error("Дані не змінені.");
+        ElMessage.error("Дані не змінені");
       }
       break;
     }
     case "table_user_add": {
+      const idStatus = setting.value.tables["tabStatus"].data.find(
+        (el) => el.nameStatus == form.nameStatus
+      ).id;
+
       const response = await HTTP.get("", {
         params: {
           _method: "addUser",
           _pib: form.pib,
           _login: form.login,
           _password: form.password,
+          _idStatus: idStatus,
+          _nameStatus: form.nameStatus,
         },
       });
 
@@ -158,34 +182,64 @@ const save = async () => {
   }
 };
 
-onUpdated(() => {
+const sourceTable = computed(() => {
+  return setting.value.tables["tabStatus"].data;
+});
+
+onUpdated(async () => {
   switch (setting.value.dialog["edit"].initiator) {
     case "table_user_edit": {
       form.title = "Редагування користувача";
+      form.disabledStatus = false;
 
       const _tab = setting.value.tables["tabUser"];
 
-      form.pib = _tab.data[_tab.numRec].PIB;
-      form.login = _tab.data[_tab.numRec].login;
-      form.password = _tab.data[_tab.numRec].password;
+      const response = await HTTP.get("", {
+        params: {
+          _method: "getStatuses",
+        },
+      });
+      setting.value.tables["tabStatus"].data = response.data;
+
+      [form.pib, form.login, form.password, form.nameStatus] = [
+        _tab.curRow.PIB,
+        _tab.curRow.login,
+        _tab.curRow.password,
+        _tab.curRow.nameStatus,
+      ];
       break;
     }
     case "drop_user": {
       form.title = "Редагування користувача";
+      form.disabledStatus = true;
 
       const user = getCurUser.value;
 
       form.pib = user.PIB;
       form.login = user.login;
       form.password = user.password;
+      form.nameStatus = user.nameStatus;
+
+      if (!setting.value.tables["tabStatus"].data.length) {
+        const response = await HTTP.get("", {
+          params: {
+            _method: "getStatuses",
+          },
+        });
+        setting.value.tables["tabStatus"].data = response.data;
+      }
+
       break;
     }
     case "table_user_add": {
       form.title = "Додавання користувача";
+      form.disabledStatus = false;
 
       form.pib = "";
       form.login = "";
       form.password = "";
+      form.nameStatus = setting.value.tables["tabStatus"].data[3].nameStatus;
+
       break;
     }
   }
