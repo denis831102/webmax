@@ -1,4 +1,12 @@
+/* eslint-disable */
+
 import { createApp } from "vue";
+
+// import Vue from "vue";
+import BootstrapVue from "bootstrap-vue";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
+
 import App from "./App";
 //import App from "./views/VPage1";
 import router from "./router";
@@ -35,4 +43,5 @@ app
   .use(router)
   .use(store)
   .use(ElementPlus)
+  .use(BootstrapVue)
   .mount("#app");
