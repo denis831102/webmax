@@ -1,4 +1,6 @@
 <template>
+  <eDialog_Status v-model:visible="setting.dialog['editStatus'].visible" />
+
   <el-row :gutter="20" style="margin: 0 0 20px 10px">
     <el-col :span="6">
       <el-input
@@ -14,7 +16,7 @@
         <el-button type="primary" :icon="Avatar" @click="addStatus()"
           >Додати новий статус</el-button
         >
-        <el-button type="primary" :icon="Refresh" @click="getStatuses()">
+        <el-button type="primary" plain :icon="Refresh" @click="getStatuses()">
           Оновити
         </el-button>
       </el-button-group>
@@ -48,7 +50,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column type="index" width="30" />
+    <el-table-column type="index" width="50" />
 
     <el-table-column label="Статус" sortable prop="nameStatus">
       <template #default="scope">
@@ -128,26 +130,30 @@ import { inject, onActivated, computed, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { Search, Avatar, Refresh } from "@element-plus/icons-vue";
 import { HTTP } from "@/hooks/http";
+import eDialog_Status from "@/components/EP/Status/eDialog_Status";
 
 const setting = inject("setting");
 const search = ref("");
 
 const editStatus = (index, row) => {
   setting.value.tables["tabStatus"].curRow = row;
+  setting.value.dialog["editStatus"].initiator = "edit";
   setting.value.dialog["editStatus"].visible = true;
 };
 
 const deleteStatus = async (index, row) => {
   const response = await HTTP.get("", {
     params: {
-      _method: "delUser",
+      _method: "delStatus",
       _id: row["id"],
     },
   });
 
   if (response.data.isSuccesfull) {
-    const _tab = setting.value.tables["tabUser"];
-    _tab.data = _tab.data.filter((el, i) => i !== index);
+    const _tab = setting.value.tables["tabStatus"];
+    _tab.data = _tab.data.filter((el, i) => el.id !== row["id"]);
+  } else {
+    ElMessage.error(response.data.message);
   }
 };
 
@@ -166,8 +172,8 @@ const getStatuses = async () => {
 };
 
 const addStatus = () => {
-  setting.value.dialog["edit"].initiator = "table_user_add";
-  setting.value.dialog["edit"].visible = true;
+  setting.value.dialog["editStatus"].initiator = "add";
+  setting.value.dialog["editStatus"].visible = true;
 };
 
 const sortMethod = () => {
@@ -194,7 +200,7 @@ const changeCheck = async (row, atr) => {
       _method: "setStatus",
       _id: row.id,
       _atr: `v${atr}`,
-      _val: curVal ? 0 : 1,
+      _val: !curVal,
     },
   });
 

@@ -19,22 +19,27 @@
     >
       <el-sub-menu index="1" :disabled="isDisabled_UserStatus">
         <template #title>
-          <el-icon><User /></el-icon>
-          <span>Користувачі</span>
+          <el-icon><Grid /></el-icon>
+          <span>Довідники</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="1-1" :disabled="isDisabled_User"
-            >Список користувачів</el-menu-item
-          >
+            ><el-icon><User /></el-icon>
+            Список користувачів
+          </el-menu-item>
           <el-menu-item index="1-2" :disabled="isDisabled_Status"
-            >Статуси користувачів</el-menu-item
-          >
-          <el-menu-item index="1-3">Власні пункти </el-menu-item>
+            ><el-icon><CircleCheck /></el-icon>
+            Статуси користувачів
+          </el-menu-item>
+          <el-menu-item index="1-3"
+            ><el-icon><Location /></el-icon>Власні пункти
+          </el-menu-item>
+          <el-menu-item index="1-4">Матеріали </el-menu-item>
         </el-menu-item-group>
-        <el-sub-menu index="1-4">
+        <el-sub-menu index="1-5">
           <template #title><span>Додатково</span></template>
-          <el-menu-item index="1-4-1">Операція 1</el-menu-item>
-          <el-menu-item index="1-4-2">Операція 2</el-menu-item>
+          <el-menu-item index="1-5-1">Операція 1</el-menu-item>
+          <el-menu-item index="1-5-2">Операція 2</el-menu-item>
         </el-sub-menu>
       </el-sub-menu>
       <el-menu-item index="2">
@@ -57,7 +62,12 @@
 /* eslint-disable */
 
 import { ref, defineProps, inject, computed, onMounted } from "vue";
-import { Menu as IconMenu, Setting } from "@element-plus/icons-vue";
+import {
+  Menu as IconMenu,
+  Setting,
+  Grid,
+  Location,
+} from "@element-plus/icons-vue";
 import { useStore } from "vuex";
 
 const setting = inject("setting");
@@ -87,7 +97,7 @@ const handleSelect = (key, keyPath) => {
     case "1-2":
       setting.value.comps.curComp = 2;
       break;
-    case "1-4-1":
+    case "1-5-1":
       setting.value.dialog["user"].visible = true;
       break;
     case "2":

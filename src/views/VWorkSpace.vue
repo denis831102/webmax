@@ -1,20 +1,16 @@
 <template>
+  <eDialog
+    :dialogText="setting.dialog.main.text"
+    v-model:visible="setting.dialog['main'].visible"
+    :funcOk="open"
+    :argFunc="arg"
+  />
+
+  <eDialog_All v-model:visible="setting.dialog['user'].visible" />
+
   <!-- eslint-disable -->
   <el-row :gutter="10">
     <el-col :span="24">
-      <eDialog
-        :dialogText="setting.dialog.main.text"
-        v-model:visible="setting.dialog['main'].visible"
-        :funcOk="open"
-        :argFunc="arg"
-      />
-
-      <eDialog_Edit v-model:visible="setting.dialog['edit'].visible" />
-
-      <eDialog_User v-model:visible="setting.dialog['user'].visible" />
-
-      <eDialog_Status v-model:visible="setting.dialog['editStatus'].visible" />
-
       <eMenu_G />
 
       <el-card
@@ -71,21 +67,18 @@ import { useStore } from "vuex";
 import { ElNotification } from "element-plus";
 import { Search } from "@element-plus/icons-vue";
 
+import eDialog from "@/components/EP/Load/eDialog";
+
 import eMenu_V from "@/components/EP/WorkSpace/eMenu_V";
 import eMenu_G from "@/components/EP/WorkSpace/eMenu_G";
 import eDrop_User from "@/components/EP/WorkSpace/eDrop_User";
 import eAvatar from "@/components/EP/WorkSpace/eAvatar";
 
-import eDialog from "@/components/EP/Load/eDialog";
-
-import eDialog_Edit from "@/components/EP/Users/eDialog_Edit";
-import eDialog_User from "@/components/EP/Users/eDialog_User";
 import eTable_User from "@/components/EP/Users/eTable_User";
-
 import eTable_Status from "@/components/EP/Status/eTable_Status";
-import eDialog_Status from "@/components/EP/Status/eDialog_Status";
-
 import eTable_Operation from "@/components/EP/Operation/eTable_Operation";
+
+import eDialog_All from "@/components/EP/eDialog_All";
 
 const arg = ref({
   text: "222",
@@ -108,7 +101,7 @@ const setting = ref({
     main: { visible: false, text: "" },
     edit: { visible: false, initiator: "" },
     user: { visible: false },
-    editStatus: { visible: false },
+    editStatus: { visible: false, initiator: "" },
   },
   comps: {
     list: [eAvatar, eTable_User, eTable_Status, eTable_Operation],

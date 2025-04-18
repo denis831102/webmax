@@ -1,116 +1,247 @@
 <template>
   <el-dialog
     :modelValue="props.visible"
-    title="Параметри"
-    width="600"
-    :before-close="handleClose"
-    style="max-width: 600px"
+    :before-close="closeWindow"
+    :title="form.title"
+    width="500"
   >
-    <el-form
-      :model="form"
-      label-width="auto"
-      style="max-width: 600px; border: 0"
-    >
-      <el-form-item label="Прізвище">
-        <el-input v-model="form.name" />
+    <el-form :model="form">
+      <el-form-item label="Прізвище, ім'я" :label-width="formLabelWidth">
+        <el-input v-model="form.pib" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="Активна зона">
-        <el-select v-model="form.region" placeholder="please select your zone">
-          <el-option label="Zone one" value="shanghai" />
-          <el-option label="Zone two" value="beijing" />
+      <el-form-item label="Логін" :label-width="formLabelWidth">
+        <el-input v-model="form.login" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="Пароль" :label-width="formLabelWidth">
+        <el-input v-model="form.password" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="Статус" :label-width="formLabelWidth">
+        <el-select v-model="form.nameStatus" :disabled="form.disabledStatus">
+          <el-option
+            v-for="item in sourceTable"
+            :key="item.idStatus"
+            :label="item.idStatus"
+            :value="item.nameStatus"
+          />
         </el-select>
-      </el-form-item>
-      <el-form-item label="Дата операції">
-        <el-col :span="11">
-          <el-date-picker
-            v-model="form.date1"
-            type="date"
-            placeholder="Pick a date"
-            style="width: 100%"
-          />
-        </el-col>
-        <el-col :span="2" class="text-center">
-          <span class="text-gray-500">-</span>
-        </el-col>
-        <el-col :span="11">
-          <el-time-picker
-            v-model="form.date2"
-            placeholder="Pick a time"
-            style="width: 100%"
-          />
-        </el-col>
-      </el-form-item>
-      <el-form-item label="Завантажено">
-        <el-switch v-model="form.delivery" />
-      </el-form-item>
-      <el-form-item label="Тип активності">
-        <el-checkbox-group v-model="form.type">
-          <el-checkbox value="Online activities" name="type">
-            Online activities
-          </el-checkbox>
-          <el-checkbox value="Promotion activities" name="type">
-            Promotion activities
-          </el-checkbox>
-          <el-checkbox value="Offline activities" name="type">
-            Offline activities
-          </el-checkbox>
-          <el-checkbox value="Simple brand exposure" name="type">
-            Simple brand exposure
-          </el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item label="Ресурс">
-        <el-radio-group v-model="form.resource">
-          <el-radio value="Sponsor">Sponsor</el-radio>
-          <el-radio value="Venue">Venue</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="Адреса">
-        <el-input v-model="form.desc" type="textarea" />
       </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button type="primary" @click="onSubmit">Create</el-button>
-        <el-button @click="$emit('update:visible', false)">Cancel</el-button>
+        <el-button @click="$emit('update:visible', false)">Закрити</el-button>
+        <el-button type="primary" @click="save"> Зберегти </el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import { reactive, defineProps, defineEmits, inject } from "vue";
+import {
+  defineProps,
+  reactive,
+  defineEmits,
+  inject,
+  onUpdated,
+  computed,
+} from "vue";
+import { HTTP } from "@/hooks/http";
+import { ElMessage } from "element-plus";
+import { useStore } from "vuex";
 
 const props = defineProps({
   visible: Boolean,
 });
-
 const emit = defineEmits([]);
-
 const setting = inject("setting");
-
-// do not use same name with ref
+const formLabelWidth = "140px";
 const form = reactive({
-  name: "",
-  region: "",
-  date1: "",
-  date2: "",
-  delivery: false,
-  type: [],
-  resource: "",
-  desc: "",
+  title: "",
+  pib: "",
+  nameStatus: "",
+  login: "",
+  password: "",
+  disabledStatus: false,
+});
+const store = useStore();
+const setCurUser = (user) => store.commit("setCurUser", user);
+const getCurUser = computed(() => store.getters.getCurUser);
+
+const closeWindow = () => {
+  emit("update:visible", false);
+};
+
+const save = async () => {
+  switch (setting.value.dialog["edit"].initiator) {
+    case "table_user_edit": {
+      const _tab = setting.value.tables["tabUser"];
+      const idStatus = setting.value.tables["tabStatus"].data.find(
+        (el) => el.nameStatus == form.nameStatus
+      ).id;
+
+      const response = await HTTP.get("", {
+        params: {
+          _method: "changeDateUser",
+          _id: _tab.curRow.id,
+          _pib: form.pib,
+          _login: form.login,
+          _password: form.password,
+          _idStatus: idStatus,
+        },
+      });
+
+      if (response.data.isSuccesfull) {
+        const user = _tab.data.find((el) => el.id == _tab.curRow.id);
+        [user.PIB, user.idStatus, user.nameStatus, user.login, user.password] =
+          [form.pib, idStatus, form.nameStatus, form.login, form.password];
+
+        if (_tab.curRow.id == getCurUser.value.id) {
+          setCurUser({
+            id: getCurUser.value.id,
+            idStatus,
+            nameStatus: form.nameStatus,
+            PIB: form.pib,
+            login: form.login,
+            password: form.password,
+          });
+          ElMessage.success("Дані поточного користувача змінені");
+        }
+        emit("update:visible", false);
+      } else {
+        ElMessage.error("Дані не змінені");
+      }
+      break;
+    }
+    case "drop_user": {
+      const _tab = setting.value.tables["tabUser"].data;
+      const user = getCurUser.value;
+
+      const response = await HTTP.get("", {
+        params: {
+          _method: "changeDateUser",
+          _id: user.id,
+          _pib: form.pib,
+          _login: form.login,
+          _password: form.password,
+          _idStatus: user.idStatus,
+        },
+      });
+
+      if (response.data.isSuccesfull) {
+        setCurUser({
+          id: user.id,
+          PIB: form.pib,
+          login: form.login,
+          password: form.password,
+          idStatus: user.idStatus,
+          listAccess: response.data.listAccess,
+        });
+
+        if (_tab.length) {
+          const curUser = _tab.find((el) => el.id);
+          [curUser.PIB, curUser.login, curUser.password] = [
+            form.pib,
+            form.login,
+            form.password,
+          ];
+        }
+
+        ElMessage.success("Дані поточного користувача змінені");
+        emit("update:visible", false);
+      } else {
+        ElMessage.error("Дані не змінені");
+      }
+      break;
+    }
+    case "table_user_add": {
+      const idStatus = setting.value.tables["tabStatus"].data.find(
+        (el) => el.nameStatus == form.nameStatus
+      ).id;
+
+      const response = await HTTP.get("", {
+        params: {
+          _method: "addUser",
+          _pib: form.pib,
+          _login: form.login,
+          _password: form.password,
+          _idStatus: idStatus,
+          _nameStatus: form.nameStatus,
+        },
+      });
+
+      if (response.data.isSuccesfull) {
+        const _tab = setting.value.tables["tabUser"];
+
+        _tab.data.push(response.data.user);
+        ElMessage.success("Нового користувача додано");
+        emit("update:visible", false);
+      } else {
+        ElMessage.error("Користувача не додано");
+      }
+      break;
+    }
+  }
+};
+
+const sourceTable = computed(() => {
+  return setting.value.tables["tabStatus"].data;
 });
 
-const onSubmit = () => {
-  emit("update:visible", false);
-  setting.value.tableData.push({
-    date: form.date1,
-    name: form.name,
-    address: form.desc,
-  });
-};
+onUpdated(async () => {
+  switch (setting.value.dialog["edit"].initiator) {
+    case "table_user_edit": {
+      form.title = "Редагування користувача";
+      form.disabledStatus = false;
 
-const handleClose = () => {
-  emit("update:visible", false);
-};
+      const _tab = setting.value.tables["tabUser"];
+
+      const response = await HTTP.get("", {
+        params: {
+          _method: "getStatuses",
+        },
+      });
+      setting.value.tables["tabStatus"].data = response.data;
+
+      [form.pib, form.login, form.password, form.nameStatus] = [
+        _tab.curRow.PIB,
+        _tab.curRow.login,
+        _tab.curRow.password,
+        _tab.curRow.nameStatus,
+      ];
+      break;
+    }
+    case "drop_user": {
+      form.title = "Редагування користувача";
+      form.disabledStatus = true;
+
+      const user = getCurUser.value;
+
+      form.pib = user.PIB;
+      form.login = user.login;
+      form.password = user.password;
+      form.nameStatus = user.nameStatus;
+
+      if (!setting.value.tables["tabStatus"].data.length) {
+        const response = await HTTP.get("", {
+          params: {
+            _method: "getStatuses",
+          },
+        });
+        setting.value.tables["tabStatus"].data = response.data;
+      }
+
+      break;
+    }
+    case "table_user_add": {
+      form.title = "Додавання користувача";
+      form.disabledStatus = false;
+
+      form.pib = "";
+      form.login = "";
+      form.password = "";
+      form.nameStatus = setting.value.tables["tabStatus"].data[3].nameStatus;
+
+      break;
+    }
+  }
+});
 </script>

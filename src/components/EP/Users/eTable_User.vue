@@ -1,4 +1,6 @@
 <template>
+  <eDialog_User v-model:visible="setting.dialog['edit'].visible" />
+
   <el-row :gutter="20" style="margin: 0 0 20px 10px">
     <el-col :span="6">
       <el-input
@@ -12,9 +14,9 @@
     <el-col :span="10">
       <el-button-group class="ml-4">
         <el-button type="primary" :icon="Avatar" @click="addUser()"
-          >Додати нового користувача</el-button
+          >Додати нового</el-button
         >
-        <el-button type="primary" :icon="Refresh" @click="getUsers()">
+        <el-button type="primary" plain :icon="Refresh" @click="getUsers()">
           Оновити
         </el-button>
       </el-button-group>
@@ -110,7 +112,7 @@ import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
 import { Search, Avatar, Refresh } from "@element-plus/icons-vue";
 import { HTTP } from "@/hooks/http";
-//import { Timer } from "@element-plus/icons-vue";
+import eDialog_User from "@/components/EP/Users/eDialog_User";
 
 const setting = inject("setting");
 const search = ref("");
@@ -118,16 +120,6 @@ const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 
 const editUser = (index, row) => {
-  // let sRow = "";
-  // for (let key in row) {
-  //   sRow += ` ${key}: ${row[key]} `;
-  // }
-  // ElMessage({
-  //   message: `edit - index: ${index}, row - ${sRow}`,
-  //   type: "success",
-  //   center: true,
-  // });
-
   setting.value.tables["tabUser"].curRow = row;
   setting.value.dialog["edit"].initiator = "table_user_edit";
   setting.value.dialog["edit"].visible = true;
