@@ -153,6 +153,7 @@ const getUsers = async () => {
     });
 
     setting.value.tables["tabUser"].data = response.data;
+    ElMessage.success("Користувачі оновлені");
   } catch (e) {
     ElMessage("Помилка завантаження...");
   }
