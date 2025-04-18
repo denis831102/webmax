@@ -132,10 +132,9 @@ import { HTTP } from "@/hooks/http";
 const setting = inject("setting");
 const search = ref("");
 
-const editStatus = (index) => {
-  setting.value.tables["tabUser"].numRec = index;
-  setting.value.dialog["edit"].initiator = "table_user_edit";
-  setting.value.dialog["edit"].visible = true;
+const editStatus = (index, row) => {
+  setting.value.tables["tabStatus"].curRow = row;
+  setting.value.dialog["editStatus"].visible = true;
 };
 
 const deleteStatus = async (index, row) => {

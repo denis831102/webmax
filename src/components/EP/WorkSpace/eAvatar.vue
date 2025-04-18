@@ -1,15 +1,10 @@
 <template>
-  <div class="demo-image">
-    <div class="block">
-      <span class="demonstration"></span>
-      <!-- <el-avatar :size="sizeList[2]" :src="circleUrl" /> -->
-      <el-image
-        style="width: 80%; height: 80%"
-        :src="circleUrl"
-        fit="contain"
-      />
-    </div>
-  </div>
+  <el-image
+    class="demo-image block"
+    style="width: 80%; height: 80%"
+    :src="circleUrl"
+    fit="contain"
+  />
 </template>
 
 <script setup>
@@ -25,7 +20,7 @@ const { circleUrl, sizeList } = toRefs(state);
 </script>
 
 <style scoped>
-.demo-image .block {
+.demo-image.block {
   padding: 30px 0;
   text-align: center;
   border-right: solid 1px var(--el-border-color);
@@ -33,11 +28,12 @@ const { circleUrl, sizeList } = toRefs(state);
   width: 60%;
   box-sizing: border-box;
   vertical-align: top;
+  align-items: center;
 }
-.demo-image .block:last-child {
+.demo-image.block:last-child {
   border-right: none;
 }
-.demo-image .demonstration {
+.demo-image.demonstration {
   display: block;
   color: var(--el-text-color-secondary);
   font-size: 14px;

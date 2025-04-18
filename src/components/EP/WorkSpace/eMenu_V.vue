@@ -29,7 +29,7 @@
           <el-menu-item index="1-2" :disabled="isDisabled_Status"
             >Статуси користувачів</el-menu-item
           >
-          <el-menu-item index="1-3">Параметри</el-menu-item>
+          <el-menu-item index="1-3">Власні пункти </el-menu-item>
         </el-menu-item-group>
         <el-sub-menu index="1-4">
           <template #title><span>Додатково</span></template>
@@ -87,7 +87,7 @@ const handleSelect = (key, keyPath) => {
     case "1-2":
       setting.value.comps.curComp = 2;
       break;
-    case "1-3":
+    case "1-4-1":
       setting.value.dialog["user"].visible = true;
       break;
     case "2":

@@ -13,6 +13,8 @@
 
       <eDialog_User v-model:visible="setting.dialog['user'].visible" />
 
+      <eDialog_Status v-model:visible="setting.dialog['editStatus'].visible" />
+
       <eMenu_G />
 
       <el-card
@@ -81,6 +83,7 @@ import eDialog_User from "@/components/EP/Users/eDialog_User";
 import eTable_User from "@/components/EP/Users/eTable_User";
 
 import eTable_Status from "@/components/EP/Status/eTable_Status";
+import eDialog_Status from "@/components/EP/Status/eDialog_Status";
 
 import eTable_Operation from "@/components/EP/Operation/eTable_Operation";
 
@@ -105,6 +108,7 @@ const setting = ref({
     main: { visible: false, text: "" },
     edit: { visible: false, initiator: "" },
     user: { visible: false },
+    editStatus: { visible: false },
   },
   comps: {
     list: [eAvatar, eTable_User, eTable_Status, eTable_Operation],
