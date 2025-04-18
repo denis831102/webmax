@@ -19,22 +19,25 @@
     >
       <el-sub-menu index="1" :disabled="isDisabled_UserStatus">
         <template #title>
-          <el-icon><Grid /></el-icon>
+          <el-icon><icon-menu /></el-icon>
           <span>Довідники</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="1-1" :disabled="isDisabled_User"
             ><el-icon><User /></el-icon>
-            Список користувачів
+            Користувачі
           </el-menu-item>
           <el-menu-item index="1-2" :disabled="isDisabled_Status"
             ><el-icon><CircleCheck /></el-icon>
-            Статуси користувачів
+            Статуси
           </el-menu-item>
           <el-menu-item index="1-3"
-            ><el-icon><Location /></el-icon>Власні пункти
+            ><el-icon><HomeFilled /></el-icon>Власні пункти
           </el-menu-item>
-          <el-menu-item index="1-4">Матеріали </el-menu-item>
+          <el-menu-item index="1-4">
+            <el-icon><ToiletPaper /></el-icon>
+            Матеріали
+          </el-menu-item>
         </el-menu-item-group>
         <el-sub-menu index="1-5">
           <template #title><span>Додатково</span></template>
@@ -43,7 +46,7 @@
         </el-sub-menu>
       </el-sub-menu>
       <el-menu-item index="2">
-        <el-icon><icon-menu /></el-icon>
+        <el-icon><Briefcase /></el-icon>
         <template #title>Операції</template>
       </el-menu-item>
       <el-menu-item index="3" disabled>
@@ -66,7 +69,8 @@ import {
   Menu as IconMenu,
   Setting,
   Grid,
-  Location,
+  HomeFilled,
+  Briefcase,
 } from "@element-plus/icons-vue";
 import { useStore } from "vuex";
 
