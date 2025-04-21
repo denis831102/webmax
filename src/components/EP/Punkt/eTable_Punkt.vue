@@ -1,5 +1,5 @@
 <template>
-  <eDialog_User v-model:visible="setting.dialog['editUser'].visible" />
+  <eDialog_Punkt v-model:visible="setting.dialog['editPunkt'].visible" />
 
   <el-row :gutter="20" style="margin: 0 0 20px 10px">
     <el-col :span="6">
@@ -13,10 +13,10 @@
     </el-col>
     <el-col :span="10">
       <el-button-group class="ml-4">
-        <el-button type="primary" :icon="Avatar" @click="addUser()"
+        <el-button type="primary" :icon="Avatar" @click="addPunkt()"
           >Додати нового</el-button
         >
-        <el-button type="primary" plain :icon="Refresh" @click="getUsers()">
+        <el-button type="primary" plain :icon="Refresh" @click="getPunkts()">
           Оновити
         </el-button>
       </el-button-group>
@@ -88,14 +88,14 @@
 
     <el-table-column label="Операція">
       <template #default="scope">
-        <el-button size="small" @click="editUser(scope.$index, scope.row)">
+        <el-button size="small" @click="editPunkt(scope.$index, scope.row)">
           <el-icon><Edit /></el-icon>
         </el-button>
 
         <el-button
           size="small"
           type="danger"
-          @click="deleteUser(scope.$index, scope.row)"
+          @click="deletePunkt(scope.$index, scope.row)"
         >
           <el-icon><DeleteFilled /></el-icon>
         </el-button>
@@ -112,20 +112,20 @@ import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
 import { Search, Avatar, Refresh } from "@element-plus/icons-vue";
 import { HTTP } from "@/hooks/http";
-import eDialog_User from "@/components/EP/Users/eDialog_User";
+import eDialog_Punkt from "@/components/EP/Punkt/eDialog_Punkt";
 
 const setting = inject("setting");
 const search = ref("");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 
-const editUser = (index, row) => {
-  setting.value.tables["tabUser"].curRow = row;
-  setting.value.dialog["editUser"].initiator = "table_user_edit";
-  setting.value.dialog["editUser"].visible = true;
+const editPunkt = (index, row) => {
+  setting.value.tables["tabPunkt"].curRow = row;
+  setting.value.dialog["editPunkt"].initiator = "table_Punkt_edit";
+  setting.value.dialog["editPunkt"].visible = true;
 };
 
-const deleteUser = async (index, row) => {
+const deletePunkt = async (index, row) => {
   if (row["id"] == getCurUser.value.id) {
     ElMessage.error("Видаляти поточного не можна");
     return;
@@ -133,35 +133,35 @@ const deleteUser = async (index, row) => {
 
   const response = await HTTP.get("", {
     params: {
-      _method: "delUser",
+      _method: "delPunkt",
       _id: row["id"],
     },
   });
 
   if (response.data.isSuccesfull) {
-    const _tab = setting.value.tables["tabUser"];
+    const _tab = setting.value.tables["tabPunkt"];
     _tab.data = _tab.data.filter((el) => el.id !== row.id);
   }
 };
 
-const getUsers = async () => {
+const getPunkt = async () => {
   try {
     const response = await HTTP.get("", {
       params: {
-        _method: "getUsers",
+        _method: "getPunkt",
       },
     });
 
-    setting.value.tables["tabUser"].data = response.data;
+    setting.value.tables["tabPunkt"].data = response.data;
     ElMessage.success("Користувачі оновлені");
   } catch (e) {
     ElMessage("Помилка завантаження...");
   }
 };
 
-const addUser = () => {
-  setting.value.dialog["editUser"].initiator = "table_user_add";
-  setting.value.dialog["editUser"].visible = true;
+const addPunkt = () => {
+  setting.value.dialog["editPunkt"].initiator = "table_Punkt_add";
+  setting.value.dialog["editPunkt"].visible = true;
 };
 
 const sortMethod = () => {
@@ -171,12 +171,12 @@ const sortMethod = () => {
 };
 
 const filterTable = computed(() => {
-  const _tabl = setting.value.tables["tabUser"];
+  const _tabl = setting.value.tables["tabPunkt"];
 
   return _tabl.data.filter((row) =>
     row.PIB.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 
-onActivated(getUsers);
+onActivated(getPunkts);
 </script>
