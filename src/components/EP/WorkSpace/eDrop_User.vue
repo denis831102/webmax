@@ -37,8 +37,8 @@ const handleCommand = (command) => {
       );
       break;
     case "change":
-      setting.value.dialog["edit"].visible = true;
-      setting.value.dialog["edit"].initiator = "drop_user";
+      setting.value.dialog["editUser"].visible = true;
+      setting.value.dialog["editUser"].initiator = "drop_user";
       break;
     case "exit":
       router.push({ name: "authent" });

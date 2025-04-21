@@ -62,10 +62,27 @@
           >
         </el-sub-menu>
       </el-sub-menu>
-      <el-menu-item index="2">
-        <el-icon><Briefcase /></el-icon>
-        <template #title>Операції</template>
-      </el-menu-item>
+
+      <el-sub-menu index="2">
+        <template #title>
+          <el-icon><Grid /></el-icon>
+          <span>Операції</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="2-1">
+            <el-icon><EditPen /></el-icon>
+            Залишки
+          </el-menu-item>
+          <el-menu-item index="2-2">
+            <el-icon><CircleCheck /></el-icon>
+            Операції
+          </el-menu-item>
+          <el-menu-item index="2-3">
+            <el-icon><Briefcase /></el-icon>Власні пункти
+          </el-menu-item>
+        </el-menu-item-group>
+      </el-sub-menu>
+
       <el-menu-item index="3" disabled>
         <el-icon><document /></el-icon>
         <template #title>Звіти</template>
@@ -117,6 +134,9 @@ const handleSelect = (key, keyPath) => {
       break;
     case "1-2":
       setting.value.comps.curComp = 2;
+      break;
+    case "1-3":
+      setting.value.comps.curComp = 3;
       break;
     case "1-5-1":
       setting.value.dialog["user"].visible = true;

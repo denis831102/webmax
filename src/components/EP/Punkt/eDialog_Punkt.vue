@@ -71,7 +71,7 @@ const closeWindow = () => {
 };
 
 const save = async () => {
-  switch (setting.value.dialog["editUser"].initiator) {
+  switch (setting.value.dialog["edit"].initiator) {
     case "table_user_edit": {
       const _tab = setting.value.tables["tabUser"];
       const idStatus = setting.value.tables["tabStatus"].data.find(
@@ -187,7 +187,7 @@ const sourceTable = computed(() => {
 });
 
 onUpdated(async () => {
-  switch (setting.value.dialog["editUser"].initiator) {
+  switch (setting.value.dialog["edit"].initiator) {
     case "table_user_edit": {
       form.title = "Редагування користувача";
       form.disabledStatus = false;
