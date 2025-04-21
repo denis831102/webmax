@@ -166,6 +166,7 @@ const getStatuses = async () => {
     });
 
     setting.value.tables["tabStatus"].data = response.data;
+    ElMessage.success("Cтатуси оновлені");
   } catch (e) {
     ElMessage("Помилка завантаження...");
   }
