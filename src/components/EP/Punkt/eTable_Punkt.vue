@@ -7,16 +7,16 @@
         v-model="search"
         size="small"
         style="width: 100%; height: 100%"
-        placeholder="Пошук за прізвищем"
+        placeholder="Пошук за пунктом"
         :prefix-icon="Search"
       />
     </el-col>
     <el-col :span="10">
       <el-button-group class="ml-4">
         <el-button type="primary" :icon="Avatar" @click="addPunkt()"
-          >Додати нового</el-button
+          >Додати новий</el-button
         >
-        <el-button type="primary" plain :icon="Refresh" @click="getPunkts()">
+        <el-button type="primary" plain :icon="Refresh" @click="getPunkt()">
           Оновити
         </el-button>
       </el-button-group>
@@ -33,55 +33,28 @@
   >
     <el-table-column type="index" width="30" />
 
-    <el-table-column label="Прізвище" sortable prop="PIB">
+    <el-table-column label="Назва пункта" sortable prop="PIB">
       <template #default="scope">
-        <el-popover effect="light" trigger="hover" placement="top" width="auto">
-          <template #default>
-            <div>користувач: {{ scope.row.PIB }}</div>
-            <div>статус: {{ scope.row.nameStatus }}</div>
-            <div>id: {{ scope.row.id }}</div>
-          </template>
-          <template #reference>
-            <el-tag>{{ scope.row.PIB }}</el-tag>
-          </template>
-        </el-popover>
+        <div>{{ scope.row.name }}</div>
       </template>
     </el-table-column>
 
     <!-- <el-table-column label="id" sortable prop="id" /> -->
 
-    <el-table-column label="логін" sortable prop="login">
+    <el-table-column label="Адреса" sortable prop="login">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-icon><Avatar /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.login }}</span>
+          <span style="margin-left: 10px">{{ scope.row.adres }}</span>
         </div>
       </template>
     </el-table-column>
 
-    <el-table-column label="пароль">
+    <el-table-column label="Менеджер">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-icon><Key /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.password }}</span>
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="Дата активності" sortable prop="date">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-icon><Calendar /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="Час активності">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-icon><timer /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.time }}</span>
+          <span style="margin-left: 10px">{{ scope.row.pib }}</span>
         </div>
       </template>
     </el-table-column>
@@ -174,9 +147,9 @@ const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabPunkt"];
 
   return _tabl.data.filter((row) =>
-    row.PIB.toLowerCase().includes(search.value.toLowerCase())
+    row.name.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 
-onActivated(getPunkts);
+onActivated(getPunkt);
 </script>
