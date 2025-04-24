@@ -102,6 +102,7 @@ const save = async () => {
             PIB: form.pib,
             login: form.login,
             password: form.password,
+            listAccess: getCurUser.value.listAccess,
           });
           ElMessage.success("Дані поточного користувача змінені");
         }

@@ -6,22 +6,19 @@
     width="500"
   >
     <el-form :model="form">
-      <el-form-item label="Прізвище, ім'я" :label-width="formLabelWidth">
-        <el-input v-model="form.pib" autocomplete="off" />
+      <el-form-item label="Назва Пункту" :label-width="formLabelWidth">
+        <el-input v-model="form.nameP" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="Логін" :label-width="formLabelWidth">
-        <el-input v-model="form.login" autocomplete="off" />
+      <el-form-item label="Адреса" :label-width="formLabelWidth">
+        <el-input v-model="form.adres" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="Пароль" :label-width="formLabelWidth">
-        <el-input v-model="form.password" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="Статус" :label-width="formLabelWidth">
-        <el-select v-model="form.nameStatus" :disabled="form.disabledStatus">
+      <el-form-item label="Менеджер" :label-width="formLabelWidth">
+        <el-select v-model="form.pib">
           <el-option
             v-for="item in sourceTable"
-            :key="item.idStatus"
-            :label="item.idStatus"
-            :value="item.nameStatus"
+            :key="item.PIB"
+            :label="item.PIB"
+            :value="item.PIB"
           />
         </el-select>
       </el-form-item>
@@ -46,7 +43,7 @@ import {
 } from "vue";
 import { HTTP } from "@/hooks/http";
 import { ElMessage } from "element-plus";
-import { useStore } from "vuex";
+// import { useStore } from "vuex";
 
 const props = defineProps({
   visible: Boolean,
@@ -56,126 +53,78 @@ const setting = inject("setting");
 const formLabelWidth = "140px";
 const form = reactive({
   title: "",
+  nameP: "",
   pib: "",
-  nameStatus: "",
-  login: "",
-  password: "",
-  disabledStatus: false,
+  adres: "",
 });
-const store = useStore();
-const setCurUser = (user) => store.commit("setCurUser", user);
-const getCurUser = computed(() => store.getters.getCurUser);
+// const store = useStore();
+// const setCurUser = (user) => store.commit("setCurUser", user);
+// const getCurUser = computed(() => store.getters.getCurUser);
 
 const closeWindow = () => {
   emit("update:visible", false);
 };
 
 const save = async () => {
-  switch (setting.value.dialog["edit"].initiator) {
-    case "table_user_edit": {
-      const _tab = setting.value.tables["tabUser"];
-      const idStatus = setting.value.tables["tabStatus"].data.find(
-        (el) => el.nameStatus == form.nameStatus
+  switch (setting.value.dialog["editPunkt"].initiator) {
+    case "table_Punkt_edit": {
+      const _tab = setting.value.tables["tabPunkt"];
+      const idU = setting.value.tables["tabUser"].data.find(
+        (el) => el.PIB == form.pib
       ).id;
 
       const response = await HTTP.get("", {
         params: {
-          _method: "changeDateUser",
+          _method: "setPunkt",
           _id: _tab.curRow.id,
-          _pib: form.pib,
-          _login: form.login,
-          _password: form.password,
-          _idStatus: idStatus,
+          _name: form.nameP,
+          _idU: idU,
+          _adres: form.adres,
         },
       });
 
       if (response.data.isSuccesfull) {
-        const user = _tab.data.find((el) => el.id == _tab.curRow.id);
-        [user.PIB, user.idStatus, user.nameStatus, user.login, user.password] =
-          [form.pib, idStatus, form.nameStatus, form.login, form.password];
-
-        if (_tab.curRow.id == getCurUser.value.id) {
-          setCurUser({
-            id: getCurUser.value.id,
-            idStatus,
-            nameStatus: form.nameStatus,
-            PIB: form.pib,
-            login: form.login,
-            password: form.password,
-          });
-          ElMessage.success("Дані поточного користувача змінені");
-        }
+        const punkt = _tab.data.find((el) => el.id == _tab.curRow.id);
+        [punkt.name, punkt.adres, punkt.pib] = [
+          form.nameP,
+          form.adres,
+          form.pib,
+        ];
         emit("update:visible", false);
       } else {
         ElMessage.error("Дані не змінені");
       }
       break;
     }
-    case "drop_user": {
-      const _tab = setting.value.tables["tabUser"].data;
-      const user = getCurUser.value;
-
-      const response = await HTTP.get("", {
-        params: {
-          _method: "changeDateUser",
-          _id: user.id,
-          _pib: form.pib,
-          _login: form.login,
-          _password: form.password,
-          _idStatus: user.idStatus,
-        },
-      });
-
-      if (response.data.isSuccesfull) {
-        setCurUser({
-          id: user.id,
-          PIB: form.pib,
-          login: form.login,
-          password: form.password,
-          idStatus: user.idStatus,
-          listAccess: response.data.listAccess,
-        });
-
-        if (_tab.length) {
-          const curUser = _tab.find((el) => el.id);
-          [curUser.PIB, curUser.login, curUser.password] = [
-            form.pib,
-            form.login,
-            form.password,
-          ];
-        }
-
-        ElMessage.success("Дані поточного користувача змінені");
-        emit("update:visible", false);
-      } else {
-        ElMessage.error("Дані не змінені");
-      }
-      break;
-    }
-    case "table_user_add": {
-      const idStatus = setting.value.tables["tabStatus"].data.find(
-        (el) => el.nameStatus == form.nameStatus
+    case "table_Punkt_copy_add":
+    case "table_Punkt_add": {
+      const idU = setting.value.tables["tabUser"].data.find(
+        (el) => el.PIB == form.pib
       ).id;
 
       const response = await HTTP.get("", {
         params: {
-          _method: "addUser",
-          _pib: form.pib,
-          _login: form.login,
-          _password: form.password,
-          _idStatus: idStatus,
-          _nameStatus: form.nameStatus,
+          _method: "addPunkt",
+          _name: form.nameP,
+          _idU: idU,
+          _adres: form.adres,
         },
       });
 
       if (response.data.isSuccesfull) {
-        const _tab = setting.value.tables["tabUser"];
+        const _tab = setting.value.tables["tabPunkt"];
+        const punkt = {
+          id: response.data.idP,
+          name: response.data.name,
+          adres: response.data.adres,
+          pib: form.pib,
+        };
 
-        _tab.data.push(response.data.user);
-        ElMessage.success("Нового користувача додано");
+        _tab.data.push(punkt);
+        ElMessage.success("Новий пункт прийому додано");
         emit("update:visible", false);
       } else {
-        ElMessage.error("Користувача не додано");
+        ElMessage.error("Пункт прийому не додано");
       }
       break;
     }
@@ -183,62 +132,54 @@ const save = async () => {
 };
 
 const sourceTable = computed(() => {
-  return setting.value.tables["tabStatus"].data;
+  return setting.value.tables["tabUser"].data;
 });
 
 onUpdated(async () => {
-  switch (setting.value.dialog["edit"].initiator) {
-    case "table_user_edit": {
-      form.title = "Редагування користувача";
-      form.disabledStatus = false;
-
-      const _tab = setting.value.tables["tabUser"];
+  switch (setting.value.dialog["editPunkt"].initiator) {
+    case "table_Punkt_edit": {
+      form.title = "Редагування Пункту прийому";
+      const _tab = setting.value.tables["tabPunkt"];
 
       const response = await HTTP.get("", {
         params: {
-          _method: "getStatuses",
+          _method: "getUsers",
         },
       });
-      setting.value.tables["tabStatus"].data = response.data;
+      setting.value.tables["tabUser"].data = response.data;
 
-      [form.pib, form.login, form.password, form.nameStatus] = [
-        _tab.curRow.PIB,
-        _tab.curRow.login,
-        _tab.curRow.password,
-        _tab.curRow.nameStatus,
+      [form.nameP, form.adres, form.pib] = [
+        _tab.curRow.name,
+        _tab.curRow.adres,
+        _tab.curRow.pib,
       ];
       break;
     }
-    case "drop_user": {
-      form.title = "Редагування користувача";
-      form.disabledStatus = true;
+    case "table_Punkt_copy_add": {
+      form.title = "Створення нового за прикладом";
+      const _tab = setting.value.tables["tabPunkt"];
 
-      const user = getCurUser.value;
+      const response = await HTTP.get("", {
+        params: {
+          _method: "getUsers",
+        },
+      });
+      setting.value.tables["tabUser"].data = response.data;
 
-      form.pib = user.PIB;
-      form.login = user.login;
-      form.password = user.password;
-      form.nameStatus = user.nameStatus;
-
-      if (!setting.value.tables["tabStatus"].data.length) {
-        const response = await HTTP.get("", {
-          params: {
-            _method: "getStatuses",
-          },
-        });
-        setting.value.tables["tabStatus"].data = response.data;
-      }
+      [form.nameP, form.adres, form.pib] = [
+        _tab.curRow.name,
+        _tab.curRow.adres,
+        _tab.curRow.pib,
+      ];
 
       break;
     }
-    case "table_user_add": {
-      form.title = "Додавання користувача";
-      form.disabledStatus = false;
+    case "table_Punkt_add": {
+      form.title = "Додавання Пункту прийому";
 
-      form.pib = "";
-      form.login = "";
-      form.password = "";
-      form.nameStatus = setting.value.tables["tabStatus"].data[3].nameStatus;
+      form.nameP = "";
+      form.adres = "";
+      form.pib = setting.value.tables["tabUser"].data[0].PIB;
 
       break;
     }

@@ -13,9 +13,9 @@
     </el-col>
     <el-col :span="10">
       <el-button-group class="ml-4">
-        <el-button type="primary" :icon="Avatar" @click="addPunkt()"
-          >Додати новий</el-button
-        >
+        <el-button type="primary" :icon="HomeFilled" @click="addPunkt()"
+          >Додати нового
+        </el-button>
         <el-button type="primary" plain :icon="Refresh" @click="getPunkt()">
           Оновити
         </el-button>
@@ -33,33 +33,34 @@
   >
     <el-table-column type="index" width="30" />
 
-    <el-table-column label="Назва пункта" sortable prop="PIB">
+    <el-table-column label="Назва Пункту" sortable prop="name">
       <template #default="scope">
-        <div>{{ scope.row.name }}</div>
+        <div style="display: flex; align-items: center">
+          <el-icon><HomeFilled /></el-icon>
+          <div style="margin-left: 10px">{{ scope.row.name }}</div>
+        </div>
       </template>
     </el-table-column>
 
-    <!-- <el-table-column label="id" sortable prop="id" /> -->
-
-    <el-table-column label="Адреса" sortable prop="login">
+    <el-table-column label="Адреса">
       <template #default="scope">
         <div style="display: flex; align-items: center">
-          <el-icon><Avatar /></el-icon>
+          <el-icon><Position /></el-icon>
           <span style="margin-left: 10px">{{ scope.row.adres }}</span>
         </div>
       </template>
     </el-table-column>
 
-    <el-table-column label="Менеджер">
+    <el-table-column label="ПІБ менеджера" sortable prop="pib">
       <template #default="scope">
         <div style="display: flex; align-items: center">
-          <el-icon><Key /></el-icon>
+          <el-icon><User /></el-icon>
           <span style="margin-left: 10px">{{ scope.row.pib }}</span>
         </div>
       </template>
     </el-table-column>
 
-    <el-table-column label="Операція">
+    <el-table-column label="Редагування ПП">
       <template #default="scope">
         <el-button size="small" @click="editPunkt(scope.$index, scope.row)">
           <el-icon><Edit /></el-icon>
@@ -72,6 +73,9 @@
         >
           <el-icon><DeleteFilled /></el-icon>
         </el-button>
+        <el-button size="small" @click="copyPunkt(scope.$index, scope.row)">
+          <el-icon><CopyDocument /></el-icon>
+        </el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -83,7 +87,12 @@
 import { inject, onActivated, computed, ref } from "vue";
 import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
-import { Search, Avatar, Refresh } from "@element-plus/icons-vue";
+import {
+  Search,
+  HomeFilled,
+  CopyDocument,
+  Refresh,
+} from "@element-plus/icons-vue";
 import { HTTP } from "@/hooks/http";
 import eDialog_Punkt from "@/components/EP/Punkt/eDialog_Punkt";
 
@@ -99,11 +108,6 @@ const editPunkt = (index, row) => {
 };
 
 const deletePunkt = async (index, row) => {
-  if (row["id"] == getCurUser.value.id) {
-    ElMessage.error("Видаляти поточного не можна");
-    return;
-  }
-
   const response = await HTTP.get("", {
     params: {
       _method: "delPunkt",
@@ -114,6 +118,8 @@ const deletePunkt = async (index, row) => {
   if (response.data.isSuccesfull) {
     const _tab = setting.value.tables["tabPunkt"];
     _tab.data = _tab.data.filter((el) => el.id !== row.id);
+  } else {
+    ElMessage.error("Заборонено видаляти пункт з залишками на складі");
   }
 };
 
@@ -126,7 +132,7 @@ const getPunkt = async () => {
     });
 
     setting.value.tables["tabPunkt"].data = response.data;
-    ElMessage.success("Користувачі оновлені");
+    ElMessage.success("Пункти оновлені");
   } catch (e) {
     ElMessage("Помилка завантаження...");
   }
@@ -134,6 +140,11 @@ const getPunkt = async () => {
 
 const addPunkt = () => {
   setting.value.dialog["editPunkt"].initiator = "table_Punkt_add";
+  setting.value.dialog["editPunkt"].visible = true;
+};
+const copyPunkt = (index, row) => {
+  setting.value.tables["tabPunkt"].curRow = row;
+  setting.value.dialog["editPunkt"].initiator = "table_Punkt_copy_add";
   setting.value.dialog["editPunkt"].visible = true;
 };
 
