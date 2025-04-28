@@ -29,9 +29,31 @@
     :sort-method="sortMethod"
     highlight-current-row
     table-layout="fixed"
+    preserve-expanded-content="false"
     style="width: 100%"
   >
     <el-table-column type="index" />
+
+    <el-table-column type="expand">
+      <template #default="props">
+        <div style="padding: 20px; background: #c6e2ff69">
+          <h3 style="margin: 0px 0 10px 0">
+            Список пунктів користувача
+            <el-text tag="b">{{ props.row.PIB }}</el-text>
+          </h3>
+          <el-table
+            :data="props.row.listPunkt"
+            v-if="props.row.listPunkt.length"
+            border="true"
+            style="background: #c6e2ff"
+          >
+            <el-table-column label="Назва пункта" prop="namePunkt" />
+            <el-table-column label="Адреса" prop="adres" />
+          </el-table>
+          <el-text v-else type="danger">Пункти відсутні</el-text>
+        </div>
+      </template>
+    </el-table-column>
 
     <el-table-column label="Прізвище" sortable prop="PIB">
       <template #default="scope">
@@ -173,9 +195,11 @@ const sortMethod = () => {
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabUser"];
 
-  return _tabl.data.filter((row) =>
-    row.PIB.toLowerCase().includes(search.value.toLowerCase())
-  );
+  return _tabl.data.length
+    ? _tabl.data.filter((row) =>
+        row.PIB.toLowerCase().includes(search.value.toLowerCase())
+      )
+    : _tabl.data;
 });
 
 onActivated(getUsers);

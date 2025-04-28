@@ -77,6 +77,7 @@ import eAvatar from "@/components/EP/WorkSpace/eAvatar";
 import eTable_User from "@/components/EP/Users/eTable_User";
 import eTable_Status from "@/components/EP/Status/eTable_Status";
 import eTable_Punkt from "@/components/EP/Punkt/eTable_Punkt";
+import eOperation from "@/components/EP/Bits/eOperation";
 import eTable_Material from "@/components/EP/Material/eTable_Material";
 
 import eTable_Operation from "@/components/EP/Operation/eTable_Operation";
@@ -105,18 +106,19 @@ const setting = ref({
     editUser: { visible: false, initiator: "" },
     editStatus: { visible: false, initiator: "" },
     editPunkt: { visible: false, initiator: "" },
+    editOperation: { visible: false, initiator: "" },
     editMaterial: { visible: false, initiator: "" },
   },
   comps: {
-    list: [
+    list: {
       eAvatar,
       eTable_User,
       eTable_Status,
       eTable_Punkt,
-      eTable_Material,
       eTable_Operation,
-    ],
-    curComp: 0,
+      eOperation,
+    },
+    curComp: "eAvatar",
   },
   tables: {
     tabUser: {

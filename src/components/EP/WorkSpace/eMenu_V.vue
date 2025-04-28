@@ -70,15 +70,15 @@
         </template>
         <el-menu-item-group>
           <el-menu-item index="2-1">
+            <el-icon><Briefcase /></el-icon>Власні пункти
+          </el-menu-item>
+          <el-menu-item index="2-2">
             <el-icon><EditPen /></el-icon>
             Залишки
           </el-menu-item>
-          <el-menu-item index="2-2">
+          <el-menu-item index="2-3">
             <el-icon><CircleCheck /></el-icon>
             Операції
-          </el-menu-item>
-          <el-menu-item index="2-3">
-            <el-icon><Briefcase /></el-icon>Власні пункти
           </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
@@ -130,23 +130,22 @@ const handleSelect = (key, keyPath) => {
   switch (key) {
     case "1-1":
       // emit("update:modelValue", 1);
-      setting.value.comps.curComp = 1;
+      setting.value.comps.curComp = "eTable_User";
       break;
     case "1-2":
-      setting.value.comps.curComp = 2;
+      setting.value.comps.curComp = "eTable_Status";
       break;
     case "1-3":
-      setting.value.comps.curComp = 3;
+      setting.value.comps.curComp = "eTable_Punkt";
       break;
-    case "1-4-2":
-      setting.value.comps.curComp = 4;
-      break;
-
     case "1-5-1":
       setting.value.dialog["user"].visible = true;
       break;
-    case "2":
-      setting.value.comps.curComp = 5;
+    case "2-1":
+      setting.value.comps.curComp = "eOperation";
+      break;
+    case "2-2":
+      setting.value.comps.curComp = "eTable_Operation";
       break;
     case "4":
       props.open({
@@ -154,7 +153,7 @@ const handleSelect = (key, keyPath) => {
       });
       break;
     default:
-      setting.value.comps.curComp = 0;
+      setting.value.comps.curComp = "eAvatar";
   }
 };
 
