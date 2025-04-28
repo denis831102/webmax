@@ -138,11 +138,15 @@ const handleSelect = (key, keyPath) => {
     case "1-3":
       setting.value.comps.curComp = 3;
       break;
+    case "1-4-2":
+      setting.value.comps.curComp = 4;
+      break;
+
     case "1-5-1":
       setting.value.dialog["user"].visible = true;
       break;
     case "2":
-      setting.value.comps.curComp = 3;
+      setting.value.comps.curComp = 5;
       break;
     case "4":
       props.open({
