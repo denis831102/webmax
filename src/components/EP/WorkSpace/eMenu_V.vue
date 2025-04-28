@@ -37,14 +37,14 @@
           <el-sub-menu index="1-4">
             <template #title
               ><span
-                ><el-icon><ToiletPaper /></el-icon> Матеріали</span
+                ><el-icon><ToiletPaper /></el-icon> Номенклатура</span
               ></template
             >
             <el-menu-item index="1-4-1"
               ><el-icon><List /></el-icon>Категорії</el-menu-item
             >
             <el-menu-item index="1-4-2"
-              ><el-icon><Ticket /></el-icon>Види матеріалів</el-menu-item
+              ><el-icon><Ticket /></el-icon>Види номенклатури</el-menu-item
             >
           </el-sub-menu>
         </el-menu-item-group>

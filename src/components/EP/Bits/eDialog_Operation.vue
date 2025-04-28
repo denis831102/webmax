@@ -48,10 +48,21 @@
             :props="multCascader"
             @change="handleChange"
             clearable
+            collapse-tags
+            collapse-tags-tooltip
+            :max-collapse-tags="3"
             placeholder="зробіть вибір..."
             style="width: 100%"
           />
         </el-col>
+      </el-form-item>
+
+      <el-form-item>
+        <el-table :data="tableData" height="250" style="width: 100%">
+          <el-table-column prop="date" label="Дія" />
+          <el-table-column prop="name" label="Значення" />
+          <el-table-column prop="address" label="Коментар" />
+        </el-table>
       </el-form-item>
 
       <el-form-item label="Коментар">
@@ -101,6 +112,44 @@ const form = reactive({
 });
 const options = ref([]);
 const multCascader = { multiple: true };
+
+const tableData = [
+  {
+    date: "2016-05-03",
+    name: "Tom",
+    address: "No. 189, ",
+  },
+  {
+    date: "2016-05-02",
+    name: "Tom",
+    address: "No. 189, ",
+  },
+  {
+    date: "2016-05-04",
+    name: "Tom",
+    address: "No. 189, ",
+  },
+  {
+    date: "2016-05-01",
+    name: "Tom",
+    address: "No. 189, ",
+  },
+  {
+    date: "2016-05-08",
+    name: "Tom",
+    address: "No. 189, ",
+  },
+  {
+    date: "2016-05-06",
+    name: "Tom",
+    address: "No. 189, ",
+  },
+  {
+    date: "2016-05-07",
+    name: "Tom",
+    address: "No. 189, ",
+  },
+];
 
 const saveData = () => {
   emit("update:visible", false);
