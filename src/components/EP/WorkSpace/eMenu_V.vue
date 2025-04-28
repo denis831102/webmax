@@ -138,6 +138,9 @@ const handleSelect = (key, keyPath) => {
     case "1-3":
       setting.value.comps.curComp = "eTable_Punkt";
       break;
+    case "1-4-2":
+      setting.value.comps.curComp = "eTable_Material";
+      break;
     case "1-5-1":
       setting.value.dialog["user"].visible = true;
       break;

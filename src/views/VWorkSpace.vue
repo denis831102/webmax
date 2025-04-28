@@ -116,6 +116,7 @@ const setting = ref({
       eTable_Status,
       eTable_Punkt,
       eTable_Operation,
+      eTable_Material,
       eOperation,
     },
     curComp: "eAvatar",
