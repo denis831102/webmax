@@ -4,6 +4,15 @@
   <el-row :gutter="20" style="margin: 0 0 20px 10px">
     <el-col :span="6">
       <el-input
+        v-model="searchKat"
+        size="small"
+        style="width: 100%; height: 100%"
+        placeholder="Пошук категорії"
+        :prefix-icon="Search"
+      />
+    </el-col>
+    <el-col :span="6">
+      <el-input
         v-model="search"
         size="small"
         style="width: 100%; height: 100%"
@@ -85,7 +94,6 @@
 /* eslint-disable */
 
 import { inject, onActivated, computed, ref } from "vue";
-import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
 import {
   Search,
@@ -99,8 +107,7 @@ import eDialog_Material from "@/components/EP/Material/eDialog_Material";
 
 const setting = inject("setting");
 const search = ref("");
-const store = useStore();
-const getCurUser = computed(() => store.getters.getCurUser);
+const searchKat = ref("");
 
 const editMaterial = (index, row) => {
   setting.value.tables["tabMaterial"].curRow = row;
@@ -157,9 +164,12 @@ const sortMethod = () => {
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabMaterial"];
 
-  return _tabl.data.filter((row) =>
-    row.name_M.toLowerCase().includes(search.value.toLowerCase())
-  );
+  return _tabl.data.filter((row) => {
+    return (
+      row.name_M.toLowerCase().includes(search.value.toLowerCase()) &&
+      row.name_K.toLowerCase().includes(searchKat.value.toLowerCase())
+    );
+  });
 });
 
 onActivated(() => {

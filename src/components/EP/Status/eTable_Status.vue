@@ -50,7 +50,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column type="index" width="50" />
+    <el-table-column type="index" />
 
     <el-table-column label="Статус" sortable prop="nameStatus">
       <template #default="scope">

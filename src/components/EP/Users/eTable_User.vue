@@ -31,7 +31,7 @@
     table-layout="fixed"
     style="width: 100%"
   >
-    <el-table-column type="index" width="30" />
+    <el-table-column type="index" />
 
     <el-table-column label="Прізвище" sortable prop="PIB">
       <template #default="scope">
