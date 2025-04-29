@@ -138,6 +138,9 @@ const handleSelect = (key, keyPath) => {
     case "1-3":
       setting.value.comps.curComp = "eTable_Punkt";
       break;
+    case "1-4-1":
+      setting.value.comps.curComp = "eTable_Kategories";
+      break;
     case "1-4-2":
       setting.value.comps.curComp = "eTable_Material";
       break;
