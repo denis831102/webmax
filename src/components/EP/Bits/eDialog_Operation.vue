@@ -66,8 +66,9 @@
       <el-form-item style="box-shadow: 0px -1px 6px 2px #b0b3b7">
         <el-table
           :data="tableOperation"
+          show-summary
           border="true"
-          height="250"
+          height="350"
           style="width: 100%; margin: 5px; font-size: 9pt"
         >
           <el-table-column prop="nameOperation" label="Операція" width="190" />
@@ -75,7 +76,7 @@
             <template #default="props">
               <el-input-number
                 v-model="props.row.count"
-                :precision="2"
+                :precision="3"
                 :step="0.1"
                 :min="0"
                 size="small"
@@ -85,7 +86,14 @@
           </el-table-column>
           <el-table-column label="Ціна одиниці">
             <template #default="props">
-              <el-input v-model="props.row.price" clearable />
+              <el-input-number
+                v-model="props.row.price"
+                :precision="3"
+                :step="0.1"
+                :min="0"
+                size="small"
+                style="width: 95%; height: 40px"
+              />
             </template>
           </el-table-column>
           <el-table-column label="Сума" width="70">
