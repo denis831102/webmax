@@ -79,6 +79,7 @@ import eTable_Status from "@/components/EP/Status/eTable_Status";
 import eTable_Punkt from "@/components/EP/Punkt/eTable_Punkt";
 import eOperation from "@/components/EP/Bits/eOperation";
 import eTable_Material from "@/components/EP/Material/eTable_Material";
+import eTable_Kategories from "@/components/EP/Kategories/eTable_Kategories";
 
 import eTable_Operation from "@/components/EP/Operation/eTable_Operation";
 import eDialog_All from "@/components/EP/eDialog_All";
@@ -117,6 +118,7 @@ const setting = ref({
       eTable_Punkt,
       eTable_Operation,
       eTable_Material,
+      eTable_Kategories,
       eOperation,
     },
     curComp: "eAvatar",
