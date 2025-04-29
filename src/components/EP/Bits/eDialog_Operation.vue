@@ -72,7 +72,7 @@
           style="width: 100%; margin: 5px; font-size: 9pt"
         >
           <el-table-column prop="nameOperation" label="Операція" width="190" />
-          <el-table-column label="Кількість">
+          <el-table-column label="Кількість" prop="count">
             <template #default="props">
               <el-input-number
                 v-model="props.row.count"
@@ -84,7 +84,7 @@
               />
             </template>
           </el-table-column>
-          <el-table-column label="Ціна одиниці">
+          <el-table-column label="Ціна одиниці" prop="price">
             <template #default="props">
               <el-input-number
                 v-model="props.row.price"
@@ -96,7 +96,7 @@
               />
             </template>
           </el-table-column>
-          <el-table-column label="Сума" width="70">
+          <el-table-column label="Сума" prop="summa" width="70">
             <template #default="props">
               {{ props.row.summa }}
             </template>
@@ -196,13 +196,6 @@ watchEffect(() => {
     el.summa = (el.count * el.price).toFixed(2);
   });
 });
-
-// watch(
-//   () => tableOperation.value[0].count,
-//   () => {
-//     tableOperation.value[0].summa = 45;
-//   }
-// );
 
 const handleClose = () => {
   emit("update:visible", false);
