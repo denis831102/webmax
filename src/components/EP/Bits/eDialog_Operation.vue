@@ -68,7 +68,7 @@
           :data="tableOperation"
           show-summary
           border="true"
-          height="350"
+          height="300"
           style="width: 100%; margin: 5px; font-size: 9pt"
         >
           <el-table-column prop="nameOperation" label="Операція" width="190" />
@@ -84,7 +84,7 @@
               />
             </template>
           </el-table-column>
-          <el-table-column label="Ціна одиниці" prop="price">
+          <el-table-column label="Ціна одиниці">
             <template #default="props">
               <el-input-number
                 v-model="props.row.price"
