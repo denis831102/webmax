@@ -46,8 +46,13 @@
           <template #default="props">
             <div style="padding: 20px; background: #c6e2ff69">
               <h3 style="margin: 0px 0 10px 0">
-                Транзакціїї по операціїї "{{ props.row.comment }}
-                {{ props.row.date }} {{ props.row.time }}"
+                Транзакція за операцією
+                <el-check-tag type="primary">
+                  {{ props.row.comment }}
+                </el-check-tag>
+                <el-check-tag type="success" style="margin-left: 5px">
+                  {{ props.row.date }} {{ props.row.time }}
+                </el-check-tag>
               </h3>
               <el-table
                 :data="props.row.listOper"
@@ -57,7 +62,11 @@
               >
                 <el-table-column label="категорія" prop="name_K" />
                 <el-table-column label="номенклатура" prop="name_M" />
-                <el-table-column label="кількість" prop="count" />
+                <el-table-column label="кількість" prop="count">
+                  <template #default="props">
+                    {{ props.row.count }}
+                  </template>
+                </el-table-column>
                 <el-table-column label="ціна одиниці">
                   <template #default="props">
                     {{ props.row.price }}
@@ -72,15 +81,40 @@
         <el-table-column type="index" />
 
         <el-table-column label="Дата" prop="date">
-          <!-- <template #default="scope">
+          <template #default="scope">
             <div style="display: flex; align-items: center">
-              <el-icon><SetUp /></el-icon>
-              <span style="margin-left: 10px">{{ scope.row.nameStatus }}</span>
+              <el-icon><Calendar /></el-icon>
+              <span style="margin-left: 10px">{{ scope.row.date }}</span>
             </div>
-          </template> -->
+          </template>
         </el-table-column>
 
         <el-table-column label="Коментар" prop="comment"> </el-table-column>
+
+        <el-table-column label="Редагування">
+          <template #default="scope">
+            <el-button
+              size="small"
+              @click="editTransaction(scope.$index, scope.row)"
+            >
+              <el-icon><Edit /></el-icon>
+            </el-button>
+
+            <el-button
+              size="small"
+              type="danger"
+              @click="delTransaction(scope.$index, scope.row)"
+            >
+              <el-icon><DeleteFilled /></el-icon>
+            </el-button>
+            <el-button
+              size="small"
+              @click="copyTransaction(scope.$index, scope.row)"
+            >
+              <el-icon><CopyDocument /></el-icon>
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-tab-pane>
   </el-tabs>
@@ -104,6 +138,18 @@ const activeName = ref("");
 const newOperation = () => {
   setting.value.dialog["editOperation"].initiator = "createOperation";
   setting.value.dialog["editOperation"].visible = true;
+};
+
+const editTransaction = () => {
+  ElMessage.success("Редагування транзакції ");
+};
+
+const delTransaction = () => {
+  ElMessage.success("Видалення транзакції ");
+};
+
+const copyTransaction = () => {
+  ElMessage.success("Копіювання транзакції ");
 };
 
 const filterTable = computed(() => {
