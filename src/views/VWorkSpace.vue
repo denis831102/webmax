@@ -146,6 +146,11 @@ const setting = ref({
       data: [],
     },
 
+    tabTransaction: {
+      numRec: 2,
+      data: [],
+    },
+
     tabResurs: {
       numRec: 2,
       data: [],

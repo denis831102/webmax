@@ -125,8 +125,8 @@ import {
   ref,
   watchEffect,
   computed,
-  onUpdated,
   onUnmounted,
+  onUpdated,
 } from "vue";
 import { HTTP } from "@/hooks/http";
 import { useStore } from "vuex";
@@ -166,7 +166,7 @@ const saveData = async () => {
     });
 
     const response = await HTTP.post("", {
-      _method: "addOperation",
+      _method: "addTransaction",
       _idUser: getCurUser.value.id,
       _idPunkt: props.idPunkt,
       _date: form.date,
