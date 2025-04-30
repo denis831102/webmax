@@ -30,7 +30,9 @@
           <el-date-picker
             v-model="form.date"
             type="date"
-            placeholder="Pick a date"
+            format="DD.MM.YYYY"
+            value-format="YYYY-MM-DD"
+            :placeholder="getDate"
             style="width: 100%"
           />
         </el-col>
@@ -38,11 +40,9 @@
           <span>-</span>
         </el-col>
         <el-col :span="11">
-          <el-time-picker
-            v-model="form.time"
-            placeholder="Pick a time"
-            style="width: 100%"
-          />
+          <el-tag type="info" size="large" style="font-size: 13pt">{{
+            getTime
+          }}</el-tag>
         </el-col>
       </el-form-item>
 
@@ -65,7 +65,7 @@
 
       <el-form-item style="box-shadow: 0px -1px 6px 2px #b0b3b7">
         <el-table
-          :data="tableOperation"
+          :data="form.tableOperation"
           show-summary
           border="true"
           height="300"
@@ -105,7 +105,7 @@
       </el-form-item>
 
       <el-form-item label="Коментар">
-        <el-input v-model="form.coment" type="textarea" />
+        <el-input v-model="form.comment" type="textarea" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -126,6 +126,7 @@ import {
   watchEffect,
   computed,
   onUpdated,
+  onUnmounted,
 } from "vue";
 import { HTTP } from "@/hooks/http";
 import { useStore } from "vuex";
@@ -134,6 +135,7 @@ import { ElMessage } from "element-plus";
 const props = defineProps({
   visible: Boolean,
   namePunkt: String,
+  idPunkt: Number,
 });
 const emit = defineEmits([]);
 const store = useStore();
@@ -144,16 +146,44 @@ const form = reactive({
   nameUser: getCurUser.value.PIB,
   namePunkt: "",
   date: "",
-  time: "",
-  coment: "",
+  comment: "",
   options: [],
+  timer: {},
+  curDate: new Date(),
+  tableOperation: [],
 });
 const multCascader = { multiple: true };
-const tableOperation = ref([]);
 
-const saveData = () => {
-  emit("update:visible", false);
-  ElMessage.success("Дані будуть збережені");
+const saveData = async () => {
+  try {
+    const groupOperation = form.tableOperation.map((oper) => {
+      return {
+        id_V: oper.id_V,
+        id_M: oper.id_M,
+        count: oper.count,
+        price: oper.price,
+      };
+    });
+
+    const response = await HTTP.post("", {
+      _method: "addOperation",
+      _idUser: getCurUser.value.id,
+      _idPunkt: props.idPunkt,
+      _date: form.date,
+      _time: getTime.value,
+      _comment: form.comment,
+      _opers: groupOperation,
+    });
+
+    if (response.data.isSuccesfull) {
+      emit("update:visible", false);
+      ElMessage.success(response.data.message);
+    } else {
+      ElMessage.error(response.data.message);
+    }
+  } catch (e) {
+    ElMessage.error("Помилка збереження операцій");
+  }
 };
 
 // const tableOperation = computed(() =>
@@ -174,8 +204,7 @@ const saveData = () => {
 // );
 
 const handleChange = () => {
-  // console.log(selOperation.value);
-  tableOperation.value = selOperation.value.map((curOper) => {
+  form.tableOperation = selOperation.value.map((curOper) => {
     return {
       nameOperation: [
         form.options[curOper[0].num].label,
@@ -187,12 +216,15 @@ const handleChange = () => {
       count: 100,
       price: curOper[2].id,
       summa: 0,
+      id_V: curOper[0].id,
+      id_K: curOper[1].id,
+      id_M: curOper[2].id,
     };
   });
 };
 
 watchEffect(() => {
-  tableOperation.value.forEach((el) => {
+  form.tableOperation.forEach((el) => {
     el.summa = (el.count * el.price).toFixed(2);
   });
 });
@@ -216,8 +248,46 @@ const getOperation = async () => {
   }
 };
 
+const getDate = computed(() => {
+  const date = {
+    d: form.curDate.getDate(),
+    m: form.curDate.getMonth() + 1,
+    y: form.curDate.getFullYear(),
+  };
+  return [
+    (date.d < 10 ? "0" : "") + date.d,
+    (date.m < 10 ? "0" : "") + date.m,
+    date.y,
+  ].join(".");
+});
+
+const getTime = computed(() => {
+  const time = {
+    h: form.curDate.getHours(),
+    m: form.curDate.getMinutes(),
+    s: form.curDate.getSeconds(),
+  };
+  return [
+    (time.h < 10 ? "0" : "") + time.h,
+    (time.m < 10 ? "0" : "") + time.m,
+    (time.s < 10 ? "0" : "") + time.s,
+  ].join(":");
+});
+
+const startTimer = () => {
+  form.timer = setInterval(() => {
+    form.curDate = new Date();
+  }, 1000);
+};
+
 onUpdated(async () => {
   await getOperation();
   form.namePunkt = props.namePunkt;
+  form.date = form.curDate;
+  startTimer();
+});
+
+onUnmounted(() => {
+  clearInterval(form.timer);
 });
 </script>

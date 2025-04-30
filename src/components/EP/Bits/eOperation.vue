@@ -2,6 +2,7 @@
   <eDialog_Operation
     v-model:visible="setting.dialog['editOperation'].visible"
     :namePunkt="activeName"
+    :idPunkt="activeIdPunkt"
   />
 
   <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
@@ -61,6 +62,11 @@ const newOperation = () => {
 const getBits = () => {
   ElMessage.success("Буде оновлення...");
 };
+
+const activeIdPunkt = computed(() => {
+  const punkt = punkts.value.find((el) => el.name == activeName.value);
+  return punkts.value.length && punkt ? punkt.id : 0;
+});
 
 const getPunktCur = async () => {
   try {

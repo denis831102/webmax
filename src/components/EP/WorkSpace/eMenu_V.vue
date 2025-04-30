@@ -70,15 +70,15 @@
         </template>
         <el-menu-item-group>
           <el-menu-item index="2-1">
-            <el-icon><Briefcase /></el-icon>Власні пункти
+            <el-icon><Briefcase /></el-icon>Залишки на власних пунктах
           </el-menu-item>
           <el-menu-item index="2-2">
-            <el-icon><EditPen /></el-icon>
-            Залишки
-          </el-menu-item>
-          <el-menu-item index="2-3">
             <el-icon><CircleCheck /></el-icon>
             Операції
+          </el-menu-item>
+          <el-menu-item index="2-3">
+            <el-icon><EditPen /></el-icon>
+            Додатково
           </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
@@ -148,9 +148,12 @@ const handleSelect = (key, keyPath) => {
       setting.value.dialog["user"].visible = true;
       break;
     case "2-1":
-      setting.value.comps.curComp = "eOperation";
+      setting.value.comps.curComp = "eAvatar";
       break;
     case "2-2":
+      setting.value.comps.curComp = "eOperation";
+      break;
+    case "2-3":
       setting.value.comps.curComp = "eTable_Operation";
       break;
     case "4":
