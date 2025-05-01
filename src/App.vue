@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h1 class="hMain" @click.prevent="$router.push({ name: 'crm' })">WebMAX</h1>
+    <h1 class="hMain" @click.prevent="$router.push({ name: 'crm' })">
+      <el-icon><ChromeFilled /></el-icon>
+      WebMAX
+    </h1>
     <transition name="component-fade" mode="out-in">
       <RouterView class="sRout" />
     </transition>
@@ -22,7 +25,7 @@
   padding: 15px;
   background: #ecf5ff;
   box-shadow: 1px 0px 9px 3px #568989;
-  text-align: center;
+  text-align: left;
 }
 .sRout {
   display: flex;

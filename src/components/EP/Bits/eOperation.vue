@@ -15,13 +15,14 @@
       </template>
 
       <el-row :gutter="20" style="margin: 0 0 20px 10px">
-        <el-col :span="10">
+        <el-col :span="6">
           <el-date-picker
-            v-model="valuetime"
+            v-model="valueDate"
             type="daterange"
             format="DD.MM.YYYY"
             :start-placeholder="getDate"
             :end-placeholder="getDate"
+            style="width: 100%"
             @change="consoleM"
           />
         </el-col>
@@ -30,11 +31,11 @@
             v-model="search"
             size="small"
             style="width: 100%; height: 100%"
-            placeholder="Пошук..."
+            placeholder="Пошук по коментарю"
             :prefix-icon="Search"
           />
         </el-col>
-        <el-col :span="9">
+        <el-col :span="13">
           <el-button-group class="ml-4">
             <el-button type="primary" :icon="HomeFilled" @click="newOperation()"
               >Нова операція
@@ -61,7 +62,7 @@
                   {{ props.row.comment }}
                 </el-check-tag>
                 <el-check-tag type="success" style="margin-left: 5px">
-                  {{ props.row.date }} {{ props.row.time }}
+                  {{ props.row.date }} - {{ props.row.time }}
                 </el-check-tag>
               </h3>
               <el-table
@@ -94,7 +95,9 @@
           <template #default="scope">
             <div style="display: flex; align-items: center">
               <el-icon><Calendar /></el-icon>
-              <span style="margin-left: 10px">{{ scope.row.date }}</span>
+              <span style="margin-left: 10px"
+                >{{ scope.row.date }} - {{ scope.row.time }}</span
+              >
             </div>
           </template>
         </el-table-column>
@@ -142,14 +145,15 @@ const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 const search = ref("");
-const valuetime = ref([new Date(), new Date()]);
+const valueDate = ref([new Date(), new Date()]);
 const punkts = ref([]);
 const activeName = ref("");
 const curDate = ref(new Date());
 
 const consoleM = () => {
   console.log(
-    calcDate(valuetime.value[0]) + " - " + calcDate(valuetime.value[1])
+    // calcDate(valueDate.value[0]) + " - " + calcDate(valueDate.value[1])
+    valueDate.value[0] + " - " + valueDate.value[1]
   );
 };
 
@@ -172,13 +176,24 @@ const copyTransaction = () => {
 
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabTransaction"];
+  // const leftDate = new Date(valueDate.value[0]);
+  // const rightDate = new Date(valueDate.value[1]);
 
-  return _tabl.data.filter(
-    (row) =>
+  const arDateL = calcDate(valueDate.value[0]).split(".");
+  const arDateR = calcDate(valueDate.value[0]).split(".");
+  const leftDate = new Date(`${arDateL[2]}-${arDateL[1]}-${arDateL[0]}`);
+  const rightDate = new Date(`${arDateR[2]}-${arDateR[1]}-${arDateR[0]}`);
+
+  return _tabl.data.filter((row) => {
+    const arDate = row.date.split(".");
+    const tDate = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
+
+    return (
       row.comment.toLowerCase().includes(search.value.toLowerCase()) &&
-      new Date(row.date) >= new Date(valuetime.value[0]) &&
-      new Date(row.date) <= new Date(valuetime.value[1])
-  );
+      tDate >= leftDate &&
+      tDate <= rightDate
+    );
+  });
 });
 
 const activeIdPunkt = computed(() => {
@@ -201,6 +216,7 @@ const getPunktCur = async () => {
     ElMessage("Помилка завантаження пунктів");
   }
 };
+
 const getTransaction = async () => {
   try {
     const response = await HTTP.get("", {
