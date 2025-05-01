@@ -15,7 +15,17 @@
       </template>
 
       <el-row :gutter="20" style="margin: 0 0 20px 10px">
-        <el-col :span="6">
+        <el-col :span="10">
+          <el-date-picker
+            v-model="valuetime"
+            type="daterange"
+            format="DD.MM.YYYY"
+            :start-placeholder="getDate"
+            :end-placeholder="getDate"
+            @change="consoleM"
+          />
+        </el-col>
+        <el-col :span="5">
           <el-input
             v-model="search"
             size="small"
@@ -24,7 +34,7 @@
             :prefix-icon="Search"
           />
         </el-col>
-        <el-col :span="10">
+        <el-col :span="9">
           <el-button-group class="ml-4">
             <el-button type="primary" :icon="HomeFilled" @click="newOperation()"
               >Нова операція
@@ -132,8 +142,16 @@ const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 const search = ref("");
+const valuetime = ref([new Date(), new Date()]);
 const punkts = ref([]);
 const activeName = ref("");
+const curDate = ref(new Date());
+
+const consoleM = () => {
+  console.log(
+    calcDate(valuetime.value[0]) + " - " + calcDate(valuetime.value[1])
+  );
+};
 
 const newOperation = () => {
   setting.value.dialog["editOperation"].initiator = "createOperation";
@@ -155,10 +173,12 @@ const copyTransaction = () => {
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabTransaction"];
 
-  // return _tabl.data.filter((row) =>
-  //   row.nameStatus.toLowerCase().includes(search.value.toLowerCase())
-  //);
-  return _tabl.data;
+  return _tabl.data.filter(
+    (row) =>
+      row.comment.toLowerCase().includes(search.value.toLowerCase()) &&
+      new Date(row.date) >= new Date(valuetime.value[0]) &&
+      new Date(row.date) <= new Date(valuetime.value[1])
+  );
 });
 
 const activeIdPunkt = computed(() => {
@@ -196,6 +216,23 @@ const getTransaction = async () => {
   } catch (e) {
     ElMessage("Помилка завантаження транзакцій");
   }
+};
+
+const getDate = computed(() => {
+  return calcDate(curDate.value);
+});
+
+const calcDate = (valDate) => {
+  const date = {
+    d: valDate.getDate(),
+    m: valDate.getMonth() + 1,
+    y: valDate.getFullYear(),
+  };
+  return [
+    (date.d < 10 ? "0" : "") + date.d,
+    (date.m < 10 ? "0" : "") + date.m,
+    date.y,
+  ].join(".");
 };
 
 onActivated(async () => {

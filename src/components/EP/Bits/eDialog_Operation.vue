@@ -186,23 +186,6 @@ const saveData = async () => {
   }
 };
 
-// const tableOperation = computed(() =>
-//   selOperation.value.map((curOper) => {
-//     return {
-//       nameOperation: [
-//         form.options[curOper[0].num].label,
-//         form.options[curOper[0].num].children[[curOper[1].num]].label,
-//         form.options[curOper[0].num].children[[curOper[1].num]].children[
-//           [curOper[2].num]
-//         ].label,
-//       ].join(" / "),
-//       count: 100,
-//       price: 10,
-//       summa: 0,
-//     };
-//   })
-// );
-
 const handleChange = () => {
   form.tableOperation = selOperation.value.map((curOper) => {
     return {
