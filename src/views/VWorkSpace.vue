@@ -78,6 +78,7 @@ import eTable_User from "@/components/EP/Users/eTable_User";
 import eTable_Status from "@/components/EP/Status/eTable_Status";
 import eTable_Punkt from "@/components/EP/Punkt/eTable_Punkt";
 import eOperation from "@/components/EP/Bits/eOperation";
+import eBits from "@/components/EP/Bits2/eBits";
 import eTable_Material from "@/components/EP/Material/eTable_Material";
 import eTable_Kategories from "@/components/EP/Kategories/eTable_Kategories";
 
@@ -109,6 +110,7 @@ const setting = ref({
     editPunkt: { visible: false, initiator: "" },
     editOperation: { visible: false, initiator: "" },
     editMaterial: { visible: false, initiator: "" },
+    editBits: { visible: false, initiator: "" },
   },
   comps: {
     list: {
@@ -119,6 +121,7 @@ const setting = ref({
       eTable_Operation,
       eTable_Material,
       eTable_Kategories,
+      eBits,
       eOperation,
     },
     curComp: "eAvatar",
@@ -145,7 +148,10 @@ const setting = ref({
       numRec: 4,
       data: [],
     },
-
+    tabBits: {
+      numRec: 4,
+      data: [],
+    },
     tabTransaction: {
       numRec: 2,
       data: [],

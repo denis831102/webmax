@@ -147,13 +147,17 @@ const handleSelect = (key, keyPath) => {
     case "1-5-1":
       setting.value.dialog["user"].visible = true;
       break;
-    case "2-1":
+    case "2-3":
       setting.value.comps.curComp = "eAvatar";
       break;
+    case "2-1":
+      setting.value.comps.curComp = "eBits";
+      break;
+
     case "2-2":
       setting.value.comps.curComp = "eOperation";
       break;
-    case "2-3":
+    case "3":
       setting.value.comps.curComp = "eTable_Operation";
       break;
     case "4":
