@@ -180,7 +180,7 @@ const filterTable = computed(() => {
   // const rightDate = new Date(valueDate.value[1]);
 
   const arDateL = calcDate(valueDate.value[0]).split(".");
-  const arDateR = calcDate(valueDate.value[0]).split(".");
+  const arDateR = calcDate(valueDate.value[1]).split(".");
   const leftDate = new Date(`${arDateL[2]}-${arDateL[1]}-${arDateL[0]}`);
   const rightDate = new Date(`${arDateR[2]}-${arDateR[1]}-${arDateR[0]}`);
 
