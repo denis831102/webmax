@@ -70,11 +70,11 @@
         </template>
         <el-menu-item-group>
           <el-menu-item index="2-1">
-            <el-icon><Briefcase /></el-icon>Залишки на власних пунктах
+            <el-icon><Briefcase /></el-icon>Залишки на ВП
           </el-menu-item>
           <el-menu-item index="2-2">
             <el-icon><CircleCheck /></el-icon>
-            Операції
+            Операції по ВП
           </el-menu-item>
           <el-menu-item index="2-3">
             <el-icon><EditPen /></el-icon>
@@ -153,12 +153,8 @@ const handleSelect = (key, keyPath) => {
     case "2-1":
       setting.value.comps.curComp = "eBits";
       break;
-
     case "2-2":
       setting.value.comps.curComp = "eOperation";
-      break;
-    case "3":
-      setting.value.comps.curComp = "eTable_Operation";
       break;
     case "4":
       props.open({

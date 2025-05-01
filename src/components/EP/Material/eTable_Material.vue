@@ -32,62 +32,70 @@
     </el-col>
   </el-row>
 
-  <el-table
-    :data="filterTable"
-    :default-sort="{ prop: 'id', order: 'ascending' }"
-    :sort-method="sortMethod"
-    highlight-current-row
-    table-layout="fixed"
-    style="width: 100%"
-  >
-    <el-table-column type="index" />
+  <el-scrollbar>
+    <el-table
+      :data="filterTable"
+      :default-sort="{ prop: 'id', order: 'ascending' }"
+      :sort-method="sortMethod"
+      highlight-current-row
+      table-layout="fixed"
+      style="width: 100%"
+    >
+      <el-table-column type="index" />
 
-    <el-table-column label="Категорія" sortable prop="name_K">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-icon><CollectionTag /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.name_K }}</span>
-        </div>
-      </template>
-    </el-table-column>
+      <el-table-column label="Категорія" sortable prop="name_K">
+        <template #default="scope">
+          <div style="display: flex; align-items: center">
+            <el-icon><CollectionTag /></el-icon>
+            <span style="margin-left: 10px">{{ scope.row.name_K }}</span>
+          </div>
+        </template>
+      </el-table-column>
 
-    <el-table-column label="Номенклатура" sortable prop="name_M">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-icon><HomeFilled /></el-icon>
-          <div style="margin-left: 10px">{{ scope.row.name_M }}</div>
-        </div>
-      </template>
-    </el-table-column>
+      <el-table-column label="Номенклатура" sortable prop="name_M">
+        <template #default="scope">
+          <div style="display: flex; align-items: center">
+            <el-icon><HomeFilled /></el-icon>
+            <div style="margin-left: 10px">{{ scope.row.name_M }}</div>
+          </div>
+        </template>
+      </el-table-column>
 
-    <el-table-column label="Одиниця виміру" sortable prop="unit">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-icon><User /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.unit }}</span>
-        </div>
-      </template>
-    </el-table-column>
+      <el-table-column label="Одиниця виміру" sortable prop="unit">
+        <template #default="scope">
+          <div style="display: flex; align-items: center">
+            <el-icon><User /></el-icon>
+            <span style="margin-left: 10px">{{ scope.row.unit }}</span>
+          </div>
+        </template>
+      </el-table-column>
 
-    <el-table-column label=" Редагування ">
-      <template #default="scope">
-        <el-button size="small" @click="editMaterial(scope.$index, scope.row)">
-          <el-icon><Edit /></el-icon>
-        </el-button>
+      <el-table-column label=" Редагування ">
+        <template #default="scope">
+          <el-button
+            size="small"
+            @click="editMaterial(scope.$index, scope.row)"
+          >
+            <el-icon><Edit /></el-icon>
+          </el-button>
 
-        <el-button
-          size="small"
-          type="danger"
-          @click="deleteMaterial(scope.$index, scope.row)"
-        >
-          <el-icon><DeleteFilled /></el-icon>
-        </el-button>
-        <el-button size="small" @click="copyMaterial(scope.$index, scope.row)">
-          <el-icon><CopyDocument /></el-icon>
-        </el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+          <el-button
+            size="small"
+            type="danger"
+            @click="deleteMaterial(scope.$index, scope.row)"
+          >
+            <el-icon><DeleteFilled /></el-icon>
+          </el-button>
+          <el-button
+            size="small"
+            @click="copyMaterial(scope.$index, scope.row)"
+          >
+            <el-icon><CopyDocument /></el-icon>
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-scrollbar>
 </template>
 
 <script setup>

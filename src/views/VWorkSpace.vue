@@ -1,13 +1,4 @@
 <template>
-  <eDialog
-    :dialogText="setting.dialog.main.text"
-    v-model:visible="setting.dialog['main'].visible"
-    :funcOk="open"
-    :argFunc="arg"
-  />
-
-  <eDialog_All v-model:visible="setting.dialog['user'].visible" />
-
   <!-- eslint-disable -->
   <el-row :gutter="10">
     <el-col :span="24">
@@ -67,8 +58,6 @@ import { useStore } from "vuex";
 import { ElNotification } from "element-plus";
 import { Search } from "@element-plus/icons-vue";
 
-import eDialog from "@/components/EP/Load/eDialog";
-
 import eMenu_V from "@/components/EP/WorkSpace/eMenu_V";
 import eMenu_G from "@/components/EP/WorkSpace/eMenu_G";
 import eDrop_User from "@/components/EP/WorkSpace/eDrop_User";
@@ -77,17 +66,10 @@ import eAvatar from "@/components/EP/WorkSpace/eAvatar";
 import eTable_User from "@/components/EP/Users/eTable_User";
 import eTable_Status from "@/components/EP/Status/eTable_Status";
 import eTable_Punkt from "@/components/EP/Punkt/eTable_Punkt";
-import eOperation from "@/components/EP/Bits/eOperation";
-import eBits from "@/components/EP/Bits2/eBits";
+import eOperation from "@/components/EP/Operation/eOperation";
+import eBits from "@/components/EP/Bits/eBits";
 import eTable_Material from "@/components/EP/Material/eTable_Material";
 import eTable_Kategories from "@/components/EP/Kategories/eTable_Kategories";
-
-import eTable_Operation from "@/components/EP/Operation/eTable_Operation";
-import eDialog_All from "@/components/EP/eDialog_All";
-
-const arg = ref({
-  text: "222",
-});
 
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
@@ -118,7 +100,6 @@ const setting = ref({
       eTable_User,
       eTable_Status,
       eTable_Punkt,
-      eTable_Operation,
       eTable_Material,
       eTable_Kategories,
       eBits,
@@ -133,32 +114,24 @@ const setting = ref({
       data: [],
     },
     tabStatus: {
-      numRec: 1,
       data: [],
     },
     tabPunkt: {
-      numRec: 2,
       data: [],
     },
     tabMaterial: {
-      numRec: 3,
       data: [],
     },
     tabKategories: {
-      numRec: 4,
       data: [],
     },
     tabBits: {
-      numRec: 4,
       data: [],
     },
     tabTransaction: {
-      numRec: 2,
       data: [],
     },
-
     tabResurs: {
-      numRec: 2,
       data: [],
     },
   },

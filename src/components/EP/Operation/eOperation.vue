@@ -137,8 +137,8 @@
 import { inject, ref, computed, onActivated, onUpdated } from "vue";
 import { useStore } from "vuex";
 import { Search, Calendar } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
-import eDialog_Operation from "@/components/EP/Bits/eDialog_Operation";
+import { ElMessage, ElMessageBox } from "element-plus";
+import eDialog_Operation from "@/components/EP/Operation/eDialog_Operation";
 import { HTTP } from "@/hooks/http";
 
 const setting = inject("setting");
@@ -167,7 +167,13 @@ const editTransaction = () => {
 };
 
 const delTransaction = () => {
-  ElMessage.success("Видалення транзакції ");
+  ElMessageBox.confirm("Ви точно бажаєте видалити транзакцію?")
+    .then(() => {
+      ElMessage.success("Видалення транзакції ");
+    })
+    .catch(() => {
+      // catch error
+    });
 };
 
 const copyTransaction = () => {
