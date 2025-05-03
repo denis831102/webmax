@@ -154,7 +154,6 @@ const curComponent = computed(() => {
 
 const onResize = () => {
   isLeftMenu.value = document.documentElement.clientWidth >= 500;
-  // isLeftMenu.value = window.innerWidth >= 500;
 };
 
 onMounted(() => {

@@ -29,6 +29,8 @@ const { circleUrl, sizeList } = toRefs(state);
   box-sizing: border-box;
   vertical-align: top;
   align-items: center;
+  margin-left: 10%;
+  opacity: 0.8;
 }
 .demo-image.block:last-child {
   border-right: none;
