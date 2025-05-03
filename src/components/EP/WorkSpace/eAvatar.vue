@@ -1,10 +1,5 @@
 <template>
-  <el-image
-    class="demo-image block"
-    style="width: 80%; height: 80%"
-    :src="circleUrl"
-    fit="contain"
-  />
+  <el-image class="demo-image block" :src="circleUrl" fit="contain" />
 </template>
 
 <script setup>
@@ -25,12 +20,13 @@ const { circleUrl, sizeList } = toRefs(state);
   text-align: center;
   border-right: solid 1px var(--el-border-color);
   display: inline-block;
-  width: 60%;
   box-sizing: border-box;
   vertical-align: top;
   align-items: center;
+  opacity: 0.6;
+  width: 80%;
+  height: 90%;
   margin-left: 10%;
-  opacity: 0.8;
 }
 .demo-image.block:last-child {
   border-right: none;

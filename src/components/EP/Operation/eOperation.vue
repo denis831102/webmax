@@ -26,7 +26,6 @@
               :end-placeholder="getDate"
               :disabled="!isDate"
               style="width: 230px"
-              @change="consoleM"
             />
           </el-space>
         </el-card>
@@ -112,6 +111,8 @@
 
         <el-table-column label="Коментар" prop="comment"> </el-table-column>
 
+        <el-table-column label="Сума" prop="suma"> </el-table-column>
+
         <el-table-column label="Редагування">
           <template #default="scope">
             <el-button
@@ -141,15 +142,19 @@
       <el-pagination
         background
         layout="prev, pager, next"
-        :total="1000"
+        :total="setPagination.total"
+        v-model:page-size="setPagination.sizePage"
+        v-model:current-page="setPagination.currentPage"
+        v-if="setPagination.total > 0"
         style="margin-top: 25px; float: right"
+        @current-change="getTransaction"
       />
     </el-tab-pane>
   </el-tabs>
 </template>
 
 <script setup>
-import { inject, ref, computed, onActivated, onUpdated } from "vue";
+import { inject, ref, computed, onActivated, onUpdated, reactive } from "vue";
 import { useStore } from "vuex";
 import { Search, Calendar } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -165,13 +170,11 @@ const punkts = ref([]);
 const activeName = ref("");
 const isDate = ref(false);
 const curDate = ref(new Date());
-
-const consoleM = () => {
-  console.log(
-    // calcDate(valueDate.value[0]) + " - " + calcDate(valueDate.value[1])
-    valueDate.value[0] + " - " + valueDate.value[1]
-  );
-};
+const setPagination = reactive({
+  currentPage: 1,
+  sizePage: 5,
+  total: 1,
+});
 
 const newOperation = () => {
   setting.value.dialog["editOperation"].initiator = "createOperation";
@@ -198,9 +201,6 @@ const copyTransaction = () => {
 
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabTransaction"];
-  // const leftDate = new Date(valueDate.value[0]);
-  // const rightDate = new Date(valueDate.value[1]);
-
   const arDateL = calcDate(valueDate.value[0]).split(".");
   const arDateR = calcDate(valueDate.value[1]).split(".");
   const leftDate = new Date(`${arDateL[2]}-${arDateL[1]}-${arDateL[0]}`);
@@ -246,13 +246,19 @@ const getTransaction = async () => {
         _method: "getTransaction",
         _id_U: getCurUser.value.id,
         _id_P: activeIdPunkt.value,
+        _currentPage: setPagination.currentPage,
+        _sizePage: setPagination.sizePage,
       },
     });
 
-    setting.value.tables["tabTransaction"].data = response.data;
-    ElMessage.success("Транзакції оновлені");
+    setting.value.tables["tabTransaction"].data = response.data.ar_data;
+    setPagination.total = response.data.total;
+
+    ElMessage.success(
+      response.data.total > 0 ? "Транзакції оновлені" : "Транзакції відсутні"
+    );
   } catch (e) {
-    ElMessage("Помилка завантаження транзакцій");
+    ElMessage.error("Помилка завантаження транзакцій");
   }
 };
 

@@ -14,7 +14,7 @@
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   color: #2c3e50;
-  margin: 20px;
+  margin: 10px;
 }
 * {
   margin: 0;
@@ -22,10 +22,10 @@
   box-sizing: border-box;
 }
 .hMain {
-  padding: 15px;
+  padding: 10px;
   background: #ecf5ff;
   box-shadow: 1px 0px 9px 3px #568989;
-  text-align: left;
+  text-align: center;
 }
 .sRout {
   display: flex;

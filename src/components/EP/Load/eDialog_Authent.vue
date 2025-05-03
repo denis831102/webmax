@@ -12,14 +12,14 @@
       style="max-width: 600px; border: 0"
     >
       <el-form-item label="Логін">
-        <el-input v-model="form.login" />
+        <el-input v-model="form.login" placeholder="введіть логін" />
       </el-form-item>
       <el-form-item label="Пароль">
         <el-input
           v-model="form.password"
           type="password"
           show-password="true"
-          placeholder="please input"
+          placeholder="введіть пароль"
           :autofocus="autoFoc"
         />
       </el-form-item>
