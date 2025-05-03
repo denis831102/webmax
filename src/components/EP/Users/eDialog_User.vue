@@ -10,7 +10,11 @@
         <el-input v-model="form.pib" autocomplete="off" />
       </el-form-item>
       <el-form-item label="Логін" :label-width="formLabelWidth">
-        <el-input v-model="form.login" autocomplete="off" />
+        <el-input
+          v-model="form.login"
+          autocomplete="off"
+          :disabled="form.disabledStatus"
+        />
       </el-form-item>
       <el-form-item label="Пароль" :label-width="formLabelWidth">
         <el-input v-model="form.password" autocomplete="off" />
@@ -134,11 +138,11 @@ const save = async () => {
           login: form.login,
           password: form.password,
           idStatus: user.idStatus,
-          listAccess: response.data.listAccess,
+          listAccess: user.listAccess,
         });
 
         if (_tab.length) {
-          const curUser = _tab.find((el) => el.id);
+          const curUser = _tab.find((el) => el.id == user.id);
           [curUser.PIB, curUser.login, curUser.password] = [
             form.pib,
             form.login,
@@ -221,15 +225,14 @@ onUpdated(async () => {
       form.password = user.password;
       form.nameStatus = user.nameStatus;
 
-      if (!setting.value.tables["tabStatus"].data.length) {
-        const response = await HTTP.get("", {
-          params: {
-            _method: "getStatuses",
-          },
-        });
-        setting.value.tables["tabStatus"].data = response.data;
-      }
-
+      // if (!setting.value.tables["tabStatus"].data.length) {
+      const response = await HTTP.get("", {
+        params: {
+          _method: "getStatuses",
+        },
+      });
+      setting.value.tables["tabStatus"].data = response.data;
+      // }
       break;
     }
     case "table_user_add": {

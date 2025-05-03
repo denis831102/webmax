@@ -20,16 +20,14 @@
             v-model="search"
             size="small"
             style="width: 100%; height: 100%"
-            placeholder="Пошук по коментарю"
+            placeholder="Пошук матеріала"
             :prefix-icon="Search"
           />
         </el-col>
         <el-col :span="13">
-          <el-button-group class="ml-4">
-            <el-button type="primary" plain :icon="Refresh" @click="getBits()">
-              Оновити
-            </el-button>
-          </el-button-group>
+          <el-button type="primary" plain :icon="Refresh" @click="getBits()">
+            Оновити
+          </el-button>
         </el-col>
       </el-row>
 
@@ -50,7 +48,12 @@
                 show-summary
               >
                 <el-table-column label="номенклатура" prop="name_M" />
-                <el-table-column label="кількість" prop="count">
+                <el-table-column label="кількість">
+                  <template #default="props">
+                    <div style="padding: 20px; background: #c6e2ff69">
+                      {{ props.row.count }} {{ props.row.unit }}
+                    </div>
+                  </template>
                 </el-table-column>
               </el-table>
             </div>
@@ -60,6 +63,14 @@
         <el-table-column type="index" />
 
         <el-table-column label="Категорія" prop="name_K"> </el-table-column>
+
+        <el-table-column label="Загальна кількість">
+          <template #default="props">
+            <div style="padding: 20px; background: #c6e2ff69">
+              {{ props.row.summa_K }}
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
     </el-tab-pane>
   </el-tabs>
@@ -80,8 +91,19 @@ const punkts = ref([]);
 const activeName = ref("");
 
 const filterTable = computed(() => {
-  const _tabl = setting.value.tables["tabBits"];
-  return _tabl.data;
+  // const _tabl = [...setting.value.tables["tabBits"].data];
+  return !search.value.length
+    ? setting.value.tables["tabBits"].data
+    : JSON.parse(JSON.stringify(setting.value.tables["tabBits"].data)).filter(
+        (row) => {
+          row.listMater = row.listMater.filter((mater) =>
+            mater.name_M.toLowerCase().includes(search.value.toLowerCase())
+          );
+          return row.listMater.find((mater) =>
+            mater.name_M.toLowerCase().includes(search.value.toLowerCase())
+          );
+        }
+      );
 });
 
 const activeIdPunkt = computed(() => {

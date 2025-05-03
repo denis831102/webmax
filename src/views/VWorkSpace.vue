@@ -2,46 +2,38 @@
   <!-- eslint-disable -->
   <el-row :gutter="10">
     <el-col :span="24">
-      <eMenu_G />
-
-      <el-card
-        v-if="false"
-        class="box-card"
-        style="max-width: 50%; margin-top: 20px"
-      >
-        <el-button
-          :icon="Search"
-          plain
-          type="primary"
-          @click="
-            setting.dialog.main.visible = true;
-            setting.dialog.main.text = 'Перевірка кнопки';
-          "
-        >
-          Відкрити тестувальний діалог
-        </el-button>
-      </el-card>
+      <eMenu mode="horizontal" style="margin-top: -20px" />
 
       <el-card
         class="box-card common-layout"
-        style="min-height: 500px; width: 100%; margin-top: 20px"
+        style="min-height: 500px; width: 100%; margin-top: 0px"
       >
         <el-container class="layout-container-demo" style="min-height: 500px">
-          <el-aside width="50">
-            <!-- v-model="setting.curId" -->
-            <eMenu_V :open="open" />
+          <el-aside width="250" v-if="isLeftMenu">
+            <eMenu mode="vertical" />
           </el-aside>
 
           <el-container>
             <el-header style="text-align: right; font-size: 12px">
-              <eDrop_User :user="getCurUser" />
+              <el-row :gutter="20">
+                <el-col :span="18" style="text-align: center">
+                  <el-text v-if="setting.titleTable.length" tag="b"
+                    >{{ setting.titleTable }}
+                  </el-text>
+                </el-col>
+                <el-col :span="6">
+                  <eDrop_User :user="getCurUser" />
+                </el-col>
+              </el-row>
             </el-header>
 
             <el-main>
               <keep-alive> <component :is="curComponent" /> </keep-alive>
             </el-main>
 
-            <el-footer height="30" style="margin-top: 20px">R@D 2025</el-footer>
+            <el-footer height="30" style="margin-top: 20px"
+              >R@ED 2025</el-footer
+            >
           </el-container>
         </el-container>
       </el-card>
@@ -53,13 +45,19 @@
 /* eslint-disable */
 
 import "element-plus/dist/index.css";
-import { ref, computed, provide } from "vue";
+import {
+  ref,
+  computed,
+  provide,
+  onBeforeMount,
+  onMounted,
+  onBeforeUnmount,
+} from "vue";
 import { useStore } from "vuex";
 import { ElNotification } from "element-plus";
 import { Search } from "@element-plus/icons-vue";
 
-import eMenu_V from "@/components/EP/WorkSpace/eMenu_V";
-import eMenu_G from "@/components/EP/WorkSpace/eMenu_G";
+import eMenu from "@/components/EP/WorkSpace/eMenu";
 import eDrop_User from "@/components/EP/WorkSpace/eDrop_User";
 import eAvatar from "@/components/EP/WorkSpace/eAvatar";
 
@@ -73,19 +71,20 @@ import eTable_Kategories from "@/components/EP/Kategories/eTable_Kategories";
 
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
-
-const open = (obj) => {
-  ElNotification({
-    title: "Info",
-    message: obj.text,
-    type: "info",
-  });
-};
+const isLeftMenu = ref(true);
+// const mode = ref("vertical");
+// const open = (obj) => {
+//   ElNotification({
+//     title: "Info",
+//     message: obj.text,
+//     type: "info",
+//   });
+// };
 
 const setting = ref({
   name: "Денис Ратов",
+  titleTable: "",
   dialog: {
-    main: { visible: false, text: "" },
     user: { visible: false },
     editUser: { visible: false, initiator: "" },
     editStatus: { visible: false, initiator: "" },
@@ -102,47 +101,65 @@ const setting = ref({
       eTable_Punkt,
       eTable_Material,
       eTable_Kategories,
-      eBits,
       eOperation,
+      eBits,
     },
     curComp: "eAvatar",
   },
   tables: {
     tabUser: {
-      numRec: 0,
+      title: "КОРИСТУВАЧІ СИСТЕМИ",
       curRow: {},
       data: [],
     },
     tabStatus: {
+      title: "СТАТУСИ КОРИСТУВАЧІВ",
+      curRow: {},
       data: [],
     },
     tabPunkt: {
+      title: "ВЛАСНІ ПУНКТИ",
+      curRow: {},
       data: [],
     },
     tabMaterial: {
+      title: "НОМЕНКЛАТУРА",
+      curRow: {},
       data: [],
     },
     tabKategories: {
+      title: "КАТЕГОРІЇ НОМЕНКЛАТУРИ",
+      curRow: {},
       data: [],
     },
     tabBits: {
+      title: "ЗАЛИШКИ НА ПУНКТАХ",
+      curRow: {},
       data: [],
     },
     tabTransaction: {
-      data: [],
-    },
-    tabResurs: {
+      title: "ОПЕРАЦІЇ МЕНЕДЖЕРА",
+      curRow: {},
       data: [],
     },
   },
 });
+
+provide("setting", setting);
 
 const curComponent = computed(() => {
   let comps = setting.value.comps;
   return comps.list[comps.curComp];
 });
 
-provide("setting", setting);
+const onResize = () => {
+  isLeftMenu.value = document.documentElement.clientWidth >= 500;
+  // isLeftMenu.value = window.innerWidth >= 500;
+};
+
+onMounted(() => {
+  window.addEventListener("resize", onResize);
+});
 </script>
 
 <style scoped>

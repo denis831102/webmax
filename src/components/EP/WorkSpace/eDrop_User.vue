@@ -1,4 +1,6 @@
 <template>
+  <eDialog_User v-model:visible="setting.dialog['editUser'].visible" />
+
   <div class="toolbar">
     <el-dropdown @command="handleCommand">
       <span class="el-dropdown-link">
@@ -9,9 +11,18 @@
       </span>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item command="data">Дані</el-dropdown-item>
-          <el-dropdown-item command="change">Змінити</el-dropdown-item>
-          <el-dropdown-item command="exit">Вихід</el-dropdown-item>
+          <el-dropdown-item command="data">
+            <el-icon><User /></el-icon>
+            Дані
+          </el-dropdown-item>
+          <el-dropdown-item command="change">
+            <el-icon><Edit /></el-icon>
+            Змінити
+          </el-dropdown-item>
+          <el-dropdown-item command="exit">
+            <el-icon><CloseBold /></el-icon>
+            Вихід
+          </el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -20,6 +31,7 @@
 
 <script setup>
 import { defineProps, inject } from "vue";
+import eDialog_User from "@/components/EP/Users/eDialog_User";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 

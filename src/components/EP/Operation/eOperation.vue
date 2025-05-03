@@ -14,43 +14,51 @@
         </span>
       </template>
 
-      <el-row :gutter="20" style="margin: 0 0 20px 10px">
-        <el-col :span="6">
-          <el-date-picker
-            v-model="valueDate"
-            type="daterange"
-            format="DD.MM.YYYY"
-            :start-placeholder="getDate"
-            :end-placeholder="getDate"
-            style="width: 100%"
-            @change="consoleM"
-          />
-        </el-col>
-        <el-col :span="5">
-          <el-input
-            v-model="search"
-            size="small"
-            style="width: 100%; height: 100%"
-            placeholder="Пошук по коментарю"
-            :prefix-icon="Search"
-          />
-        </el-col>
-        <el-col :span="13">
-          <el-button-group class="ml-4">
-            <el-button type="primary" :icon="HomeFilled" @click="newOperation()"
-              >Нова операція
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              :icon="Refresh"
-              @click="getTransaction()"
-            >
-              Оновити
-            </el-button>
-          </el-button-group>
-        </el-col>
-      </el-row>
+      <el-space :size="10" style="margin: -15px 0 10px 0">
+        <el-card>
+          <el-space :size="10">
+            <el-switch v-model="isDate" />
+            <el-date-picker
+              v-model="valueDate"
+              type="daterange"
+              format="DD.MM.YYYY"
+              :start-placeholder="getDate"
+              :end-placeholder="getDate"
+              :disabled="!isDate"
+              style="width: 230px"
+              @change="consoleM"
+            />
+          </el-space>
+        </el-card>
+
+        <el-card>
+          <el-space :size="10">
+            <el-input
+              v-model="search"
+              size="large"
+              style="width: 100%"
+              placeholder="Пошук по коментарю"
+              :prefix-icon="Search"
+            />
+            <el-button-group class="ml-4">
+              <el-button
+                type="primary"
+                :icon="HomeFilled"
+                @click="newOperation()"
+                >Нова операція
+              </el-button>
+              <el-button
+                type="primary"
+                plain
+                :icon="Refresh"
+                @click="getTransaction()"
+              >
+                Оновити
+              </el-button>
+            </el-button-group>
+          </el-space>
+        </el-card>
+      </el-space>
 
       <el-table :data="filterTable">
         <el-table-column type="expand">
@@ -129,6 +137,13 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="1000"
+        style="margin-top: 25px; float: right"
+      />
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -148,6 +163,7 @@ const search = ref("");
 const valueDate = ref([new Date(), new Date()]);
 const punkts = ref([]);
 const activeName = ref("");
+const isDate = ref(false);
 const curDate = ref(new Date());
 
 const consoleM = () => {
@@ -194,11 +210,11 @@ const filterTable = computed(() => {
     const arDate = row.date.split(".");
     const tDate = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
 
-    return (
-      row.comment.toLowerCase().includes(search.value.toLowerCase()) &&
-      tDate >= leftDate &&
-      tDate <= rightDate
-    );
+    return isDate.value
+      ? row.comment.toLowerCase().includes(search.value.toLowerCase()) &&
+          tDate >= leftDate &&
+          tDate <= rightDate
+      : row.comment.toLowerCase().includes(search.value.toLowerCase());
   });
 });
 

@@ -1,6 +1,10 @@
 <template>
   <div>
-    <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
+    <el-radio-group
+      v-if="props.mode == 'vertical'"
+      v-model="isCollapse"
+      style="margin-bottom: 20px"
+    >
       <el-radio-button :value="false">
         <el-icon><View /></el-icon>
       </el-radio-button>
@@ -10,9 +14,10 @@
     </el-radio-group>
 
     <el-menu
-      default-active="2"
-      class="el-menu-vertical-demo"
+      default-active="2-1"
+      :class="classMenu"
       :collapse="isCollapse"
+      :mode="props.mode"
       @open="handleOpen"
       @close="handleClose"
       @select="handleSelect"
@@ -41,7 +46,7 @@
               ></template
             >
             <el-menu-item index="1-4-1"
-              ><el-icon><List /></el-icon>Категорії</el-menu-item
+              ><el-icon><List /></el-icon>Категорії номенклатури</el-menu-item
             >
             <el-menu-item index="1-4-2"
               ><el-icon><Ticket /></el-icon>Види номенклатури</el-menu-item
@@ -51,14 +56,14 @@
         <el-sub-menu index="1-5">
           <template #title
             ><span
-              ><el-icon><SetUp /></el-icon>Додатково</span
+              ><el-icon><SetUp /></el-icon>Довідник</span
             ></template
           >
           <el-menu-item index="1-5-1"
-            ><el-icon><EditPen /></el-icon>Операція 1</el-menu-item
+            ><el-icon><EditPen /></el-icon>Компонент - 1</el-menu-item
           >
           <el-menu-item index="1-5-2"
-            ><el-icon><Edit /></el-icon>Операція 2</el-menu-item
+            ><el-icon><Edit /></el-icon>Компонент - 2</el-menu-item
           >
         </el-sub-menu>
       </el-sub-menu>
@@ -83,13 +88,19 @@
         </el-menu-item-group>
       </el-sub-menu>
 
-      <el-menu-item index="3" disabled>
+      <el-menu-item index="3">
         <el-icon><document /></el-icon>
-        <template #title>Звіти</template>
+        <template #title>Моніторинг</template>
       </el-menu-item>
+
       <el-menu-item index="4">
         <el-icon><Setting /></el-icon>
         <template #title>Налаштування</template>
+      </el-menu-item>
+
+      <el-menu-item index="5">
+        <el-icon><CloseBold /></el-icon>
+        <template #title>Вихід</template>
       </el-menu-item>
     </el-menu>
   </div>
@@ -98,51 +109,53 @@
 <script setup>
 /* eslint-disable */
 
-import { ref, defineProps, inject, computed, onMounted } from "vue";
-import {
-  Menu as IconMenu,
-  Setting,
-  Grid,
-  HomeFilled,
-  Briefcase,
-} from "@element-plus/icons-vue";
+import { ref, defineProps, inject, computed, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 const setting = inject("setting");
+const router = useRouter();
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
-const isCollapse = ref(true);
-
+const changeAuthenticated = (val) => store.commit("changeAuthenticated", val);
+const isCollapse = ref();
 const props = defineProps({
-  open: Function,
+  mode: Boolean,
+});
+const classMenu = reactive({
+  "el-menu-vertical-demo": props.mode == "vertical",
+  "el-menu-horizontal-demo": props.mode == "horizontal",
 });
 
 const handleOpen = (key, keyPath) => {
-  // console.log(key, keyPath);
+  console.log(key, keyPath);
 };
 
 const handleClose = (key, keyPath) => {
-  // console.log(key, keyPath);
+  console.log(key, keyPath);
 };
 
 const handleSelect = (key, keyPath) => {
-  console.log(key);
   switch (key) {
     case "1-1":
-      // emit("update:modelValue", 1);
       setting.value.comps.curComp = "eTable_User";
+      setting.value.titleTable = setting.value.tables["tabUser"].title;
       break;
     case "1-2":
       setting.value.comps.curComp = "eTable_Status";
+      setting.value.titleTable = setting.value.tables["tabStatus"].title;
       break;
     case "1-3":
       setting.value.comps.curComp = "eTable_Punkt";
+      setting.value.titleTable = setting.value.tables["tabPunkt"].title;
       break;
     case "1-4-1":
       setting.value.comps.curComp = "eTable_Kategories";
+      setting.value.titleTable = setting.value.tables["tabKategories"].title;
       break;
     case "1-4-2":
       setting.value.comps.curComp = "eTable_Material";
+      setting.value.titleTable = setting.value.tables["tabMaterial"].title;
       break;
     case "1-5-1":
       setting.value.dialog["user"].visible = true;
@@ -152,17 +165,22 @@ const handleSelect = (key, keyPath) => {
       break;
     case "2-1":
       setting.value.comps.curComp = "eBits";
+      setting.value.titleTable = setting.value.tables["tabBits"].title;
       break;
     case "2-2":
       setting.value.comps.curComp = "eOperation";
+      setting.value.titleTable = setting.value.tables["tabTransaction"].title;
       break;
     case "4":
-      props.open({
-        text: `${key} ${keyPath}`,
-      });
       break;
-    default:
+    case "5":
+      changeAuthenticated(false);
+      router.push({ name: "authent" });
+      break;
+    default: {
       setting.value.comps.curComp = "eAvatar";
+      setting.value.titleTable = "";
+    }
   }
 };
 
@@ -175,11 +193,19 @@ const isDisabled_User = computed(() => {
 const isDisabled_Status = computed(() => {
   return !+getCurUser.value.listAccess[2];
 });
+
+onMounted(() => {
+  isCollapse.value = props.mode == "vertical";
+});
 </script>
 
 <style>
 .el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 200px;
+  width: 250px;
   min-height: 400px;
+}
+.el-menu-horizontal-demo {
+  width: 100%;
+  height: 50px;
 }
 </style>
