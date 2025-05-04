@@ -4,9 +4,7 @@
   <div class="toolbar">
     <el-dropdown @command="handleCommand">
       <span class="el-dropdown-link">
-        <el-icon style="margin-right: 8px; margin-top: 1px">
-          <setting />
-        </el-icon>
+        <el-icon style="margin-right: 8px; margin-top: 1px"><User /></el-icon>
         {{ props.user.PIB }}
       </span>
       <template #dropdown>
@@ -44,9 +42,13 @@ const setting = inject("setting");
 const handleCommand = (command) => {
   switch (command) {
     case "data":
-      ElMessage(
-        `Прізвище: ${props.user.PIB}, статус: ${props.user.nameStatus}, логін: ${props.user.login}`
-      );
+      ElMessage({
+        dangerouslyUseHTMLString: true,
+        message: `<div style="color:black; line-height:1.5; font-size:11pt;">
+            <b>прізвище:</b> ${props.user.PIB} <br> 
+            <b>статус:</b> ${props.user.nameStatus} <br> 
+            <b>логін:</b> ${props.user.login}</div>`,
+      });
       break;
     case "change":
       setting.value.dialog["editUser"].visible = true;

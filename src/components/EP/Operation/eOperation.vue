@@ -17,14 +17,15 @@
       <el-space :size="10" style="margin: -15px 0 10px 0">
         <el-card>
           <el-space :size="10">
-            <el-switch v-model="isDate" />
+            <el-switch v-model="isPeriod" @change="getTransaction" />
             <el-date-picker
               v-model="valueDate"
               type="daterange"
               format="DD.MM.YYYY"
               :start-placeholder="getDate"
               :end-placeholder="getDate"
-              :disabled="!isDate"
+              :disabled="!isPeriod"
+              @change="getTransaction"
               style="width: 230px"
             />
           </el-space>
@@ -37,6 +38,7 @@
               size="large"
               style="width: 100%"
               placeholder="Пошук по коментарю"
+              @input="debouncedChange"
               :prefix-icon="Search"
             />
             <el-button-group class="ml-4">
@@ -154,12 +156,21 @@
 </template>
 
 <script setup>
-import { inject, ref, computed, onActivated, onUpdated, reactive } from "vue";
+import {
+  inject,
+  ref,
+  computed,
+  onActivated,
+  onUpdated,
+  reactive,
+  onUnmounted,
+} from "vue";
 import { useStore } from "vuex";
 import { Search, Calendar } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import eDialog_Operation from "@/components/EP/Operation/eDialog_Operation";
 import { HTTP } from "@/hooks/http";
+import * as _ from "lodash";
 
 const setting = inject("setting");
 const store = useStore();
@@ -168,13 +179,14 @@ const search = ref("");
 const valueDate = ref([new Date(), new Date()]);
 const punkts = ref([]);
 const activeName = ref("");
-const isDate = ref(false);
+const isPeriod = ref(false);
 const curDate = ref(new Date());
 const setPagination = reactive({
   currentPage: 1,
   sizePage: 5,
   total: 1,
 });
+const debouncedChange = ref();
 
 const newOperation = () => {
   setting.value.dialog["editOperation"].initiator = "createOperation";
@@ -201,21 +213,23 @@ const copyTransaction = () => {
 
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabTransaction"];
-  const arDateL = calcDate(valueDate.value[0]).split(".");
-  const arDateR = calcDate(valueDate.value[1]).split(".");
-  const leftDate = new Date(`${arDateL[2]}-${arDateL[1]}-${arDateL[0]}`);
-  const rightDate = new Date(`${arDateR[2]}-${arDateR[1]}-${arDateR[0]}`);
+  // const arDateL = formatDate(valueDate.value[0]).split(".");
+  // const arDateR = formatDate(valueDate.value[1]).split(".");
+  // const leftDate = new Date(`${arDateL[2]}-${arDateL[1]}-${arDateL[0]}`);
+  // const rightDate = new Date(`${arDateR[2]}-${arDateR[1]}-${arDateR[0]}`);
 
-  return _tabl.data.filter((row) => {
-    const arDate = row.date.split(".");
-    const tDate = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
+  // return _tabl.data.filter((row) => {
+  //   const arDate = row.date.split(".");
+  //   const tDate = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
 
-    return isDate.value
-      ? row.comment.toLowerCase().includes(search.value.toLowerCase()) &&
-          tDate >= leftDate &&
-          tDate <= rightDate
-      : row.comment.toLowerCase().includes(search.value.toLowerCase());
-  });
+  //   return isDate.value
+  //     ? row.comment.toLowerCase().includes(search.value.toLowerCase()) &&
+  //         tDate >= leftDate &&
+  //         tDate <= rightDate
+  //     : row.comment.toLowerCase().includes(search.value.toLowerCase());
+  // });
+
+  return _tabl.data;
 });
 
 const activeIdPunkt = computed(() => {
@@ -248,6 +262,10 @@ const getTransaction = async () => {
         _id_P: activeIdPunkt.value,
         _currentPage: setPagination.currentPage,
         _sizePage: setPagination.sizePage,
+        _date_l: formatDate(valueDate.value[0], "eng"),
+        _date_r: formatDate(valueDate.value[1], "eng"),
+        _isPeriod: isPeriod.value ? 1 : 0,
+        _search: search.value.toLowerCase(),
       },
     });
 
@@ -255,7 +273,9 @@ const getTransaction = async () => {
     setPagination.total = response.data.total;
 
     ElMessage.success(
-      response.data.total > 0 ? "Транзакції оновлені" : "Транзакції відсутні"
+      response.data.total > 0
+        ? `Транзакції для ${getCurUser.value.PIB.toUpperCase()} оновлені`
+        : `Транзакції для ${getCurUser.value.PIB.toUpperCase()} відсутні`
     );
   } catch (e) {
     ElMessage.error("Помилка завантаження транзакцій");
@@ -263,29 +283,43 @@ const getTransaction = async () => {
 };
 
 const getDate = computed(() => {
-  return calcDate(curDate.value);
+  return formatDate(curDate.value);
 });
 
-const calcDate = (valDate) => {
+const formatDate = (valDate, mode = "ukr") => {
   const date = {
     d: valDate.getDate(),
     m: valDate.getMonth() + 1,
     y: valDate.getFullYear(),
   };
-  return [
-    (date.d < 10 ? "0" : "") + date.d,
-    (date.m < 10 ? "0" : "") + date.m,
-    date.y,
-  ].join(".");
+  return mode == "ukr"
+    ? [
+        (date.d < 10 ? "0" : "") + date.d,
+        (date.m < 10 ? "0" : "") + date.m,
+        date.y,
+      ].join(".")
+    : [
+        date.y,
+        (date.m < 10 ? "0" : "") + date.m,
+        (date.d < 10 ? "0" : "") + date.d,
+      ].join("-");
 };
 
 onActivated(async () => {
   await getPunktCur();
   activeName.value = punkts.value[0]["name"];
+
+  debouncedChange.value = _.debounce(() => {
+    getTransaction();
+  }, 1000);
 });
 
 onUpdated(async () => {
   await getTransaction();
+});
+
+onUnmounted(() => {
+  debouncedChange.value.cancel();
 });
 </script>
 
