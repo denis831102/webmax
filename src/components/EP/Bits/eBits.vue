@@ -50,7 +50,7 @@
                 <el-table-column label="номенклатура" prop="name_M" />
                 <el-table-column label="кількість">
                   <template #default="props">
-                    <div style="padding: 20px; background: #c6e2ff69">
+                    <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
                       {{ props.row.count }} {{ props.row.unit }}
                     </div>
                   </template>
@@ -66,7 +66,7 @@
 
         <el-table-column label="Загальна кількість">
           <template #default="props">
-            <div style="padding: 20px; background: #c6e2ff69">
+            <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
               {{ props.row.summa_K }}
             </div>
           </template>
