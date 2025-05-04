@@ -32,8 +32,6 @@
     preserve-expanded-content="false"
     style="width: 100%"
   >
-    <el-table-column type="index" />
-
     <el-table-column type="expand">
       <template #default="props">
         <div style="padding: 20px; background: #c6e2ff69">
@@ -54,6 +52,8 @@
         </div>
       </template>
     </el-table-column>
+
+    <el-table-column type="index" />
 
     <el-table-column label="Прізвище" sortable prop="PIB">
       <template #default="scope">

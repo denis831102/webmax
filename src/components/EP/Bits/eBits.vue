@@ -148,6 +148,7 @@ const getBits = async () => {
 onActivated(async () => {
   await getPunktCur();
   activeName.value = punkts.value[0]["name"];
+  await getBits();
 });
 
 onUpdated(async () => {

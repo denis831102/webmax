@@ -221,6 +221,8 @@ const getOperation = async () => {
     const response = await HTTP.get("", {
       params: {
         _method: "getOperation",
+        _id_U: getCurUser.value.id,
+        _id_P: props.idPunkt,
       },
     });
 

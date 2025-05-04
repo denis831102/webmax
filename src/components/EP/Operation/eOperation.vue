@@ -113,7 +113,13 @@
 
         <el-table-column label="Коментар" prop="comment"> </el-table-column>
 
-        <el-table-column label="Сума" prop="suma"> </el-table-column>
+        <el-table-column label="Сума" prop="suma">
+          <template #default="scope">
+            <div style="display: flex; align-items: center">
+              <span style="margin-left: 10px">{{ scope.row.suma }} грн.</span>
+            </div>
+          </template>
+        </el-table-column>
 
         <el-table-column label="Редагування">
           <template #default="scope">
@@ -197,8 +203,12 @@ const editTransaction = () => {
   ElMessage.success("Редагування транзакції ");
 };
 
-const delTransaction = () => {
-  ElMessageBox.confirm("Ви точно бажаєте видалити транзакцію?")
+const delTransaction = (ind, row) => {
+  ElMessageBox.confirm(
+    `Ви точно бажаєте видалити транзакцію '${row.comment.toUpperCase()}' на суму ${
+      row.suma
+    } грн.?`
+  )
     .then(() => {
       ElMessage.success("Видалення транзакції ");
     })
@@ -308,6 +318,7 @@ const formatDate = (valDate, mode = "ukr") => {
 onActivated(async () => {
   await getPunktCur();
   activeName.value = punkts.value[0]["name"];
+  await getTransaction();
 
   debouncedChange.value = _.debounce(() => {
     getTransaction();
