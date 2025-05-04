@@ -44,11 +44,14 @@
               <el-table
                 :data="props.row.listMater"
                 border="true"
-                style="background: #c6e2ff"
+                style="margin-left: 5%; width: 80%"
                 show-summary
               >
+                <el-table-column type="index" />
+
                 <el-table-column label="номенклатура" prop="name_M" />
-                <el-table-column label="кількість">
+
+                <el-table-column label="кількість" width="100" prop="count">
                   <template #default="props">
                     <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
                       {{ props.row.count }} {{ props.row.unit }}
