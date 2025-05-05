@@ -7,7 +7,7 @@
 import { reactive, toRefs } from "vue";
 
 const state = reactive({
-  circleUrl: "https://webmax.lond.lg.ua/php/img/caption.png",
+  circleUrl: "https://webmax.lond.lg.ua/php/img/caption_2_2.png",
   sizeList: ["small", "", "large"],
 });
 
@@ -23,7 +23,7 @@ const { circleUrl, sizeList } = toRefs(state);
   box-sizing: border-box;
   vertical-align: top;
   align-items: center;
-  opacity: 0.6;
+  opacity: 0.8;
   width: 80%;
   height: 90%;
   margin-left: 10%;

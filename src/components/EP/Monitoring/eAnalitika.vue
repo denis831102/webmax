@@ -32,6 +32,66 @@
     </el-card>
   </el-space>
 
+  <el-card>
+    <div class="demo-progress">
+      <el-row :gutter="20">
+        <el-col :span="4"
+          ><el-tag type="primary" style="width: 100%"
+            >Параметр 1</el-tag
+          ></el-col
+        >
+        <el-col :span="20"
+          ><el-progress :text-inside="true" :stroke-width="26" :percentage="70"
+        /></el-col>
+      </el-row>
+
+      <el-row :gutter="20">
+        <el-col :span="4"
+          ><el-tag type="primary" style="width: 100%"
+            >Параметр 2</el-tag
+          ></el-col
+        >
+        <el-col :span="20"
+          ><el-progress
+            :text-inside="true"
+            :stroke-width="24"
+            :percentage="100"
+            status="success"
+        /></el-col>
+      </el-row>
+
+      <el-row :gutter="20">
+        <el-col :span="4"
+          ><el-tag type="primary" style="width: 100%"
+            >Параметр 2</el-tag
+          ></el-col
+        >
+        <el-col :span="20"
+          ><el-progress
+            :text-inside="true"
+            :stroke-width="22"
+            :percentage="80"
+            status="warning"
+        /></el-col>
+      </el-row>
+
+      <el-row :gutter="20">
+        <el-col :span="4"
+          ><el-tag type="primary" style="width: 100%"
+            >Параметр 4</el-tag
+          ></el-col
+        >
+        <el-col :span="20">
+          <el-progress
+            :text-inside="true"
+            :stroke-width="20"
+            :percentage="50"
+            status="exception"
+        /></el-col>
+      </el-row>
+    </div>
+  </el-card>
+
   <el-table :data="filterTable">
     <el-table-column type="index" />
 
