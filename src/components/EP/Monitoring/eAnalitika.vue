@@ -35,19 +35,30 @@
   <el-table :data="filterTable">
     <el-table-column type="index" />
 
-    <el-table-column label="Менеджер" prop="date">
+    <el-table-column label="Менеджер" prop="pib" width="250">
       <template #default="scope">
         <div style="display: flex; align-items: center">
-          <el-icon><Calendar /></el-icon>
-          <span style="margin-left: 10px"
-            >{{ scope.row.date }} - {{ scope.row.time }}</span
-          >
+          <el-icon><User /></el-icon>
+          <span style="margin-left: 10px">{{ scope.row.pib }}</span>
         </div>
       </template>
     </el-table-column>
 
     <el-table-column label="Дані">
-      <el-progress type="dashboard" :percentage="percentage" :color="colors" />
+      <template #default="scope">
+        <el-space :size="40">
+          <el-progress
+            type="dashboard"
+            :percentage="scope.row.percentage_1"
+            :color="colors"
+          />
+          <el-progress
+            type="dashboard"
+            :percentage="scope.row.percentage_2"
+            :color="colors"
+          />
+        </el-space>
+      </template>
     </el-table-column>
   </el-table>
 </template>
@@ -55,7 +66,7 @@
 <script setup>
 import { inject, ref, computed, onActivated } from "vue";
 import { useStore } from "vuex";
-import { Calendar } from "@element-plus/icons-vue";
+import { User } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { HTTP } from "@/hooks/http";
 
@@ -65,8 +76,6 @@ const getCurUser = computed(() => store.getters.getCurUser);
 const valueDate = ref([new Date(), new Date()]);
 const isPeriod = ref(false);
 const curDate = ref(new Date());
-
-const percentage = ref(10);
 const colors = [
   { color: "#f56c6c", percentage: 20 },
   { color: "#e6a23c", percentage: 40 },
