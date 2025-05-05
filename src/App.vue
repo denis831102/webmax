@@ -2,7 +2,7 @@
   <div>
     <h1 class="hMain" @click.prevent="$router.push({ name: 'crm' })">
       <el-icon><ChromeFilled /></el-icon>
-      WebMAX
+      Web MetAl'ans
     </h1>
     <transition name="component-fade" mode="out-in">
       <RouterView class="sRout" />

@@ -16,7 +16,7 @@
           <el-container>
             <el-header style="text-align: right; font-size: 12px">
               <el-row :gutter="20">
-                <el-col :span="19" style="text-align: center">
+                <el-col :span="19" style="text-align: center; margin-top: 10px">
                   <el-text v-if="setting.titleTable.length" tag="b"
                     >{{ setting.titleTable }}
                   </el-text>
@@ -31,7 +31,7 @@
               <keep-alive> <component :is="curComponent" /> </keep-alive>
             </el-main>
 
-            <el-footer height="30" style="margin-top: 20px"
+            <el-footer height="30" style="margin-top: 20px; text-align: center"
               >R@ED 2025</el-footer
             >
           </el-container>
@@ -64,10 +64,11 @@ import eAvatar from "@/components/EP/WorkSpace/eAvatar";
 import eTable_User from "@/components/EP/Users/eTable_User";
 import eTable_Status from "@/components/EP/Status/eTable_Status";
 import eTable_Punkt from "@/components/EP/Punkt/eTable_Punkt";
-import eOperation from "@/components/EP/Operation/eOperation";
-import eBits from "@/components/EP/Bits/eBits";
 import eTable_Material from "@/components/EP/Material/eTable_Material";
 import eTable_Kategories from "@/components/EP/Kategories/eTable_Kategories";
+import eOperation from "@/components/EP/Operation/eOperation";
+import eBits from "@/components/EP/Bits/eBits";
+import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
 
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
@@ -82,7 +83,7 @@ const isLeftMenu = ref(true);
 // };
 
 const setting = ref({
-  name: "Денис Ратов",
+  name: "Денис і Євгенія Ратови",
   titleTable: "",
   dialog: {
     user: { visible: false },
@@ -103,6 +104,7 @@ const setting = ref({
       eTable_Kategories,
       eOperation,
       eBits,
+      eAnalitika,
     },
     curComp: "eAvatar",
   },
@@ -118,12 +120,12 @@ const setting = ref({
       data: [],
     },
     tabPunkt: {
-      title: "ВЛАСНІ ПУНКТИ",
+      title: "ДОВІДНИК ВЛАСНИХ ПУНКТІВ",
       curRow: {},
       data: [],
     },
     tabMaterial: {
-      title: "НОМЕНКЛАТУРА",
+      title: "ДОВІДНИК НОМЕНКЛАТУРИ",
       curRow: {},
       data: [],
     },
@@ -133,12 +135,17 @@ const setting = ref({
       data: [],
     },
     tabBits: {
-      title: "ЗАЛИШКИ НА ПУНКТАХ",
+      title: "ЗАЛИШКИ НА ВЛАСНИМ ПУНКТАХ",
       curRow: {},
       data: [],
     },
     tabTransaction: {
       title: "ОПЕРАЦІЇ МЕНЕДЖЕРА",
+      curRow: {},
+      data: [],
+    },
+    tabAnalitika: {
+      title: "АНАЛІТИКА ПО ВЛАСНИМ ПУНКТАМ",
       curRow: {},
       data: [],
     },

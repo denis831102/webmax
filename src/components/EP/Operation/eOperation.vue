@@ -113,7 +113,7 @@
 
         <el-table-column label="Коментар" prop="comment"> </el-table-column>
 
-        <el-table-column label="Сума" prop="suma">
+        <el-table-column label="Сума" prop="suma" width="150">
           <template #default="scope">
             <div style="display: flex; align-items: center">
               <span style="margin-left: 10px">{{ scope.row.suma }} грн.</span>

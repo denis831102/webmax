@@ -36,7 +36,8 @@
           <template #default="props">
             <div style="padding: 20px; background: #c6e2ff69">
               <h3 style="margin: 0px 0 10px 0">
-                Залишки по категоріїї
+                <el-icon><PieChart /></el-icon>
+                <span style="margin-left: 5px">Залишки по категоріїї</span>
                 <el-check-tag type="primary">
                   {{ props.row.name_K }}
                 </el-check-tag>
