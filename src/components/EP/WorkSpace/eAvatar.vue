@@ -7,7 +7,7 @@
 import { reactive, toRefs } from "vue";
 
 const state = reactive({
-  circleUrl: "https://webmax.lond.lg.ua/php/img/caption_2_2.png",
+  circleUrl: "https://webmax.lond.lg.ua/php/img/caption_2.jpg",
   sizeList: ["small", "", "large"],
 });
 
