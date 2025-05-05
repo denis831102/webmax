@@ -16,12 +16,12 @@
           <el-container>
             <el-header style="text-align: right; font-size: 12px">
               <el-row :gutter="20">
-                <el-col :span="16" style="text-align: center">
+                <el-col :span="19" style="text-align: center">
                   <el-text v-if="setting.titleTable.length" tag="b"
                     >{{ setting.titleTable }}
                   </el-text>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="5">
                   <eDrop_User :user="getCurUser" />
                 </el-col>
               </el-row>

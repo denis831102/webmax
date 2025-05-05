@@ -88,10 +88,22 @@
         </el-menu-item-group>
       </el-sub-menu>
 
-      <el-menu-item index="3">
-        <el-icon><document /></el-icon>
-        <template #title>Моніторинг</template>
-      </el-menu-item>
+      <el-sub-menu index="3">
+        <template #title>
+          <el-icon><document /></el-icon>
+          <span>Моніторинг</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="3-1">
+            <el-icon><TrendCharts /></el-icon>
+            Аналітика - 1
+          </el-menu-item>
+          <el-menu-item index="3-2"
+            ><el-icon><Management /></el-icon>
+            Аналітика - 2
+          </el-menu-item>
+        </el-menu-item-group>
+      </el-sub-menu>
 
       <el-menu-item index="4">
         <el-icon><Setting /></el-icon>
@@ -157,12 +169,6 @@ const handleSelect = (key, keyPath) => {
       setting.value.comps.curComp = "eTable_Material";
       setting.value.titleTable = setting.value.tables["tabMaterial"].title;
       break;
-    case "1-5-1":
-      setting.value.dialog["user"].visible = true;
-      break;
-    case "2-3":
-      setting.value.comps.curComp = "eAvatar";
-      break;
     case "2-1":
       setting.value.comps.curComp = "eBits";
       setting.value.titleTable = setting.value.tables["tabBits"].title;
@@ -170,8 +176,6 @@ const handleSelect = (key, keyPath) => {
     case "2-2":
       setting.value.comps.curComp = "eOperation";
       setting.value.titleTable = setting.value.tables["tabTransaction"].title;
-      break;
-    case "4":
       break;
     case "5":
       changeAuthenticated(false);

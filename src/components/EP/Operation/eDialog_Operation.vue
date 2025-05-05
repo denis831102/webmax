@@ -71,31 +71,44 @@
           height="300"
           style="width: 100%; margin: 5px; font-size: 9pt"
         >
-          <el-table-column prop="nameOperation" label="Операція" width="190" />
+          <el-table-column prop="nameOperation" label="Операція" width="190">
+            <template #default="props">
+              {{ props.row.nameOperation }}
+              <span
+                style="padding: 5px; background: #c6e2ff69; font-weight: bold"
+              >
+                {{ props.row.curCount }} {{ props.row.unit }}
+              </span>
+            </template>
+          </el-table-column>
+
           <el-table-column label="Кількість" prop="count">
             <template #default="props">
               <el-input-number
                 v-model="props.row.count"
                 :precision="3"
-                :step="0.1"
+                :step="1"
+                :max="props.row.maxCount"
                 :min="0"
                 size="small"
                 style="width: 95%; height: 40px"
               />
             </template>
           </el-table-column>
+
           <el-table-column label="Ціна одиниці">
             <template #default="props">
               <el-input-number
                 v-model="props.row.price"
                 :precision="3"
-                :step="0.1"
+                :step="1"
                 :min="0"
                 size="small"
                 style="width: 95%; height: 40px"
               />
             </template>
           </el-table-column>
+
           <el-table-column label="Сума" prop="summa" width="70">
             <template #default="props">
               {{ props.row.summa }}
@@ -108,6 +121,7 @@
         <el-input v-model="form.comment" type="textarea" />
       </el-form-item>
     </el-form>
+
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="$emit('update:visible', false)">Вийти</el-button>
@@ -196,8 +210,11 @@ const handleChange = () => {
           [curOper[2].num]
         ].label,
       ].join(" / "),
-      count: 100,
-      price: curOper[2].id,
+      maxCount: +curOper[2].dir == -1 ? curOper[2].count : 999999999,
+      curCount: curOper[2].count,
+      unit: curOper[2].unit,
+      count: 1,
+      price: 1,
       summa: 0,
       id_V: curOper[0].id,
       id_K: curOper[1].id,
