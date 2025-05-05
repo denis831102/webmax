@@ -60,6 +60,26 @@
         </el-space>
       </template>
     </el-table-column>
+
+    <el-table-column label="Деталізація">
+      <el-descriptions
+        title="Деталізація"
+        direction="vertical"
+        :column="4"
+        size="default"
+        border
+      >
+        <el-descriptions-item label="Дані 1">Значення 1</el-descriptions-item>
+        <el-descriptions-item label="Дані 2">Значення 2</el-descriptions-item>
+        <el-descriptions-item label="Дані 3" :span="2"
+          >Значення 3</el-descriptions-item
+        >
+        <el-descriptions-item label="Дані 4">
+          <el-tag size="small">Значення 4</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="Дані 4"> Значення 5 </el-descriptions-item>
+      </el-descriptions>
+    </el-table-column>
   </el-table>
 </template>
 
