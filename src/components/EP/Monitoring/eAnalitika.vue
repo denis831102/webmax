@@ -63,7 +63,7 @@
       <el-row :gutter="20">
         <el-col :span="4"
           ><el-tag type="primary" style="width: 100%"
-            >Параметр 2</el-tag
+            >Параметр 3</el-tag
           ></el-col
         >
         <el-col :span="20"

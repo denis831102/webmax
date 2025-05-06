@@ -24,9 +24,7 @@ const { circleUrl, sizeList } = toRefs(state);
   vertical-align: top;
   align-items: center;
   opacity: 0.8;
-  width: 80%;
-  height: 90%;
-  margin-left: 10%;
+  margin-left: 15%;
 }
 .demo-image.block:last-child {
   border-right: none;

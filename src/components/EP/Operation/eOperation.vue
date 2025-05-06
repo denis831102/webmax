@@ -199,26 +199,48 @@ const newOperation = () => {
   setting.value.dialog["editOperation"].visible = true;
 };
 
-const editTransaction = () => {
-  ElMessage.success("Редагування транзакції ");
+const editTransaction = (ind, row) => {
+  setting.value.tables["tabTransaction"].curRow = row;
+  setting.value.dialog["editOperation"].initiator = "editOperation";
+  setting.value.dialog["editOperation"].visible = true;
 };
 
-const delTransaction = (ind, row) => {
+const delTransaction = async (ind, row) => {
   ElMessageBox.confirm(
     `Ви точно бажаєте видалити транзакцію '${row.comment.toUpperCase()}' на суму ${
       row.suma
-    } грн.?`
+    } грн. за ${row.date} - ${row.time}?`
   )
     .then(() => {
-      ElMessage.success("Видалення транзакції ");
+      delTransaction_Ok(row);
     })
-    .catch(() => {
-      // catch error
-    });
+    .catch(() => {});
 };
 
-const copyTransaction = () => {
-  ElMessage.success("Копіювання транзакції ");
+const delTransaction_Ok = async (row) => {
+  try {
+    const response = await HTTP.get("", {
+      params: {
+        _method: "delTransaction",
+        _id_T: row.id_T,
+      },
+    });
+
+    if (response.data.isSuccesfull) {
+      const _tab = setting.value.tables["tabTransaction"];
+      _tab.data = _tab.data.filter((el) => el.id_T !== row.id_T);
+    } else {
+      ElMessage.error("Транзакцію не видалено");
+    }
+  } catch (e) {
+    ElMessage("Помилка видалення транзакції");
+  }
+};
+
+const copyTransaction = (ind, row) => {
+  setting.value.tables["tabTransaction"].curRow = row;
+  setting.value.dialog["editOperation"].initiator = "copyOperation";
+  setting.value.dialog["editOperation"].visible = true;
 };
 
 const filterTable = computed(() => {
