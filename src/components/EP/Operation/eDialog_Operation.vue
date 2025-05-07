@@ -51,7 +51,7 @@
           <el-cascader
             v-model="selOperation"
             :options="form.options"
-            :props="multCascader"
+            :props="propsCascader"
             @change="operationChange"
             clearable
             collapse-tags
@@ -172,10 +172,10 @@ const form = reactive({
   curDate: new Date(),
   tableOperation: [],
 });
-const multCascader = { multiple: true };
+const propsCascader = { multiple: true, expandTrigger: "hover" };
 const selOperation = ref([]);
-const title = ref("");
 const oldOperation = ref([]);
+const title = ref("");
 const newOperation = ref([
   [
     { id: "2", num: 1 },
@@ -214,6 +214,9 @@ const saveData = async () => {
     if (response.data.isSuccesfull) {
       emit("update:visible", false);
       ElMessage.success(response.data.message);
+
+      console.log("save => ");
+      console.log(selOperation.value);
     } else {
       ElMessage.error(response.data.message);
     }
@@ -259,17 +262,31 @@ const clearForm = () => {
 };
 
 const saveSel = () => {
-  oldOperation.value = selOperation.value;
-  console.log(selOperation.value);
+  oldOperation.value = JSON.stringify(selOperation.value);
+
+  console.log("saveSel => ");
+  console.log(oldOperation.value);
 };
 
 const returnSel = () => {
-  selOperation.value = oldOperation.value;
+  // const arOp = [
+  //   [
+  //     {
+  //       label: "Заготвка",
+  //       children: [
+  //         { label: "кольоровий лом", children: [{ label: "АЛ радиатор" }] },
+  //       ],
+  //     },
+  //   ],
+  // ];
+  // selOperation.value = arOp;
   //selOperation.value = newOperation.value;
+
+  selOperation.value = JSON.parse(oldOperation.value);
   operationChange();
 
-  const s = JSON.stringify(selOperation.value);
-  alert(s);
+  console.log("returnSel => ");
+  console.log(selOperation.value);
 };
 
 watchEffect(() => {
@@ -352,10 +369,11 @@ onUpdated(async () => {
 
       form.tableOperation = [];
 
-      selOperation.value = JSON.parse(
-        _tab.curRow.groupOperation.replaceAll("'", '"')
-      );
+      selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       operationChange();
+
+      console.log("load => ");
+      console.log(selOperation.value);
       break;
     }
   }
