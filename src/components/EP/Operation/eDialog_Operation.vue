@@ -46,23 +46,6 @@
         </el-col>
       </el-form-item>
 
-      <el-form-item label="Операція">
-        <el-col :span="24">
-          <el-cascader
-            v-model="selOperation"
-            :options="form.options"
-            :props="propsCascader"
-            @change="operationChange"
-            clearable
-            collapse-tags
-            collapse-tags-tooltip
-            :max-collapse-tags="2"
-            placeholder="зробіть вибір..."
-            style="width: 100%"
-          />
-        </el-col>
-      </el-form-item>
-
       <el-form-item style="box-shadow: 0px -1px 6px 2px #b0b3b7">
         <el-table
           :data="form.tableOperation"
@@ -73,12 +56,21 @@
         >
           <el-table-column prop="nameOperation" label="Операція" width="190">
             <template #default="props">
-              {{ props.row.nameOperation }}
-              <span
-                style="padding: 5px; background: #c6e2ff69; font-weight: bold"
-              >
-                {{ props.row.curCount }} {{ props.row.unit }}
-              </span>
+              <div>
+                {{ props.row.nameOperation }}
+                <span
+                  style="padding: 5px; background: #c6e2ff69; font-weight: bold"
+                >
+                  {{ props.row.curCount }} {{ props.row.unit }}
+                </span>
+                <el-button
+                  type="danger"
+                  :icon="Delete"
+                  circle
+                  style="width: 10px; height: 10px"
+                  @click="delOperation(props.row)"
+                />
+              </div>
             </template>
           </el-table-column>
 
@@ -117,6 +109,23 @@
         </el-table>
       </el-form-item>
 
+      <el-form-item label="Додати операцію">
+        <el-col :span="24">
+          <el-cascader
+            v-model="selOperation"
+            :options="form.options"
+            :props="propsCascader"
+            @change="addOperation"
+            clearable
+            collapse-tags
+            collapse-tags-tooltip
+            :max-collapse-tags="2"
+            placeholder="зробіть вибір..."
+            style="width: 100%"
+          />
+        </el-col>
+      </el-form-item>
+
       <el-form-item label="Коментар">
         <el-input v-model="form.comment" type="textarea" />
       </el-form-item>
@@ -124,8 +133,8 @@
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="returnSel">Повернути</el-button>
-        <el-button @click="saveSel">Запам'ятати</el-button>
+        <el-button @click="returnSel" v-if="false">Повернути</el-button>
+        <el-button @click="saveSel" v-if="false">Запам'ятати</el-button>
         <el-button @click="clearForm">Очистити</el-button>
         <el-button @click="$emit('update:visible', false)">Вийти</el-button>
         <el-button type="primary" @click="saveData">Зберегти</el-button>
@@ -152,6 +161,7 @@ import {
 import { HTTP } from "@/hooks/http";
 import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
+import { Delete } from "@element-plus/icons-vue";
 
 const props = defineProps({
   visible: Boolean,
@@ -214,9 +224,6 @@ const saveData = async () => {
     if (response.data.isSuccesfull) {
       emit("update:visible", false);
       ElMessage.success(response.data.message);
-
-      console.log("save => ");
-      console.log(selOperation.value);
     } else {
       ElMessage.error(response.data.message);
     }
@@ -225,9 +232,47 @@ const saveData = async () => {
   }
 };
 
-const operationChange = () => {
-  form.tableOperation = selOperation.value.map((curOper) => {
+const loadOperation = () => {
+  const curRow = setting.value.tables["tabTransaction"].curRow;
+
+  form.tableOperation = selOperation.value.map((curOper, ind) => {
     return {
+      nameOperation: [
+        form.options[curOper[0].num].label,
+        form.options[curOper[0].num].children[[curOper[1].num]].label,
+        form.options[curOper[0].num].children[[curOper[1].num]].children[
+          [curOper[2].num]
+        ].label,
+      ].join(" / "),
+      maxCount:
+        +curOper[2].dir == -1
+          ? form.options[curOper[0].num].children[[curOper[1].num]].children[
+              [curOper[2].num]
+            ].value.count
+          : 999999999,
+      curCount:
+        form.options[curOper[0].num].children[[curOper[1].num]].children[
+          [curOper[2].num]
+        ].value.count,
+      unit: curOper[2].unit,
+      count: 1,
+      price: curRow.listOper[ind].price,
+      summa: 0,
+      id_V: curOper[0].id,
+      id_K: curOper[1].id,
+      id_M: curOper[2].id,
+    };
+  });
+
+  form.comment = curRow.comment;
+};
+
+const addOperation = () => {
+  if (!selOperation.value.length) return;
+
+  const curOper = selOperation.value[selOperation.value.length - 1];
+  const newOperation = [
+    {
       nameOperation: [
         form.options[curOper[0].num].label,
         form.options[curOper[0].num].children[[curOper[1].num]].label,
@@ -252,8 +297,16 @@ const operationChange = () => {
       id_V: curOper[0].id,
       id_K: curOper[1].id,
       id_M: curOper[2].id,
-    };
-  });
+    },
+  ];
+  form.tableOperation = [...form.tableOperation, ...newOperation];
+};
+
+const delOperation = (row) => {
+  form.tableOperation = form.tableOperation.filter(
+    (el) => el.nameOperation != row.nameOperation
+    //(el) => el.id_V != row.id_V && el.id_K != row.id_K && el.id_M != row.id_M
+  );
 };
 
 const clearForm = () => {
@@ -269,19 +322,6 @@ const saveSel = () => {
 };
 
 const returnSel = () => {
-  // const arOp = [
-  //   [
-  //     {
-  //       label: "Заготвка",
-  //       children: [
-  //         { label: "кольоровий лом", children: [{ label: "АЛ радиатор" }] },
-  //       ],
-  //     },
-  //   ],
-  // ];
-  // selOperation.value = arOp;
-  //selOperation.value = newOperation.value;
-
   selOperation.value = JSON.parse(oldOperation.value);
   operationChange();
 
@@ -358,22 +398,27 @@ onUpdated(async () => {
 
   switch (setting.value.dialog["editOperation"].initiator) {
     case "createOperation": {
-      title.value = "Створення операції";
+      title.value = "Створення транзакції операцій";
       form.tableOperation = [];
       selOperation.value = [];
       break;
     }
     case "copyOperation": {
-      title.value = "Дублювання Транзакції";
+      title.value = "Дублювання транзакції операцій";
       const _tab = setting.value.tables["tabTransaction"];
 
       form.tableOperation = [];
-
       selOperation.value = JSON.parse(_tab.curRow.groupOperation);
-      operationChange();
+      loadOperation();
+      break;
+    }
+    case "editOperation": {
+      title.value = "Редагування транзакції операцій";
+      const _tab = setting.value.tables["tabTransaction"];
 
-      console.log("load => ");
-      console.log(selOperation.value);
+      form.tableOperation = [];
+      selOperation.value = JSON.parse(_tab.curRow.groupOperation);
+      loadOperation();
       break;
     }
   }
