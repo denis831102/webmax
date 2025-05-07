@@ -121,11 +121,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Редагування">
+        <el-table-column label="Дії">
           <template #default="scope">
             <el-button
               size="small"
               @click="editTransaction(scope.$index, scope.row)"
+              title="Редагування транзакції"
             >
               <el-icon><Edit /></el-icon>
             </el-button>
@@ -134,12 +135,14 @@
               size="small"
               type="danger"
               @click="delTransaction(scope.$index, scope.row)"
+              title="Видалення транзакції"
             >
               <el-icon><DeleteFilled /></el-icon>
             </el-button>
             <el-button
               size="small"
               @click="copyTransaction(scope.$index, scope.row)"
+              title="Створення транзакції за копією"
             >
               <el-icon><CopyDocument /></el-icon>
             </el-button>

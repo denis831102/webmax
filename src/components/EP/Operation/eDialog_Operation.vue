@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :modelValue="props.visible"
-    :title="title"
+    :title="form.title"
     width="600"
     :before-close="handleClose"
     style="max-width: 600px"
@@ -114,7 +114,7 @@
           <el-cascader
             v-model="selOperation"
             :options="form.options"
-            :props="propsCascader"
+            :props="form.propsCascader"
             @change="addOperation"
             clearable
             collapse-tags
@@ -133,11 +133,9 @@
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="returnSel" v-if="false">Повернути</el-button>
-        <el-button @click="saveSel" v-if="false">Запам'ятати</el-button>
         <el-button @click="clearForm">Очистити</el-button>
         <el-button @click="$emit('update:visible', false)">Вийти</el-button>
-        <el-button type="primary" @click="saveData">Зберегти</el-button>
+        <el-button type="primary" @click="addTransaction">Зберегти</el-button>
       </div>
     </template>
   </el-dialog>
@@ -181,25 +179,18 @@ const form = reactive({
   timer: {},
   curDate: new Date(),
   tableOperation: [],
+  propsCascader: { multiple: true, expandTrigger: "hover" },
+  title: "",
 });
-const propsCascader = { multiple: true, expandTrigger: "hover" };
 const selOperation = ref([]);
-const oldOperation = ref([]);
-const title = ref("");
-const newOperation = ref([
-  [
-    { id: "2", num: 1 },
-    { id: "3", num: 1 },
-    { id: "4", num: 1, count: 1119, unit: "кг", dir: "-1" },
-  ],
-  [
-    { id: "2", num: 1 },
-    { id: "3", num: 1 },
-    { id: "5", num: 2, count: 811, unit: "кг", dir: "-1" },
-  ],
-]);
 
-const saveData = async () => {
+watchEffect(() => {
+  form.tableOperation.forEach((el) => {
+    el.summa = (el.count * el.price).toFixed(2);
+  });
+});
+
+const addTransaction = async () => {
   try {
     const groupOperation = form.tableOperation.map((oper) => {
       return {
@@ -232,7 +223,40 @@ const saveData = async () => {
   }
 };
 
-const loadOperation = () => {
+const changeTransaction = async () => {
+  try {
+    const groupOperation = form.tableOperation.map((oper) => {
+      return {
+        id_V: oper.id_V,
+        id_M: oper.id_M,
+        count: oper.count,
+        price: oper.price,
+      };
+    });
+
+    const response = await HTTP.post("", {
+      _method: "changeTransaction",
+      _idUser: getCurUser.value.id,
+      _idPunkt: props.idPunkt,
+      _date: form.date,
+      _time: getTime.value,
+      _comment: form.comment,
+      _opers: groupOperation,
+      _curOperation: JSON.stringify(selOperation.value),
+    });
+
+    if (response.data.isSuccesfull) {
+      emit("update:visible", false);
+      ElMessage.success(response.data.message);
+    } else {
+      ElMessage.error(response.data.message);
+    }
+  } catch (e) {
+    ElMessage.error("Помилка збереження операцій");
+  }
+};
+
+const loadOperation = (isRedactor = false) => {
   const curRow = setting.value.tables["tabTransaction"].curRow;
 
   form.tableOperation = selOperation.value.map((curOper, ind) => {
@@ -255,7 +279,7 @@ const loadOperation = () => {
           [curOper[2].num]
         ].value.count,
       unit: curOper[2].unit,
-      count: 1,
+      count: isRedactor ? curRow.listOper[ind].count : 1,
       price: curRow.listOper[ind].price,
       summa: 0,
       id_V: curOper[0].id,
@@ -312,28 +336,8 @@ const delOperation = (row) => {
 const clearForm = () => {
   form.tableOperation = [];
   selOperation.value = [];
+  form.comment = "";
 };
-
-const saveSel = () => {
-  oldOperation.value = JSON.stringify(selOperation.value);
-
-  console.log("saveSel => ");
-  console.log(oldOperation.value);
-};
-
-const returnSel = () => {
-  selOperation.value = JSON.parse(oldOperation.value);
-  operationChange();
-
-  console.log("returnSel => ");
-  console.log(selOperation.value);
-};
-
-watchEffect(() => {
-  form.tableOperation.forEach((el) => {
-    el.summa = (el.count * el.price).toFixed(2);
-  });
-});
 
 const handleClose = () => {
   emit("update:visible", false);
@@ -398,13 +402,14 @@ onUpdated(async () => {
 
   switch (setting.value.dialog["editOperation"].initiator) {
     case "createOperation": {
-      title.value = "Створення транзакції операцій";
+      form.title = "Створення транзакції операцій";
       form.tableOperation = [];
       selOperation.value = [];
+      form.comment = "";
       break;
     }
     case "copyOperation": {
-      title.value = "Дублювання транзакції операцій";
+      form.title = "Дублювання транзакції операцій";
       const _tab = setting.value.tables["tabTransaction"];
 
       form.tableOperation = [];
@@ -413,12 +418,12 @@ onUpdated(async () => {
       break;
     }
     case "editOperation": {
-      title.value = "Редагування транзакції операцій";
+      form.title = "Редагування транзакції операцій";
       const _tab = setting.value.tables["tabTransaction"];
 
       form.tableOperation = [];
       selOperation.value = JSON.parse(_tab.curRow.groupOperation);
-      loadOperation();
+      loadOperation(true);
       break;
     }
   }
