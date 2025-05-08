@@ -54,7 +54,12 @@
           height="300"
           style="width: 100%; margin: 5px; font-size: 9pt"
         >
-          <el-table-column prop="nameOperation" label="Операція" width="190">
+          <el-table-column
+            prop="nameOperation"
+            label="Операція"
+            width="190"
+            sortable
+          >
             <template #default="props">
               <div>
                 {{ props.row.nameOperation }}
@@ -74,7 +79,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="Кількість" prop="count">
+          <el-table-column label="Кількість" prop="count" sortable>
             <template #default="props">
               <el-input-number
                 v-model="props.row.count"
@@ -88,7 +93,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="Ціна одиниці">
+          <el-table-column label="Ціна одиниці" prop="price" sortable>
             <template #default="props">
               <el-input-number
                 v-model="props.row.price"
@@ -101,7 +106,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="Сума" prop="summa" width="70">
+          <el-table-column label="Сума" prop="summa" width="80" sortable>
             <template #default="props">
               {{ props.row.summa }}
             </template>
@@ -133,9 +138,16 @@
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="clearForm">Очистити</el-button>
+        <el-button @click="clearForm" :disabled="!form.isSave"
+          >Очистити</el-button
+        >
         <el-button @click="$emit('update:visible', false)">Вийти</el-button>
-        <el-button type="primary" @click="addTransaction">Зберегти</el-button>
+        <el-button
+          type="primary"
+          @click="addTransaction"
+          :disabled="!form.isSave"
+          >Зберегти</el-button
+        >
       </div>
     </template>
   </el-dialog>
@@ -145,6 +157,7 @@
 /* eslint-disable */
 
 import {
+  inject,
   reactive,
   defineProps,
   defineEmits,
@@ -152,9 +165,8 @@ import {
   watchEffect,
   computed,
   onUnmounted,
-  onUpdated,
-  inject,
   onActivated,
+  onUpdated,
 } from "vue";
 import { HTTP } from "@/hooks/http";
 import { useStore } from "vuex";
@@ -181,6 +193,7 @@ const form = reactive({
   tableOperation: [],
   propsCascader: { multiple: true, expandTrigger: "hover" },
   title: "",
+  isSave: true,
 });
 const selOperation = ref([]);
 
@@ -209,7 +222,6 @@ const addTransaction = async () => {
       _time: getTime.value,
       _comment: form.comment,
       _opers: groupOperation,
-      _curOperation: JSON.stringify(selOperation.value),
     });
 
     if (response.data.isSuccesfull) {
@@ -242,7 +254,6 @@ const changeTransaction = async () => {
       _time: getTime.value,
       _comment: form.comment,
       _opers: groupOperation,
-      _curOperation: JSON.stringify(selOperation.value),
     });
 
     if (response.data.isSuccesfull) {
@@ -257,38 +268,26 @@ const changeTransaction = async () => {
 };
 
 const loadOperation = (isRedactor = false) => {
-  const curRow = setting.value.tables["tabTransaction"].curRow;
+  const curTransaction = setting.value.tables["tabTransaction"].curRow;
 
-  form.tableOperation = selOperation.value.map((curOper, ind) => {
+  form.tableOperation = curTransaction.listOper.map((curOper) => {
     return {
-      nameOperation: [
-        form.options[curOper[0].num].label,
-        form.options[curOper[0].num].children[[curOper[1].num]].label,
-        form.options[curOper[0].num].children[[curOper[1].num]].children[
-          [curOper[2].num]
-        ].label,
-      ].join(" / "),
-      maxCount:
-        +curOper[2].dir == -1
-          ? form.options[curOper[0].num].children[[curOper[1].num]].children[
-              [curOper[2].num]
-            ].value.count
-          : 999999999,
-      curCount:
-        form.options[curOper[0].num].children[[curOper[1].num]].children[
-          [curOper[2].num]
-        ].value.count,
-      unit: curOper[2].unit,
-      count: isRedactor ? curRow.listOper[ind].count : 1,
-      price: curRow.listOper[ind].price,
+      nameOperation: [curOper.name_V, curOper.name_K, curOper.name_M].join(
+        " / "
+      ),
+      maxCount: +curOper.dir == -1 ? curOper.count : 999999999,
+      curCount: curOper.count,
+      unit: curOper.unit,
+      count: isRedactor ? curOper.count : 1,
+      price: curOper.price,
       summa: 0,
-      id_V: curOper[0].id,
-      id_K: curOper[1].id,
-      id_M: curOper[2].id,
+      id_V: curOper.id_V,
+      id_K: curOper.id_K,
+      id_M: curOper.id_M,
     };
   });
 
-  form.comment = curRow.comment;
+  form.comment = curTransaction.comment;
 };
 
 const addOperation = () => {
@@ -392,13 +391,8 @@ const startTimer = () => {
   }, 1000);
 };
 
-onActivated(async () => {});
-
-onUpdated(async () => {
-  await getOperation();
+onUpdated(() => {
   form.namePunkt = props.namePunkt;
-  form.date = form.curDate;
-  startTimer();
 
   switch (setting.value.dialog["editOperation"].initiator) {
     case "createOperation": {
@@ -406,6 +400,7 @@ onUpdated(async () => {
       form.tableOperation = [];
       selOperation.value = [];
       form.comment = "";
+      form.isSave = true;
       break;
     }
     case "copyOperation": {
@@ -413,6 +408,7 @@ onUpdated(async () => {
       const _tab = setting.value.tables["tabTransaction"];
 
       form.tableOperation = [];
+      form.isSave = true;
       selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       loadOperation();
       break;
@@ -422,11 +418,18 @@ onUpdated(async () => {
       const _tab = setting.value.tables["tabTransaction"];
 
       form.tableOperation = [];
+      form.isSave = false;
       selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       loadOperation(true);
       break;
     }
   }
+});
+
+onActivated(async () => {
+  await getOperation();
+  form.date = form.curDate;
+  startTimer();
 });
 
 onUnmounted(() => {

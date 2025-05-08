@@ -142,7 +142,7 @@
             <el-button
               size="small"
               @click="copyTransaction(scope.$index, scope.row)"
-              title="Створення транзакції за копією"
+              title="Створення транзакції за зразком"
             >
               <el-icon><CopyDocument /></el-icon>
             </el-button>
@@ -169,6 +169,7 @@ import {
   inject,
   ref,
   computed,
+  watch,
   onActivated,
   onUpdated,
   reactive,
@@ -196,6 +197,11 @@ const setPagination = reactive({
   total: 1,
 });
 const debouncedChange = ref();
+
+watch(
+  () => [activeName.value, setting.value.dialog["editOperation"].visible],
+  () => getTransaction()
+);
 
 const newOperation = () => {
   setting.value.dialog["editOperation"].initiator = "createOperation";
@@ -289,6 +295,8 @@ const getPunktCur = async () => {
 };
 
 const getTransaction = async () => {
+  if (setting.value.dialog["editOperation"].visible) return;
+
   try {
     const response = await HTTP.get("", {
       params: {
@@ -351,7 +359,7 @@ onActivated(async () => {
 });
 
 onUpdated(async () => {
-  await getTransaction();
+  //await getTransaction();
 });
 
 onUnmounted(() => {
