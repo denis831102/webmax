@@ -280,7 +280,10 @@ const loadOperation = (isRedactor = false) => {
       ),
       maxCount:
         +curOper.dir == -1 && curOper.id_V != 5 ? curOper.count : 999999999,
-      curCount: curOper.count,
+      curCount:
+        curOper.id_V == 4 || curOper.id_V == 5
+          ? curOper.count * curOper.price
+          : curOper.count,
       unit: curOper.unit,
       count: isRedactor ? curOper.count : 1,
       price: curOper.price,

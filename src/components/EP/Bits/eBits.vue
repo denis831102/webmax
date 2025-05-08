@@ -31,51 +31,57 @@
         </el-col>
       </el-row>
 
-      <el-table :data="filterTable">
-        <el-table-column type="expand">
-          <template #default="props">
-            <div style="padding: 20px; background: #c6e2ff69">
-              <h3 style="margin: 0px 0 10px 0">
-                <el-icon><PieChart /></el-icon>
-                <span style="margin-left: 5px">Залишки по категоріїї</span>
-                <el-check-tag type="primary">
-                  {{ props.row.name_K }}
-                </el-check-tag>
-              </h3>
-              <el-table
-                :data="props.row.listMater"
-                border="true"
-                style="margin-left: 5%; width: 80%"
-                show-summary
-              >
-                <el-table-column type="index" />
+      <el-row :gutter="20" style="margin: 0 20% 20px 20%">
+        <el-col :span="24">
+          <el-table :data="filterTable">
+            <el-table-column type="expand">
+              <template #default="props">
+                <div style="padding: 20px; background: #c6e2ff69">
+                  <h3 style="margin: 0px 0 10px 0">
+                    <el-icon><PieChart /></el-icon>
+                    <span style="margin-left: 5px">Залишки по категоріїї</span>
+                    <el-check-tag type="primary">
+                      {{ props.row.name_K }}
+                    </el-check-tag>
+                  </h3>
+                  <el-table
+                    :data="props.row.listMater"
+                    border="true"
+                    style="margin-left: 5%; width: 80%"
+                    show-summary
+                  >
+                    <el-table-column type="index" width="100" />
 
-                <el-table-column label="номенклатура" prop="name_M" />
+                    <el-table-column label="номенклатура" prop="name_M" />
 
-                <el-table-column label="кількість" width="100" prop="count">
-                  <template #default="props">
-                    <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
-                      {{ props.row.count }} {{ props.row.unit }}
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-          </template>
-        </el-table-column>
+                    <el-table-column label="кількість" width="150" prop="count">
+                      <template #default="props">
+                        <div
+                          style="padding: 5px 0 5px 10px; background: #c6e2ff69"
+                        >
+                          {{ props.row.count }} {{ props.row.unit }}
+                        </div>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </template>
+            </el-table-column>
 
-        <el-table-column type="index" />
+            <el-table-column type="index" />
 
-        <el-table-column label="Категорія" prop="name_K"> </el-table-column>
+            <el-table-column label="Категорія" prop="name_K"> </el-table-column>
 
-        <el-table-column label="Загальна кількість">
-          <template #default="props">
-            <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
-              {{ props.row.summa_K }}
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
+            <el-table-column label="Загальна кількість">
+              <template #default="props">
+                <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
+                  {{ props.row.summa_K }}
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
     </el-tab-pane>
   </el-tabs>
 </template>
