@@ -167,6 +167,9 @@ import {
   onUnmounted,
   onActivated,
   onUpdated,
+  onBeforeUpdate,
+  onMounted,
+  onBeforeMount,
 } from "vue";
 import { HTTP } from "@/hooks/http";
 import { useStore } from "vuex";
@@ -343,6 +346,8 @@ const handleClose = () => {
 };
 
 const getOperation = async () => {
+  if (!setting.value.dialog["editOperation"].visible) return;
+
   try {
     const response = await HTTP.get("", {
       params: {
@@ -391,8 +396,9 @@ const startTimer = () => {
   }, 1000);
 };
 
-onUpdated(() => {
+onUpdated(async () => {
   form.namePunkt = props.namePunkt;
+  await getOperation();
 
   switch (setting.value.dialog["editOperation"].initiator) {
     case "createOperation": {
@@ -427,7 +433,6 @@ onUpdated(() => {
 });
 
 onActivated(async () => {
-  await getOperation();
   form.date = form.curDate;
   startTimer();
 });

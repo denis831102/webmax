@@ -350,17 +350,15 @@ const formatDate = (valDate, mode = "ukr") => {
 
 onActivated(async () => {
   await getPunktCur();
-  activeName.value = punkts.value[0]["name"];
   await getTransaction();
+  activeName.value = punkts.value[0]["name"];
 
   debouncedChange.value = _.debounce(() => {
     getTransaction();
   }, 1000);
 });
 
-onUpdated(async () => {
-  //await getTransaction();
-});
+onUpdated(async () => {});
 
 onUnmounted(() => {
   debouncedChange.value.cancel();
