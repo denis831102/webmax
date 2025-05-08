@@ -278,7 +278,8 @@ const loadOperation = (isRedactor = false) => {
       nameOperation: [curOper.name_V, curOper.name_K, curOper.name_M].join(
         " / "
       ),
-      maxCount: +curOper.dir == -1 ? curOper.count : 999999999,
+      maxCount:
+        +curOper.dir == -1 && curOper.id_V != 5 ? curOper.count : 999999999,
       curCount: curOper.count,
       unit: curOper.unit,
       count: isRedactor ? curOper.count : 1,
@@ -297,6 +298,9 @@ const addOperation = () => {
   if (!selOperation.value.length) return;
 
   const curOper = selOperation.value[selOperation.value.length - 1];
+
+  console.log(curOper);
+
   const newOperation = [
     {
       nameOperation: [
@@ -307,7 +311,7 @@ const addOperation = () => {
         ].label,
       ].join(" / "),
       maxCount:
-        +curOper[2].dir == -1
+        +curOper[2].dir == -1 && curOper[0].id != 5
           ? form.options[curOper[0].num].children[[curOper[1].num]].children[
               [curOper[2].num]
             ].value.count
