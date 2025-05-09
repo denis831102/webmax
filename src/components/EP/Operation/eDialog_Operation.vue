@@ -141,13 +141,8 @@
         <el-button @click="clearForm" :disabled="!form.isSave"
           >Очистити</el-button
         >
-        <el-button @click="$emit('update:visible', false)">Вийти</el-button>
-        <el-button
-          type="primary"
-          @click="addTransaction"
-          :disabled="!form.isSave"
-          >Зберегти</el-button
-        >
+        <el-button @click="closeForm">Вийти</el-button>
+        <el-button type="primary" @click="saveTransaction">Зберегти</el-button>
       </div>
     </template>
   </el-dialog>
@@ -197,6 +192,9 @@ const form = reactive({
   propsCascader: { multiple: true, expandTrigger: "hover" },
   title: "",
   isSave: true,
+  delOperation: [],
+  addOperation: [],
+  chnOperation: [],
 });
 const selOperation = ref([]);
 
@@ -205,6 +203,17 @@ watchEffect(() => {
     el.summa = (el.count * el.price).toFixed(2);
   });
 });
+
+const saveTransaction = () => {
+  form.isSave ? addTransaction() : changeTransaction();
+};
+
+const closeForm = () => {
+  form.delOperation = [];
+  form.addOperation = [];
+  form.chnOperation = [];
+  emit("update:visible", false);
+};
 
 const addTransaction = async () => {
   try {
@@ -240,23 +249,45 @@ const addTransaction = async () => {
 
 const changeTransaction = async () => {
   try {
-    const groupOperation = form.tableOperation.map((oper) => {
-      return {
-        id_V: oper.id_V,
-        id_M: oper.id_M,
-        count: oper.count,
-        price: oper.price,
-      };
+    let id_T = 0;
+
+    form.tableOperation.forEach((oper) => {
+      if (oper.mode == "add") {
+        form.addOperation.push({
+          id_V: oper.id_V,
+          id_M: oper.id_M,
+          count: oper.count,
+          price: oper.price,
+        });
+      } else {
+        let dCount = oper.count - oper.old.count,
+          dPrice = oper.price - oper.old.price;
+
+        id_T = oper.id_T;
+
+        if (dCount != 0 || dPrice != 0) {
+          form.chnOperation.push({
+            id_O: oper.id_O,
+            id_V: oper.id_V,
+            id_M: oper.id_M,
+            count: dCount,
+            price: dPrice,
+          });
+        }
+      }
     });
 
     const response = await HTTP.post("", {
       _method: "changeTransaction",
       _idUser: getCurUser.value.id,
       _idPunkt: props.idPunkt,
+      _id_T: id_T,
       _date: form.date,
       _time: getTime.value,
       _comment: form.comment,
-      _opers: groupOperation,
+      _opersDel: form.delOperation,
+      _opersAdd: form.addOperation,
+      _opersChn: form.chnOperation,
     });
 
     if (response.data.isSuccesfull) {
@@ -285,9 +316,18 @@ const loadOperation = (isRedactor = false) => {
           ? curOper.count * curOper.price
           : curOper.count,
       unit: curOper.unit,
+      mode: "change",
+
       count: isRedactor ? curOper.count : 1,
       price: curOper.price,
       summa: 0,
+      old: {
+        count: isRedactor ? curOper.count : 1,
+        price: curOper.price,
+      },
+
+      id_T: curTransaction.id_T,
+      id_O: curOper.id_O,
       id_V: curOper.id_V,
       id_K: curOper.id_K,
       id_M: curOper.id_M,
@@ -304,42 +344,52 @@ const addOperation = () => {
 
   console.log(curOper);
 
-  const newOperation = [
-    {
-      nameOperation: [
-        form.options[curOper[0].num].label,
-        form.options[curOper[0].num].children[[curOper[1].num]].label,
-        form.options[curOper[0].num].children[[curOper[1].num]].children[
-          [curOper[2].num]
-        ].label,
-      ].join(" / "),
-      maxCount:
-        +curOper[2].dir == -1 && curOper[0].id != 5
-          ? form.options[curOper[0].num].children[[curOper[1].num]].children[
-              [curOper[2].num]
-            ].value.count
-          : 999999999,
-      curCount:
-        form.options[curOper[0].num].children[[curOper[1].num]].children[
-          [curOper[2].num]
-        ].value.count,
-      unit: curOper[2].unit,
-      count: 1,
-      price: 1,
-      summa: 0,
-      id_V: curOper[0].id,
-      id_K: curOper[1].id,
-      id_M: curOper[2].id,
-    },
-  ];
-  form.tableOperation = [...form.tableOperation, ...newOperation];
+  const newOperation = {
+    nameOperation: [
+      form.options[curOper[0].num].label,
+      form.options[curOper[0].num].children[[curOper[1].num]].label,
+      form.options[curOper[0].num].children[[curOper[1].num]].children[
+        [curOper[2].num]
+      ].label,
+    ].join(" / "),
+    maxCount:
+      +curOper[2].dir == -1 && curOper[0].id != 5
+        ? form.options[curOper[0].num].children[[curOper[1].num]].children[
+            [curOper[2].num]
+          ].value.count
+        : 999999999,
+    curCount:
+      form.options[curOper[0].num].children[[curOper[1].num]].children[
+        [curOper[2].num]
+      ].value.count,
+    unit: curOper[2].unit,
+    mode: "add",
+
+    count: 1,
+    price: 1,
+    summa: 0,
+
+    id_V: curOper[0].id,
+    id_K: curOper[1].id,
+    id_M: curOper[2].id,
+  };
+  // form.tableOperation = [...form.tableOperation, ...newOperation];
+  form.tableOperation.push(newOperation);
 };
 
 const delOperation = (row) => {
-  form.tableOperation = form.tableOperation.filter(
-    (el) => el.nameOperation != row.nameOperation
-    //(el) => el.id_V != row.id_V && el.id_K != row.id_K && el.id_M != row.id_M
-  );
+  form.tableOperation = form.tableOperation.filter((el) => {
+    const isAdd = el.id_V != row.id_V || el.id_M != row.id_M;
+    if (!isAdd && el.mode == "change")
+      form.delOperation.push({
+        id_O: el.id_O,
+        id_M: el.id_M,
+        id_V: el.id_V,
+        count: el.count,
+        price: el.price,
+      });
+    return isAdd;
+  });
 };
 
 const clearForm = () => {
@@ -405,6 +455,7 @@ const startTimer = () => {
 
 onUpdated(async () => {
   form.namePunkt = props.namePunkt;
+  form.date = form.curDate;
   await getOperation();
 
   switch (setting.value.dialog["editOperation"].initiator) {
@@ -440,7 +491,6 @@ onUpdated(async () => {
 });
 
 onActivated(async () => {
-  form.date = form.curDate;
   startTimer();
 });
 
