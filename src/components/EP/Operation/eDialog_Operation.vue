@@ -49,6 +49,7 @@
       <el-form-item style="box-shadow: 0px -1px 6px 2px #b0b3b7">
         <el-table
           :data="form.tableOperation"
+          :default-sort="{ prop: 'id', order: 'ascending' }"
           show-summary
           border="true"
           height="300"
@@ -304,7 +305,7 @@ const changeTransaction = async () => {
 const loadOperation = (isRedactor = false) => {
   const curTransaction = setting.value.tables["tabTransaction"].curRow;
 
-  form.tableOperation = curTransaction.listOper.map((curOper) => {
+  form.tableOperation = curTransaction.listOper.map((curOper, ind) => {
     return {
       nameOperation: [curOper.name_V, curOper.name_K, curOper.name_M].join(
         " / "
@@ -331,6 +332,7 @@ const loadOperation = (isRedactor = false) => {
       id_V: curOper.id_V,
       id_K: curOper.id_K,
       id_M: curOper.id_M,
+      id: ind,
     };
   });
 

@@ -141,6 +141,7 @@
             </el-button>
             <el-button
               size="small"
+              type="success"
               @click="copyTransaction(scope.$index, scope.row)"
               title="Створення транзакції за зразком"
             >
