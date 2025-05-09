@@ -218,7 +218,7 @@ const closeForm = () => {
 };
 
 const clearInp = (event) => {
-  if (form.isSave) event.target.value = "";
+  if (form.isSave && +event.target.value == 0) event.target.value = "";
 };
 
 const addTransaction = async () => {
