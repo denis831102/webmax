@@ -47,10 +47,10 @@
                   <el-table
                     :data="props.row.listMater"
                     border="true"
-                    style="margin-left: 5%; width: 80%"
+                    style="margin-left: 2%; width: 98%"
                     show-summary
                   >
-                    <el-table-column type="index" width="100" />
+                    <el-table-column type="index" width="60" />
 
                     <el-table-column label="номенклатура" prop="name_M" />
 

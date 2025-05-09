@@ -234,7 +234,7 @@ const addTransaction = async () => {
       ElMessage.error(response.data.message);
     }
   } catch (e) {
-    ElMessage.error("Помилка збереження операцій");
+    ElMessage.error("Помилка збереження транзакції");
   }
 };
 
@@ -266,7 +266,7 @@ const changeTransaction = async () => {
       ElMessage.error(response.data.message);
     }
   } catch (e) {
-    ElMessage.error("Помилка збереження операцій");
+    ElMessage.error("Помилка редагування транзакції");
   }
 };
 
