@@ -312,10 +312,10 @@ const loadOperation = (isRedactor = false) => {
       ),
       maxCount:
         +curOper.dir == -1 && curOper.id_V != 5 ? curOper.count : 999999999,
-      curCount:
-        curOper.id_V == 4 || curOper.id_V == 5
-          ? curOper.count * curOper.price
-          : curOper.count,
+      curCount: curOper.countBits,
+      // curOper.id_V == 4 || curOper.id_V == 5
+      //   ? curOper.count * curOper.price
+      //   : curOper.countBits,
       unit: curOper.unit,
       mode: "change",
 
@@ -459,6 +459,7 @@ onUpdated(async () => {
   form.namePunkt = props.namePunkt;
   form.date = form.curDate;
   await getOperation();
+  startTimer();
 
   switch (setting.value.dialog["editOperation"].initiator) {
     case "createOperation": {
@@ -492,9 +493,7 @@ onUpdated(async () => {
   }
 });
 
-onActivated(async () => {
-  startTimer();
-});
+onActivated(async () => {});
 
 onUnmounted(() => {
   clearInterval(form.timer);
