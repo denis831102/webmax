@@ -89,6 +89,7 @@
                 :max="props.row.maxCount"
                 :min="0"
                 size="small"
+                @focus="clearInp"
                 style="width: 95%; height: 40px"
               />
             </template>
@@ -216,6 +217,10 @@ const closeForm = () => {
   emit("update:visible", false);
 };
 
+const clearInp = (event) => {
+  if (form.isSave) event.target.value = "";
+};
+
 const addTransaction = async () => {
   try {
     const groupOperation = form.tableOperation.map((oper) => {
@@ -320,7 +325,7 @@ const loadOperation = (isRedactor = false) => {
       price: curOper.price,
       summa: 0,
       old: {
-        count: isRedactor ? curOper.count : 1,
+        count: isRedactor ? curOper.count : 0,
         price: curOper.price,
       },
 
