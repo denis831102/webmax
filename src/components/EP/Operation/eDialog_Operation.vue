@@ -369,7 +369,7 @@ const addOperation = () => {
     unit: curOper[2].unit,
     mode: "add",
 
-    count: 1,
+    count: 0,
     price: 1,
     summa: 0,
 
