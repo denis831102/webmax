@@ -206,19 +206,117 @@ watchEffect(() => {
   });
 });
 
+const getOperation = async () => {
+  if (!setting.value.dialog["editOperation"].visible) return;
+
+  try {
+    const response = await HTTP.get("", {
+      params: {
+        _method: "getOperation",
+        _id_U: getCurUser.value.id,
+        _id_P: props.idPunkt,
+      },
+    });
+
+    form.options = response.data;
+    // ElMessage.success("Операції оновлені");
+  } catch (e) {
+    ElMessage("Помилка завантаження операцій");
+  }
+};
+
+const loadOperation = (isRedactor = false) => {
+  const curTransaction = setting.value.tables["tabTransaction"].curRow;
+
+  form.tableOperation = curTransaction.listOper.map((curOper, ind) => {
+    return {
+      nameOperation: [curOper.name_V, curOper.name_K, curOper.name_M].join(
+        " / "
+      ),
+      maxCount:
+        +curOper.dir == -1 && curOper.id_V != 5 ? curOper.count : 999999999,
+      curCount: curOper.countBits,
+      unit: curOper.unit,
+      mode: "change",
+
+      count: isRedactor ? curOper.count : 0,
+      price: curOper.price,
+      summa: 0,
+      old: {
+        count: isRedactor ? curOper.count : 0,
+        price: curOper.price,
+      },
+
+      id_T: curTransaction.id_T,
+      id_O: curOper.id_O,
+      id_V: curOper.id_V,
+      id_K: curOper.id_K,
+      id_M: curOper.id_M,
+      id: ind,
+    };
+  });
+
+  form.comment = curTransaction.comment;
+};
+
+const addOperation = () => {
+  if (!selOperation.value.length) return;
+
+  const curOper = selOperation.value[selOperation.value.length - 1];
+
+  const newOperation = {
+    nameOperation: [
+      form.options[curOper[0].num].label,
+      form.options[curOper[0].num].children[[curOper[1].num]].label,
+      form.options[curOper[0].num].children[[curOper[1].num]].children[
+        [curOper[2].num]
+      ].label,
+    ].join(" / "),
+    maxCount:
+      +curOper[2].dir == -1 && curOper[0].id != 5
+        ? form.options[curOper[0].num].children[[curOper[1].num]].children[
+            [curOper[2].num]
+          ].value.count
+        : 999999999,
+    curCount:
+      form.options[curOper[0].num].children[[curOper[1].num]].children[
+        [curOper[2].num]
+      ].value.count,
+    unit: curOper[2].unit,
+    mode: "add",
+
+    count: 0,
+    price: 1,
+    summa: 0,
+
+    id_V: curOper[0].id,
+    id_K: curOper[1].id,
+    id_M: curOper[2].id,
+  };
+  // form.tableOperation = [...form.tableOperation, ...newOperation];
+  form.tableOperation.push(newOperation);
+};
+
+const delOperation = (row) => {
+  form.tableOperation = form.tableOperation.filter((el) => {
+    const isAdd = el.id_V != row.id_V || el.id_M != row.id_M;
+
+    if (!isAdd && el.mode == "change") {
+      form.delOperation.push({
+        id_O: el.id_O,
+        id_M: el.id_M,
+        id_V: el.id_V,
+        count: el.count,
+        price: el.price,
+      });
+    }
+
+    return isAdd;
+  });
+};
+
 const saveTransaction = () => {
   form.isSave ? addTransaction() : changeTransaction();
-};
-
-const closeForm = () => {
-  form.delOperation = [];
-  form.addOperation = [];
-  form.chnOperation = [];
-  emit("update:visible", false);
-};
-
-const clearInp = (event) => {
-  if (form.isSave && +event.target.value == 0) event.target.value = "";
 };
 
 const addTransaction = async () => {
@@ -307,93 +405,15 @@ const changeTransaction = async () => {
   }
 };
 
-const loadOperation = (isRedactor = false) => {
-  const curTransaction = setting.value.tables["tabTransaction"].curRow;
-
-  form.tableOperation = curTransaction.listOper.map((curOper, ind) => {
-    return {
-      nameOperation: [curOper.name_V, curOper.name_K, curOper.name_M].join(
-        " / "
-      ),
-      maxCount:
-        +curOper.dir == -1 && curOper.id_V != 5 ? curOper.count : 999999999,
-      curCount: curOper.countBits,
-      unit: curOper.unit,
-      mode: "change",
-
-      count: isRedactor ? curOper.count : 0,
-      price: curOper.price,
-      summa: 0,
-      old: {
-        count: isRedactor ? curOper.count : 0,
-        price: curOper.price,
-      },
-
-      id_T: curTransaction.id_T,
-      id_O: curOper.id_O,
-      id_V: curOper.id_V,
-      id_K: curOper.id_K,
-      id_M: curOper.id_M,
-      id: ind,
-    };
-  });
-
-  form.comment = curTransaction.comment;
+const closeForm = () => {
+  form.delOperation = [];
+  form.addOperation = [];
+  form.chnOperation = [];
+  emit("update:visible", false);
 };
 
-const addOperation = () => {
-  if (!selOperation.value.length) return;
-
-  const curOper = selOperation.value[selOperation.value.length - 1];
-
-  console.log(curOper);
-
-  const newOperation = {
-    nameOperation: [
-      form.options[curOper[0].num].label,
-      form.options[curOper[0].num].children[[curOper[1].num]].label,
-      form.options[curOper[0].num].children[[curOper[1].num]].children[
-        [curOper[2].num]
-      ].label,
-    ].join(" / "),
-    maxCount:
-      +curOper[2].dir == -1 && curOper[0].id != 5
-        ? form.options[curOper[0].num].children[[curOper[1].num]].children[
-            [curOper[2].num]
-          ].value.count
-        : 999999999,
-    curCount:
-      form.options[curOper[0].num].children[[curOper[1].num]].children[
-        [curOper[2].num]
-      ].value.count,
-    unit: curOper[2].unit,
-    mode: "add",
-
-    count: 0,
-    price: 1,
-    summa: 0,
-
-    id_V: curOper[0].id,
-    id_K: curOper[1].id,
-    id_M: curOper[2].id,
-  };
-  // form.tableOperation = [...form.tableOperation, ...newOperation];
-  form.tableOperation.push(newOperation);
-};
-
-const delOperation = (row) => {
-  form.tableOperation = form.tableOperation.filter((el) => {
-    const isAdd = el.id_V != row.id_V || el.id_M != row.id_M;
-    if (!isAdd && el.mode == "change")
-      form.delOperation.push({
-        id_O: el.id_O,
-        id_M: el.id_M,
-        id_V: el.id_V,
-        count: el.count,
-        price: el.price,
-      });
-    return isAdd;
-  });
+const clearInp = (event) => {
+  if (form.isSave && +event.target.value == 0) event.target.value = "";
 };
 
 const clearForm = () => {
@@ -404,25 +424,6 @@ const clearForm = () => {
 
 const handleClose = () => {
   emit("update:visible", false);
-};
-
-const getOperation = async () => {
-  if (!setting.value.dialog["editOperation"].visible) return;
-
-  try {
-    const response = await HTTP.get("", {
-      params: {
-        _method: "getOperation",
-        _id_U: getCurUser.value.id,
-        _id_P: props.idPunkt,
-      },
-    });
-
-    form.options = response.data;
-    ElMessage.success("Операції оновлені");
-  } catch (e) {
-    ElMessage("Помилка завантаження операцій");
-  }
 };
 
 const getDate = computed(() => {

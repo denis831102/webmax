@@ -131,7 +131,7 @@ const getPunktCur = async () => {
     });
 
     punkts.value = response.data;
-    ElMessage.success("Пункти поточного користувача оновлені");
+    // ElMessage.success("Пункти поточного користувача оновлені");
   } catch (e) {
     ElMessage("Помилка завантаження пунктів");
   }

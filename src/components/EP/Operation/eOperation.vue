@@ -17,51 +17,113 @@
       <el-space :size="10" style="margin: -15px 0 10px 0">
         <el-card>
           <el-space :size="10">
-            <el-switch v-model="isPeriod" @change="getTransaction" />
-            <el-date-picker
-              v-model="valueDate"
-              type="daterange"
-              format="DD.MM.YYYY"
-              :start-placeholder="getDate"
-              :end-placeholder="getDate"
-              :disabled="!isPeriod"
-              @change="getTransaction"
-              style="width: 230px"
-            />
+            <div class="statistic-card">
+              <el-statistic
+                :value="kassa"
+                title="New transactions today"
+                precision="2"
+                group-separator=" "
+              >
+                <template #title>
+                  <div style="display: inline-flex; align-items: center">
+                    Загальна каса, грн.
+                  </div>
+                </template>
+              </el-statistic>
+              <div class="statistic-footer">
+                <div class="footer-item">
+                  <span>за період </span>
+                  <span class="green">
+                    16%
+                    <el-icon>
+                      <CaretTop />
+                    </el-icon>
+                  </span>
+                </div>
+              </div>
+            </div>
           </el-space>
         </el-card>
 
-        <el-card>
-          <el-space :size="10">
-            <el-input
-              v-model="search"
-              size="large"
-              style="width: 100%"
-              placeholder="Пошук по коментарю"
-              @input="debouncedChange"
-              :prefix-icon="Search"
-            />
-            <el-button-group class="ml-4">
-              <el-button
-                type="primary"
-                :icon="HomeFilled"
-                @click="newOperation()"
-                >Нова операція
-              </el-button>
-              <el-button
-                type="primary"
-                plain
-                :icon="Refresh"
-                @click="getTransaction()"
-              >
-                Оновити
-              </el-button>
-            </el-button-group>
-          </el-space>
+        <el-card
+          v-if="setting.displaySize == 'large'"
+          style="padding: 15px; 0px"
+        >
+          <el-row :gutter="10">
+            <el-col :span="3">
+              <el-switch v-model="isPeriod" @change="getTransaction" />
+            </el-col>
+
+            <el-col :span="8">
+              <el-date-picker
+                v-model="valueDate"
+                type="daterange"
+                format="DD.MM.YYYY"
+                :start-placeholder="getDate"
+                :end-placeholder="getDate"
+                :disabled="!isPeriod"
+                @change="getTransaction"
+                style="width: 210px; padding: 20px 10px; margin-left: -15px"
+              />
+            </el-col>
+
+            <el-col :span="2"> </el-col>
+
+            <el-col :span="11">
+              <el-input
+                v-model="search"
+                size="large"
+                style="width: 100%"
+                placeholder="Пошук за коментарем"
+                @input="debouncedChange"
+                :prefix-icon="Search"
+              />
+            </el-col>
+          </el-row>
         </el-card>
+
+        <el-button-group class="ml-4">
+          <el-button
+            v-if="setting.displaySize == 'small'"
+            type="warning"
+            :icon="HomeFilled"
+            style="width: 110px"
+            @click="loadFiltr"
+            >Фільтр
+          </el-button>
+
+          <!-- <el-popconfirm
+          v-if="setting.displaySize == 'small'"
+            class="box-item"
+            title="Bottom Right prompts info"
+            placement="Фільтр"
+          >
+            <template #reference>
+              <el-switch v-model="isPeriod" @change="getTransaction" />
+            </template>
+          </el-popconfirm> -->
+
+          <el-button
+            type="primary"
+            :icon="HomeFilled"
+            style="width: 110px"
+            @click="newTransaction()"
+            >Нова операція
+          </el-button>
+
+          <el-button
+            type="primary"
+            plain
+            :icon="Refresh"
+            style="width: 110px"
+            @click="getTransaction()"
+          >
+            Оновити
+          </el-button>
+        </el-button-group>
       </el-space>
 
-      <el-table :data="filterTable">
+      <el-table :data="filterTable" v-loading="loading">
         <el-table-column type="expand">
           <template #default="props">
             <div style="padding: 20px; background: #c6e2ff69">
@@ -177,10 +239,16 @@ import {
   onUpdated,
   reactive,
   onUnmounted,
+  h,
 } from "vue";
 import { useStore } from "vuex";
-import { Search, Calendar } from "@element-plus/icons-vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { Search, Calendar, CaretTop } from "@element-plus/icons-vue";
+import {
+  ElMessage,
+  ElMessageBox,
+  ElNotification,
+  ElSwitch,
+} from "element-plus";
 import eDialog_Operation from "@/components/EP/Operation/eDialog_Operation";
 import { HTTP } from "@/hooks/http";
 import * as _ from "lodash";
@@ -200,13 +268,65 @@ const setPagination = reactive({
   total: 1,
 });
 const debouncedChange = ref();
+const loading = ref(true);
+const kassa = ref(0);
 
 watch(
   () => [activeName.value, setting.value.dialog["editOperation"].visible],
   () => getTransaction()
 );
 
-const newOperation = () => {
+const getPunktCur = async () => {
+  try {
+    const response = await HTTP.get("", {
+      params: {
+        _method: "getPunktCur",
+        _id_U: getCurUser.value.id,
+      },
+    });
+
+    punkts.value = response.data;
+    // ElMessage.success("Пункти поточного користувача оновлені");
+  } catch (e) {
+    ElMessage("Помилка завантаження пунктів");
+  }
+};
+
+const getTransaction = async () => {
+  if (setting.value.dialog["editOperation"].visible) return;
+
+  try {
+    loading.value = true;
+    const response = await HTTP.get("", {
+      params: {
+        _method: "getTransaction",
+        _id_U: getCurUser.value.id,
+        _id_P: activeIdPunkt.value,
+        _currentPage: setPagination.currentPage,
+        _sizePage: setPagination.sizePage,
+        _date_l: formatDate(valueDate.value[0], "eng"),
+        _date_r: formatDate(valueDate.value[1], "eng"),
+        _isPeriod: isPeriod.value ? 1 : 0,
+        _search: search.value.toLowerCase(),
+      },
+    });
+
+    setting.value.tables["tabTransaction"].data = response.data.ar_data;
+    setPagination.total = response.data.total;
+    kassa.value = response.data.kassa;
+    loading.value = false;
+
+    ElMessage.success(
+      response.data.total > 0
+        ? `Транзакції для ${getCurUser.value.PIB.toUpperCase()} оновлені`
+        : `Транзакції для ${getCurUser.value.PIB.toUpperCase()} відсутні`
+    );
+  } catch (e) {
+    ElMessage.error("Помилка завантаження транзакцій");
+  }
+};
+
+const newTransaction = () => {
   setting.value.dialog["editOperation"].initiator = "createOperation";
   setting.value.dialog["editOperation"].visible = true;
 };
@@ -281,53 +401,6 @@ const activeIdPunkt = computed(() => {
   return punkts.value.length && punkt ? punkt.id : 0;
 });
 
-const getPunktCur = async () => {
-  try {
-    const response = await HTTP.get("", {
-      params: {
-        _method: "getPunktCur",
-        _id_U: getCurUser.value.id,
-      },
-    });
-
-    punkts.value = response.data;
-    ElMessage.success("Пункти поточного користувача оновлені");
-  } catch (e) {
-    ElMessage("Помилка завантаження пунктів");
-  }
-};
-
-const getTransaction = async () => {
-  if (setting.value.dialog["editOperation"].visible) return;
-
-  try {
-    const response = await HTTP.get("", {
-      params: {
-        _method: "getTransaction",
-        _id_U: getCurUser.value.id,
-        _id_P: activeIdPunkt.value,
-        _currentPage: setPagination.currentPage,
-        _sizePage: setPagination.sizePage,
-        _date_l: formatDate(valueDate.value[0], "eng"),
-        _date_r: formatDate(valueDate.value[1], "eng"),
-        _isPeriod: isPeriod.value ? 1 : 0,
-        _search: search.value.toLowerCase(),
-      },
-    });
-
-    setting.value.tables["tabTransaction"].data = response.data.ar_data;
-    setPagination.total = response.data.total;
-
-    ElMessage.success(
-      response.data.total > 0
-        ? `Транзакції для ${getCurUser.value.PIB.toUpperCase()} оновлені`
-        : `Транзакції для ${getCurUser.value.PIB.toUpperCase()} відсутні`
-    );
-  } catch (e) {
-    ElMessage.error("Помилка завантаження транзакцій");
-  }
-};
-
 const getDate = computed(() => {
   return formatDate(curDate.value);
 });
@@ -349,6 +422,20 @@ const formatDate = (valDate, mode = "ukr") => {
         (date.m < 10 ? "0" : "") + date.m,
         (date.d < 10 ? "0" : "") + date.d,
       ].join("-");
+};
+
+const loadFiltr = () => {
+  const checked = ref(false);
+  ElNotification({
+    title: "Use Vnode",
+    message: () =>
+      h(ElSwitch, {
+        modelValue: checked.value,
+        "onUpdate:modelValue": (val) => {
+          checked.value = val;
+        },
+      }),
+  });
 };
 
 onActivated(async () => {
@@ -381,5 +468,58 @@ onUnmounted(() => {
 .demo-tabs .custom-tabs-label span {
   vertical-align: middle;
   margin-left: 4px;
+}
+
+.el-statistic {
+  --el-statistic-content-font-size: 28px;
+}
+
+.statistic-card {
+  height: 100%;
+  padding: 0px;
+  border-radius: 4px;
+  background-color: var(--el-bg-color-overlay);
+}
+
+.statistic-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--el-text-color-regular);
+  margin-top: 5px;
+}
+
+.statistic-footer .footer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statistic-footer .footer-item span:last-child {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 5px;
+}
+
+.green {
+  color: var(--el-color-success);
+}
+.red {
+  color: var(--el-color-error);
+}
+
+.el-row {
+  margin-bottom: 8px;
+}
+
+.el-card.panel {
+  height: 120px;
+}
+
+.popconfirm-base-box .box-item {
+  width: 110px;
+  margin-top: 10px;
 }
 </style>

@@ -9,7 +9,7 @@
         style="min-height: 500px; width: 100%; margin-top: 0px"
       >
         <el-container class="layout-container-demo" style="min-height: 500px">
-          <el-aside width="250" v-if="isLeftMenu">
+          <el-aside width="250" v-if="setting.displaySize == 'large'">
             <eMenu mode="vertical" />
           </el-aside>
 
@@ -72,7 +72,7 @@ import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
 
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
-const isLeftMenu = ref(true);
+// const isLeftMenu = ref(true);
 // const mode = ref("vertical");
 // const open = (obj) => {
 //   ElNotification({
@@ -85,6 +85,7 @@ const isLeftMenu = ref(true);
 const setting = ref({
   name: "Денис і Євгенія Ратови",
   titleTable: "",
+  displaySize: "large",
   dialog: {
     user: { visible: false },
     editUser: { visible: false, initiator: "" },
@@ -160,7 +161,8 @@ const curComponent = computed(() => {
 });
 
 const onResize = () => {
-  isLeftMenu.value = document.documentElement.clientWidth >= 1000;
+  setting.value.displaySize =
+    document.documentElement.clientWidth >= 1000 ? "large" : "small";
 };
 
 onMounted(() => {
