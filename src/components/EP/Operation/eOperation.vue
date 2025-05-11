@@ -92,17 +92,6 @@
             >Фільтр
           </el-button>
 
-          <!-- <el-popconfirm
-          v-if="setting.displaySize == 'small'"
-            class="box-item"
-            title="Bottom Right prompts info"
-            placement="Фільтр"
-          >
-            <template #reference>
-              <el-switch v-model="isPeriod" @change="getTransaction" />
-            </template>
-          </el-popconfirm> -->
-
           <el-button
             type="primary"
             :icon="HomeFilled"
@@ -142,7 +131,7 @@
                 style="background: #c6e2ff"
                 show-summary
               >
-                <el-table-column label="категорія" prop="name_K" />
+                <el-table-column label="вид операції" prop="name_V" />
                 <el-table-column label="номенклатура" prop="name_M" />
                 <el-table-column label="кількість" prop="count">
                   <template #default="props">
@@ -248,6 +237,8 @@ import {
   ElMessageBox,
   ElNotification,
   ElSwitch,
+  ElDatePicker,
+  ElInput,
 } from "element-plus";
 import eDialog_Operation from "@/components/EP/Operation/eDialog_Operation";
 import { HTTP } from "@/hooks/http";
@@ -425,16 +416,47 @@ const formatDate = (valDate, mode = "ukr") => {
 };
 
 const loadFiltr = () => {
-  const checked = ref(false);
   ElNotification({
-    title: "Use Vnode",
-    message: () =>
+    title: "Фільтр",
+    message: () => [
       h(ElSwitch, {
-        modelValue: checked.value,
+        modelValue: isPeriod.value,
         "onUpdate:modelValue": (val) => {
-          checked.value = val;
+          isPeriod.value = val;
+        },
+        onChange: () => {
+          getTransaction();
         },
       }),
+      h(ElDatePicker, {
+        modelValue: valueDate.value,
+        "onUpdate:modelValue": (val) => {
+          valueDate.value = val;
+        },
+        type: "daterange",
+        format: "DD.MM.YYYY",
+        "start-placeholder": getDate.value,
+        "end-placeholder": getDate.value,
+        disabled: !isPeriod.value,
+        style: "width: 210px; padding: 20px 10px; margin-left: 15px",
+        onChange: () => {
+          getTransaction();
+        },
+      }),
+      h(ElInput, {
+        modelValue: search.value,
+        "onUpdate:modelValue": (val) => {
+          search.value = val;
+        },
+        size: "large",
+        placeholder: "Пошук за коментарем",
+        "prefix-icon": Search,
+        style: "width: 100%; margin-top:15px;",
+        onInput: () => {
+          debouncedChange.value();
+        },
+      }),
+    ],
   });
 };
 

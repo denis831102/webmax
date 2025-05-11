@@ -59,7 +59,10 @@
                         <div
                           style="padding: 5px 0 5px 10px; background: #c6e2ff69"
                         >
-                          {{ props.row.count }} {{ props.row.unit }}
+                          {{
+                            parseFloat(props.row.count).toLocaleString("ru")
+                          }}
+                          {{ props.row.unit }}
                         </div>
                       </template>
                     </el-table-column>
@@ -75,7 +78,7 @@
             <el-table-column label="Загальна кількість">
               <template #default="props">
                 <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
-                  {{ props.row.summa_K }}
+                  {{ parseFloat(props.row.summa_K).toLocaleString("ru") }}
                 </div>
               </template>
             </el-table-column>
