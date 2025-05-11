@@ -167,7 +167,12 @@
         <el-table-column label="Сума" prop="suma" width="150">
           <template #default="scope">
             <div style="display: flex; align-items: center">
-              <span style="margin-left: 10px">{{ scope.row.suma }} грн.</span>
+              <span style="margin-left: 10px"
+                >{{
+                  parseFloat(scope.row.suma).toLocaleString("ua")
+                }}
+                грн.</span
+              >
             </div>
           </template>
         </el-table-column>
