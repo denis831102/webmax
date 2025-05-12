@@ -105,9 +105,13 @@
                 :step="1"
                 :min="0"
                 size="small"
-                style="width: 95%; height: 40px"
+                style="height: 40px"
+                :class="{ clWidth: getSettingUser.colOper == 'price' }"
               />
-              <div v-else>
+              <div
+                :class="{ clWidth: getSettingUser.colOper == 'price' }"
+                v-else
+              >
                 {{ props.row.price }}
               </div>
             </template>
@@ -122,9 +126,13 @@
                 :step="1"
                 :min="0"
                 size="small"
-                style="width: 95%; height: 40px"
+                style="height: 40px"
+                :class="{ clWidth: getSettingUser.colOper == 'summa' }"
               />
-              <div v-else>
+              <div
+                :class="{ clWidth: getSettingUser.colOper == 'summa' }"
+                v-else
+              >
                 {{ props.row.summa }}
               </div>
             </template>
@@ -519,3 +527,8 @@ onUnmounted(() => {
   clearInterval(form.timer);
 });
 </script>
+<style>
+.clWidth {
+  width: 95%;
+}
+</style>
