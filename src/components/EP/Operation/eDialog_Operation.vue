@@ -59,7 +59,7 @@
           <el-table-column
             prop="nameOperation"
             label="Операція"
-            width="190"
+            width="175"
             sortable
           >
             <template #default="props">
@@ -99,6 +99,7 @@
           <el-table-column label="Ціна одиниці" prop="price" sortable>
             <template #default="props">
               <el-input-number
+                v-if="getSettingUser.colOper == 'price'"
                 v-model="props.row.price"
                 :precision="3"
                 :step="1"
@@ -106,12 +107,26 @@
                 size="small"
                 style="width: 95%; height: 40px"
               />
+              <div v-else>
+                {{ props.row.price }}
+              </div>
             </template>
           </el-table-column>
 
-          <el-table-column label="Сума" prop="summa" width="80" sortable>
+          <el-table-column label="Сума" prop="summa" sortable>
             <template #default="props">
-              {{ props.row.summa }}
+              <el-input-number
+                v-if="getSettingUser.colOper == 'summa'"
+                v-model="props.row.summa"
+                :precision="3"
+                :step="1"
+                :min="0"
+                size="small"
+                style="width: 95%; height: 40px"
+              />
+              <div v-else>
+                {{ props.row.summa }}
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -182,6 +197,7 @@ const props = defineProps({
 const emit = defineEmits([]);
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
+const getSettingUser = computed(() => store.getters.getSettingUser);
 const setting = inject("setting");
 const form = reactive({
   nameUser: getCurUser.value.PIB,
