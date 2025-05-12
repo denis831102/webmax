@@ -2,8 +2,9 @@
   <el-dialog
     :modelValue="props.visible"
     :title="form.title"
+    :before-close="closeForm"
+    :close-on-click-modal="false"
     width="600"
-    :before-close="handleClose"
     style="max-width: 600px"
   >
     <el-form
@@ -420,10 +421,6 @@ const clearForm = () => {
   form.tableOperation = [];
   selOperation.value = [];
   form.comment = "";
-};
-
-const handleClose = () => {
-  // emit("update:visible", false);
 };
 
 const getDate = computed(() => {
