@@ -183,7 +183,7 @@ const handleSelect = (key, keyPath) => {
       break;
     case "4":
       setting.value.comps.curComp = "eSettingUser";
-      setting.value.titleTable = "Налаштування користувача";
+      setting.value.titleTable = "НАЛАШТУВАННЯ КОРИСТУВАЧА";
       break;
     case "5":
       changeAuthenticated(false);

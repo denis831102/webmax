@@ -4,14 +4,9 @@
     :title="form.title"
     :before-close="closeForm"
     :close-on-click-modal="false"
-    width="600"
-    style="max-width: 600px"
+    :width="getWidth"
   >
-    <el-form
-      :model="form"
-      label-width="auto"
-      style="max-width: 600px; border: 0"
-    >
+    <el-form :model="form" label-width="auto">
       <el-form-item label="Пункт / прізвище">
         <el-col :span="15">
           <el-tag type="primary" style="width: 100%">{{
@@ -59,7 +54,7 @@
           <el-table-column
             prop="nameOperation"
             label="Операція"
-            width="175"
+            width="180"
             sortable
           >
             <template #default="props">
@@ -105,13 +100,9 @@
                 :step="1"
                 :min="0"
                 size="small"
-                style="height: 40px"
-                :class="{ clWidth: getSettingUser.colOper == 'price' }"
+                style="width: 95%; height: 40px"
               />
-              <div
-                :class="{ clWidth: getSettingUser.colOper == 'price' }"
-                v-else
-              >
+              <div v-else style="width: 90%; height: 40px">
                 {{ props.row.price }}
               </div>
             </template>
@@ -126,13 +117,9 @@
                 :step="1"
                 :min="0"
                 size="small"
-                style="height: 40px"
-                :class="{ clWidth: getSettingUser.colOper == 'summa' }"
+                style="width: 95%; height: 40px"
               />
-              <div
-                :class="{ clWidth: getSettingUser.colOper == 'summa' }"
-                v-else
-              >
+              <div v-else>
                 {{ props.row.summa }}
               </div>
             </template>
@@ -451,6 +438,10 @@ const clearForm = () => {
   form.comment = "";
 };
 
+const getWidth = () => {
+  return setting.value.displaySize == "large" ? 800 : 600;
+};
+
 const getDate = computed(() => {
   const date = {
     d: form.curDate.getDate(),
@@ -527,8 +518,5 @@ onUnmounted(() => {
   clearInterval(form.timer);
 });
 </script>
-<style>
-.clWidth {
-  width: 95%;
-}
-</style>
+
+<style></style>
