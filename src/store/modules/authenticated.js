@@ -6,7 +6,7 @@ export default {
     isAuthenticated: false,
     curUser: {},
     settingUser: {
-      colOper: "summa",
+      colOper: "price",
     },
   },
   actions: {
@@ -69,8 +69,10 @@ export default {
         );
       }
     },
-    changeSettingUser(state, key, val) {
-      state.settingUser[key] = val;
+    changeSettingUser(state, obj) {
+      for (let key in obj) {
+        state.settingUser[key] = obj[key];
+      }
       window.localStorage.setItem(
         "settingUser",
         JSON.stringify(state.settingUser)

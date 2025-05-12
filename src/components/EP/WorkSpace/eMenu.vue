@@ -181,6 +181,10 @@ const handleSelect = (key, keyPath) => {
       setting.value.comps.curComp = "eAnalitika";
       setting.value.titleTable = setting.value.tables["tabAnalitika"].title;
       break;
+    case "4":
+      setting.value.comps.curComp = "eSettingUser";
+      setting.value.titleTable = "Налаштування користувача";
+      break;
     case "5":
       changeAuthenticated(false);
       router.push({ name: "authent" });

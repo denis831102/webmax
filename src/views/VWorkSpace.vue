@@ -69,6 +69,7 @@ import eTable_Kategories from "@/components/EP/Kategories/eTable_Kategories";
 import eOperation from "@/components/EP/Operation/eOperation";
 import eBits from "@/components/EP/Bits/eBits";
 import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
+import eSettingUser from "@/components/EP/SettingUser/eSettingUser";
 
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
@@ -106,6 +107,7 @@ const setting = ref({
       eOperation,
       eBits,
       eAnalitika,
+      eSettingUser,
     },
     curComp: "eAvatar",
   },
