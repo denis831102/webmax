@@ -5,6 +5,9 @@ export default {
   state: {
     isAuthenticated: false,
     curUser: {},
+    settingUser: {
+      colOper: "summa",
+    },
   },
   actions: {
     async checkAuthenticated({ commit }, form) {
@@ -37,6 +40,7 @@ export default {
             login: form.login,
             password: form.password,
           });
+          commit("setAllSettingUser");
         } else {
           commit("changeAuthenticated", false);
           commit("setCurUser", { id: 0, PIB: "", login: "", password: "" });
@@ -54,6 +58,24 @@ export default {
       state.curUser = user;
       HTTP.defaults.headers["Token"] = btoa(`${user.login}:${user.password}`);
     },
+    setAllSettingUser(state) {
+      const store = window.localStorage;
+      if (store.getItem("settingUser")) {
+        state.settingUser = JSON.parse(store.getItem("settingUser"));
+      } else {
+        window.localStorage.setItem(
+          "settingUser",
+          JSON.stringify(state.settingUser)
+        );
+      }
+    },
+    changeSettingUser(state, key, val) {
+      state.settingUser[key] = val;
+      window.localStorage.setItem(
+        "settingUser",
+        JSON.stringify(state.settingUser)
+      );
+    },
   },
   getters: {
     getAuthenticated(state) {
@@ -61,6 +83,9 @@ export default {
     },
     getCurUser(state) {
       return state.curUser;
+    },
+    getSettingUser(state) {
+      return state.settingUser;
     },
   },
   //namespaced: true,
