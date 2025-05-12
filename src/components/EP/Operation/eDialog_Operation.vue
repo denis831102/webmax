@@ -219,7 +219,11 @@ const selOperation = ref([]);
 
 watchEffect(() => {
   form.tableOperation.forEach((el) => {
-    el.summa = (el.count * el.price).toFixed(2);
+    if (getSettingUser.value.colOper == "price") {
+      el.summa = (el.count * el.price).toFixed(2);
+    } else {
+      el.price = el.count != 0 ? (el.summa / el.count).toFixed(2) : "";
+    }
   });
 });
 
