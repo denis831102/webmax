@@ -343,8 +343,8 @@ const addTransaction = async () => {
       return {
         id_V: oper.id_V,
         id_M: oper.id_M,
-        count: oper.count,
-        price: oper.price,
+        d_count: oper.count,
+        d_price: oper.price,
       };
     });
 
@@ -394,10 +394,12 @@ const changeTransaction = async () => {
             id_O: oper.id_O,
             id_V: oper.id_V,
             id_M: oper.id_M,
-            count: dCount,
-            price: dPrice,
+            d_count: dCount,
+            d_price: dPrice,
             old_count: oper.old.count,
             old_price: oper.old.price,
+            new_count: oper.count,
+            new_price: oper.price,
           });
         }
       }
