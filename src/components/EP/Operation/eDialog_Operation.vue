@@ -324,9 +324,6 @@ const delOperation = (row) => {
         id_O: el.id_O,
         id_M: el.id_M,
         id_V: el.id_V,
-        count: el.count,
-        price: el.price,
-
         d_count: el.count,
         d_price: el.price,
         old_count: el.count,
