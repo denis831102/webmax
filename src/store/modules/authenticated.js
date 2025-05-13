@@ -7,6 +7,7 @@ export default {
     curUser: {},
     settingUser: {
       colOper: "price",
+      countTrans: 5,
     },
   },
   actions: {

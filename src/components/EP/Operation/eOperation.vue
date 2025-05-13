@@ -252,6 +252,7 @@ import * as _ from "lodash";
 const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
+const getSettingUser = computed(() => store.getters.getSettingUser);
 const search = ref("");
 const valueDate = ref([new Date(), new Date()]);
 const punkts = ref([]);
@@ -466,6 +467,7 @@ const loadFiltr = () => {
 };
 
 onActivated(async () => {
+  setPagination.sizePage = getSettingUser.value.countTrans;
   await getPunktCur();
   await getTransaction();
   activeName.value = punkts.value[0]["name"];
@@ -475,7 +477,9 @@ onActivated(async () => {
   }, 1000);
 });
 
-onUpdated(async () => {});
+onUpdated(async () => {
+  setPagination.sizePage = getSettingUser.value.countTrans;
+});
 
 onUnmounted(() => {
   debouncedChange.value.cancel();
