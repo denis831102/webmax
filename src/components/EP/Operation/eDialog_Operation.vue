@@ -102,7 +102,7 @@
                 size="small"
                 style="width: 95%; height: 40px"
               />
-              <div v-else style="width: 90%; height: 40px">
+              <div v-else style="text-align: center; font-size: 14pt">
                 {{ props.row.price }}
               </div>
             </template>
@@ -120,7 +120,7 @@
                 @focus="clearInp"
                 style="width: 95%; height: 40px"
               />
-              <div v-else>
+              <div v-else style="text-align: center; font-size: 14pt">
                 {{ props.row.summa }}
               </div>
             </template>
