@@ -345,6 +345,10 @@ const addTransaction = async () => {
         id_M: oper.id_M,
         d_count: oper.count,
         d_price: oper.price,
+        old_count: 0,
+        old_price: 0,
+        new_count: oper.count,
+        new_price: oper.price,
       };
     });
 
