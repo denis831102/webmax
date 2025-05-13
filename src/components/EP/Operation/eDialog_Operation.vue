@@ -438,9 +438,9 @@ const clearForm = () => {
   form.comment = "";
 };
 
-const getWidth = () => {
-  return setting.value.displaySize == "large" ? 800 : 600;
-};
+const getWidth = computed(() => {
+  return setting.value.displaySize == "large" ? "800px" : "600px";
+});
 
 const getDate = computed(() => {
   const date = {

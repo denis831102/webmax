@@ -60,23 +60,31 @@ export default {
     },
     setAllSettingUser(state) {
       const store = window.localStorage;
-      if (store.getItem("settingUser")) {
-        state.settingUser = JSON.parse(store.getItem("settingUser"));
-      } else {
-        window.localStorage.setItem(
-          "settingUser",
-          JSON.stringify(state.settingUser)
-        );
+      // if (store.getItem("settingUser")) {
+      //   state.settingUser = JSON.parse(store.getItem("settingUser"));
+      // } else {
+      //   store.setItem("settingUser", JSON.stringify(state.settingUser));
+      // }
+      for (let key in state.settingUser) {
+        if (store.getItem(key)) {
+          state.settingUser[key] = store.getItem(key);
+        } else {
+          store.setItem(key, state.settingUser[key]);
+        }
       }
     },
     changeSettingUser(state, obj) {
+      // for (let key in obj) {
+      //   state.settingUser[key] = obj[key];
+      // }
+      // window.localStorage.setItem(
+      //   "settingUser",
+      //   JSON.stringify(state.settingUser)
+      // );
       for (let key in obj) {
         state.settingUser[key] = obj[key];
+        window.localStorage.setItem(key, obj[key]);
       }
-      window.localStorage.setItem(
-        "settingUser",
-        JSON.stringify(state.settingUser)
-      );
     },
   },
   getters: {
