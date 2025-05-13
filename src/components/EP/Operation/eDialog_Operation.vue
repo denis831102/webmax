@@ -4,7 +4,7 @@
     :title="form.title"
     :before-close="closeForm"
     :close-on-click-modal="false"
-    :width="getWidth"
+    :width="getWidth[0]"
   >
     <el-form :model="form" label-width="auto">
       <el-form-item label="Пункт / прізвище">
@@ -54,7 +54,7 @@
           <el-table-column
             prop="nameOperation"
             label="Операція"
-            width="180"
+            :width="getWidth[1]"
             sortable
           >
             <template #default="props">
@@ -259,7 +259,7 @@ const loadOperation = (isRedactor = false) => {
 
       count: isRedactor ? curOper.count : 0,
       price: curOper.price,
-      summa: curOper.count * curOper.price,
+      summa: isRedactor ? curOper.count * curOper.price : 0,
       old: {
         count: isRedactor ? curOper.count : 0,
         price: curOper.price,
@@ -441,7 +441,10 @@ const clearForm = () => {
 };
 
 const getWidth = computed(() => {
-  return setting.value.displaySize == "large" ? "800px" : "600px";
+  return [
+    setting.value.displaySize == "large" ? "800px" : "600px",
+    setting.value.displaySize == "large" ? "200px" : "180px",
+  ];
 });
 
 const getDate = computed(() => {
