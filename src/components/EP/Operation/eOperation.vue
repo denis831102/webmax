@@ -358,6 +358,7 @@ const delTransaction_Ok = async (row) => {
     if (response.data.isSuccesfull) {
       const _tab = setting.value.tables["tabTransaction"];
       _tab.data = _tab.data.filter((el) => el.id_T !== row.id_T);
+      kassa.value = response.data.kassa;
     } else {
       ElMessage.error("Транзакцію не видалено");
     }
