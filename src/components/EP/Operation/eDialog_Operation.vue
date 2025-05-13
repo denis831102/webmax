@@ -258,7 +258,7 @@ const loadOperation = (isRedactor = false) => {
 
       count: isRedactor ? curOper.count : 0,
       price: curOper.price,
-      summa: 0,
+      summa: curOper.count * curOper.price,
       old: {
         count: isRedactor ? curOper.count : 0,
         price: curOper.price,
