@@ -117,6 +117,7 @@
                 :step="1"
                 :min="0"
                 size="small"
+                @focus="clearInp"
                 style="width: 95%; height: 40px"
               />
               <div v-else>
