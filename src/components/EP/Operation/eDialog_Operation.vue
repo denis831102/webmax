@@ -100,6 +100,7 @@
                 :step="1"
                 :min="0"
                 size="small"
+                @focus="clearInp"
                 style="width: 95%; height: 40px"
               />
               <div v-else style="text-align: center; font-size: 14pt">
@@ -430,7 +431,7 @@ const closeForm = () => {
 };
 
 const clearInp = (event) => {
-  if (form.isSave && +event.target.value == 0) event.target.value = "";
+  if (+event.target.value == 0) event.target.value = "";
 };
 
 const clearForm = () => {
