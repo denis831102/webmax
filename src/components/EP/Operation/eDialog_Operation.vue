@@ -384,8 +384,12 @@ const changeTransaction = async () => {
         form.addOperation.push({
           id_V: oper.id_V,
           id_M: oper.id_M,
-          count: oper.count,
-          price: oper.price,
+          d_count: oper.count,
+          d_price: oper.price,
+          old_count: 0,
+          old_price: 0,
+          new_count: oper.count,
+          new_price: oper.price,
         });
       } else {
         let dCount = oper.count - oper.old.count,
