@@ -371,6 +371,8 @@ const addTransaction = async () => {
 
 const changeTransaction = async () => {
   try {
+    form.addOperation = [];
+    form.chnOperation = [];
     let id_T = 0;
 
     form.tableOperation.forEach((oper) => {
@@ -509,6 +511,7 @@ onUpdated(async () => {
       const _tab = setting.value.tables["tabTransaction"];
 
       form.tableOperation = [];
+      form.delOperation = [];
       form.isSave = false;
       selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       loadOperation(true);

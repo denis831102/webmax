@@ -136,14 +136,26 @@
                 <el-table-column label="кількість" prop="count">
                   <template #default="props">
                     {{ props.row.count }}
+                    {{ props.row.unit != "грн" ? props.row.unit : "" }}
                   </template>
                 </el-table-column>
+
                 <el-table-column label="ціна одиниці">
                   <template #default="props">
                     {{ props.row.price }}
+                    {{
+                      props.row.unit == "грн"
+                        ? props.row.unit
+                        : `грн/${props.row.unit}`
+                    }}
                   </template>
                 </el-table-column>
-                <el-table-column label="сума" prop="suma" />
+
+                <el-table-column label="сума" prop="suma">
+                  <template #default="props">
+                    {{ props.row.suma }} грн
+                  </template>
+                </el-table-column>
               </el-table>
             </div>
           </template>
