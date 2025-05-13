@@ -326,10 +326,10 @@ const delOperation = (row) => {
         id_V: el.id_V,
         d_count: el.count,
         d_price: el.price,
-        old_count: el.count,
-        old_price: el.price,
-        new_count: 0,
-        new_price: 0,
+        old_count: 0,
+        old_price: 0,
+        new_count: el.count,
+        new_price: el.price,
       });
     }
 
