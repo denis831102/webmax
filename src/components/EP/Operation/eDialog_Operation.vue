@@ -396,6 +396,8 @@ const changeTransaction = async () => {
             id_M: oper.id_M,
             count: dCount,
             price: dPrice,
+            old_count: oper.old.count,
+            old_price: oper.old.price,
           });
         }
       }
