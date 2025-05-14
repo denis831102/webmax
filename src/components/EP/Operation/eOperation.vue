@@ -56,27 +56,36 @@
               </div>
             </div>
           </el-space>
+          <el-button
+            :size="20"
+            style="width: 90px; height: 90px; margin: -15px 10 10px 10"
+            :icon="HomeFilled"
+            type="primary"
+            plain
+            @click="getBits"
+          >
+            <div
+              style="
+                position: relative;
+                left: 42px;
+                top: -16px;
+                font-size: 41px;
+              "
+            >
+              <el-icon><ShoppingCartFull /></el-icon>
+            </div>
+            <div
+              style="
+                position: relative;
+                left: -23px;
+                top: 24px;
+                font-size: 20px;
+              "
+            >
+              Залишки
+            </div>
+          </el-button>
         </el-card>
-
-        <el-button
-          :size="20"
-          style="width: 110px; height: 140px; margin: -15px 10 10px 10"
-          :icon="HomeFilled"
-          type="primary"
-          plain
-          @click="getBits"
-        >
-          <div
-            style="position: relative; left: 42px; top: -16px; font-size: 41px"
-          >
-            <el-icon><ShoppingCartFull /></el-icon>
-          </div>
-          <div
-            style="position: relative; left: -23px; top: 24px; font-size: 20px"
-          >
-            Залишки
-          </div>
-        </el-button>
 
         <el-card v-if="setting.displaySize == 'large'" style="padding: 0px 5px">
           <el-row :gutter="10">
