@@ -5,7 +5,12 @@
     :idPunkt="activeIdPunkt"
   />
 
-  <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
+  <el-tabs
+    v-model="activeName"
+    @tab-change="changeTab"
+    type="border-card"
+    class="demo-tabs"
+  >
     <el-tab-pane v-for="punkt in punkts" :key="punkt.id" :name="punkt.name">
       <template #label>
         <span class="custom-tabs-label">
@@ -98,6 +103,7 @@ const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 const getSettingUser = computed(() => store.getters.getSettingUser);
+const changeSettingUser = (obj) => store.commit("changeSettingUser", obj);
 const search = ref("");
 const punkts = ref([]);
 const activeName = ref("");
@@ -157,10 +163,17 @@ const getBits = async () => {
   }
 };
 
+const changeTab = (tab) => {
+  changeSettingUser({ nameTab: tab });
+};
+
 onActivated(async () => {
   await getPunktCur();
-  activeName.value = punkts.value[0]["name"];
   await getBits();
+
+  activeName.value = getSettingUser.value.nameTab.length
+    ? getSettingUser.value.nameTab
+    : punkts.value[0]["name"];
 });
 
 onUpdated(async () => {

@@ -5,7 +5,12 @@
     :idPunkt="activeIdPunkt"
   />
 
-  <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
+  <el-tabs
+    v-model="activeName"
+    @tab-change="changeTab"
+    type="border-card"
+    class="demo-tabs"
+  >
     <el-tab-pane v-for="punkt in punkts" :key="punkt.id" :name="punkt.name">
       <template #label>
         <span class="custom-tabs-label">
@@ -269,6 +274,7 @@ const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 const getSettingUser = computed(() => store.getters.getSettingUser);
+const changeSettingUser = (obj) => store.commit("changeSettingUser", obj);
 const search = ref("");
 const valueDate = ref([new Date(), new Date()]);
 const punkts = ref([]);
@@ -487,11 +493,18 @@ const loadFiltr = () => {
   });
 };
 
+const changeTab = (tab) => {
+  changeSettingUser({ nameTab: tab });
+};
+
 onActivated(async () => {
   setPagination.sizePage = getSettingUser.value.countTrans;
   await getPunktCur();
   await getTransaction();
-  activeName.value = punkts.value[0]["name"];
+
+  activeName.value = getSettingUser.value.nameTab.length
+    ? getSettingUser.value.nameTab
+    : punkts.value[0]["name"];
 
   debouncedChange.value = _.debounce(() => {
     getTransaction();

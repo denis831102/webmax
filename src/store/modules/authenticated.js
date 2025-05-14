@@ -9,6 +9,7 @@ export default {
       colOper: "price",
       countTrans: 5,
       isShowMes: true,
+      nameTab: "",
     },
   },
   actions: {
