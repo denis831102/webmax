@@ -20,7 +20,7 @@
       </template>
 
       <el-space :size="10" style="margin: -5px 0 10px 0">
-        <el-card>
+        <el-card v-if="setting.displaySize == 'large'">
           <el-space :size="10" style="padding: 10px 5px">
             <div class="statistic-card">
               <el-statistic
@@ -56,27 +56,52 @@
               </div>
             </div>
           </el-space>
+          <el-button
+            :size="20"
+            style="width: 90px; height: 90px; margin: -15px 10 10px 10"
+            :icon="HomeFilled"
+            type="primary"
+            plain
+            @click="getBits"
+          >
+            <div
+              style="
+                position: relative;
+                left: 24pt;
+                top: -16px;
+                font-size: 30pt;
+              "
+            >
+              <el-icon><ShoppingCartFull /></el-icon>
+            </div>
+            <div
+              style="
+                position: relative;
+                left: -23px;
+                top: 24px;
+                font-size: 13pt;
+              "
+            >
+              Залишки
+            </div>
+          </el-button>
         </el-card>
-
-        <el-button
-          :size="20"
-          style="width: 110px; height: 140px; margin: -15px 10 10px 10"
-          :icon="HomeFilled"
-          type="primary"
-          plain
-          @click="getBits"
-        >
-          <div
-            style="position: relative; left: 42px; top: -16px; font-size: 41px"
-          >
-            <el-icon><ShoppingCartFull /></el-icon>
-          </div>
-          <div
-            style="position: relative; left: -23px; top: 24px; font-size: 20px"
-          >
-            Залишки
-          </div>
-        </el-button>
+        <el-row v-if="setting.displaySize == 'small'">
+          <el-button-group style="margin-top: 10px">
+            <el-button style="width: 110px" plain @click="getBits">
+              <el-icon><Money /></el-icon>
+              <span>{{ kassa }}</span>
+            </el-button>
+            <el-button
+              style="width: 110px; font-style: 5pt"
+              plain
+              @click="getBits"
+            >
+              <el-icon><ShoppingCartFull /></el-icon>
+              Залишки
+            </el-button>
+          </el-button-group>
+        </el-row>
 
         <el-card v-if="setting.displaySize == 'large'" style="padding: 0px 5px">
           <el-row :gutter="10">
@@ -119,7 +144,7 @@
             v-if="setting.displaySize == 'small'"
             type="warning"
             :icon="HomeFilled"
-            style="width: 110px; padding: 20px"
+            style="width: 110px"
             @click="loadFiltr"
             >Фільтр
           </el-button>
