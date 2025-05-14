@@ -20,7 +20,7 @@
             <div class="statistic-card">
               <el-statistic
                 :value="kassa"
-                title="New transactions today"
+                title=""
                 precision="2"
                 group-separator=" "
               >
@@ -30,9 +30,10 @@
                   </div>
                 </template>
               </el-statistic>
+
               <div class="statistic-footer">
                 <div class="footer-item">
-                  <span>за період </span>
+                  <span>з минулим днем </span>
                   <span class="green">
                     16%
                     <el-icon>
@@ -135,14 +136,14 @@
                 <el-table-column label="номенклатура" prop="name_M" />
                 <el-table-column label="кількість" prop="count">
                   <template #default="props">
-                    {{ props.row.count }}
+                    {{ parseFloat(props.row.count).toLocaleString("ua") }}
                     {{ props.row.unit != "грн" ? props.row.unit : "" }}
                   </template>
                 </el-table-column>
 
                 <el-table-column label="ціна одиниці">
                   <template #default="props">
-                    {{ props.row.price }}
+                    {{ parseFloat(props.row.price).toLocaleString("ua") }}
                     {{
                       props.row.unit == "грн"
                         ? props.row.unit
@@ -153,7 +154,7 @@
 
                 <el-table-column label="сума" prop="suma">
                   <template #default="props">
-                    {{ props.row.suma }} грн
+                    {{ parseFloat(props.row.suma).toLocaleString("ua") }} грн
                   </template>
                 </el-table-column>
               </el-table>
@@ -161,12 +162,15 @@
           </template>
         </el-table-column>
 
-        <el-table-column type="index" />
+        <el-table-column type="index" v-if="setting.displaySize == 'large'" />
 
-        <el-table-column label="Дата" prop="date">
+        <el-table-column prop="date">
+          <template #header>
+            <el-icon><Calendar /></el-icon>
+            <span style="margin-left: 10px">Дата</span>
+          </template>
           <template #default="scope">
             <div style="display: flex; align-items: center">
-              <el-icon><Calendar /></el-icon>
               <span style="margin-left: 10px"
                 >{{ scope.row.date }} - {{ scope.row.time }}</span
               >
@@ -325,11 +329,13 @@ const getTransaction = async () => {
     kassa.value = response.data.kassa;
     loading.value = false;
 
-    ElMessage.success(
-      response.data.total > 0
-        ? `Транзакції для ${getCurUser.value.PIB.toUpperCase()} оновлені`
-        : `Транзакції для ${getCurUser.value.PIB.toUpperCase()} відсутні`
-    );
+    if (getSettingUser.value.isShowMes) {
+      ElMessage.success(
+        response.data.total > 0
+          ? `Транзакції для ${getCurUser.value.PIB.toUpperCase()} оновлені`
+          : `Транзакції для ${getCurUser.value.PIB.toUpperCase()} відсутні`
+      );
+    }
   } catch (e) {
     ElMessage.error("Помилка завантаження транзакцій");
   }

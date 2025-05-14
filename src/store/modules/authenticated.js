@@ -8,6 +8,7 @@ export default {
     settingUser: {
       colOper: "price",
       countTrans: 5,
+      isShowMes: true,
     },
   },
   actions: {

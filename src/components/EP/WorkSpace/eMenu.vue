@@ -96,7 +96,7 @@
         <el-menu-item-group>
           <el-menu-item index="3-1">
             <el-icon><TrendCharts /></el-icon>
-            Аналітика - 1
+            Аналітика по власним пунктам
           </el-menu-item>
           <el-menu-item index="3-2"
             ><el-icon><Management /></el-icon>

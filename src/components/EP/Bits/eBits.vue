@@ -97,6 +97,7 @@ import { HTTP } from "@/hooks/http";
 const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
+const getSettingUser = computed(() => store.getters.getSettingUser);
 const search = ref("");
 const punkts = ref([]);
 const activeName = ref("");
@@ -147,7 +148,10 @@ const getBits = async () => {
     });
 
     setting.value.tables["tabBits"].data = response.data;
-    ElMessage.success("Залишки оновлені");
+
+    if (getSettingUser.value.isShowMes) {
+      ElMessage.success("Залишки оновлені");
+    }
   } catch (e) {
     ElMessage("Помилка завантаження залишків на складі");
   }
