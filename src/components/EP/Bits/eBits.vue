@@ -30,9 +30,15 @@
           />
         </el-col>
         <el-col :span="13">
-          <el-button type="primary" plain :icon="Refresh" @click="getBits()">
-            Оновити
-          </el-button>
+          <el-button-group>
+            <el-button type="primary" :icon="HomeFilled" @click="getOperation">
+              <el-icon><Connection /></el-icon>
+              Поточні операції
+            </el-button>
+            <el-button type="primary" plain :icon="Refresh" @click="getBits()">
+              Оновити
+            </el-button>
+          </el-button-group>
         </el-col>
       </el-row>
 
@@ -95,7 +101,7 @@
 <script setup>
 import { inject, ref, computed, onActivated, onUpdated } from "vue";
 import { useStore } from "vuex";
-import { Search, Calendar } from "@element-plus/icons-vue";
+import { Search, Calendar, Connection } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { HTTP } from "@/hooks/http";
 
@@ -165,6 +171,11 @@ const getBits = async () => {
 
 const changeTab = (tab) => {
   changeSettingUser({ nameTab: tab });
+};
+
+const getOperation = () => {
+  setting.value.comps.curComp = "eOperation";
+  setting.value.titleTable = setting.value.tables["tabTransaction"].title;
 };
 
 onActivated(async () => {
