@@ -94,7 +94,7 @@
           <el-button-group style="margin-top: 10px">
             <el-button style="width: 110px" plain @click="getBits">
               <el-icon><Money /></el-icon>
-              <span>{{ kassa }}</span>
+              <span>{{ kassa.summa }}</span>
             </el-button>
             <el-button
               style="width: 110px; font-style: 5pt"
