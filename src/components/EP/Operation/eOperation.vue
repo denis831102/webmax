@@ -48,7 +48,7 @@
 
         <el-card
           v-if="setting.displaySize == 'large'"
-          style="padding: 15px; 0px"
+          style="padding: 15px 10px"
         >
           <el-row :gutter="10">
             <el-col :span="3">
@@ -109,6 +109,15 @@
             @click="getTransaction()"
           >
             Оновити
+          </el-button>
+          <el-button
+            type="primary"
+            plain
+            :icon="Refresh"
+            style="width: 110px"
+            @click="getTransaction()"
+          >
+            Пересорт
           </el-button>
         </el-button-group>
       </el-space>
