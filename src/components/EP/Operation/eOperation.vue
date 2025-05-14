@@ -105,12 +105,12 @@
           </el-row>
         </el-card>
 
-        <el-button-group class="ml-4">
+        <el-button-group>
           <el-button
             v-if="setting.displaySize == 'small'"
             type="warning"
             :icon="HomeFilled"
-            style="width: 110px"
+            style="width: 110px; padding: 20px"
             @click="loadFiltr"
             >Фільтр
           </el-button>
@@ -124,14 +124,14 @@
           </el-button>
 
           <el-button
-            type="primary"
-            plain
-            :icon="Refresh"
+            type="info"
+            :icon="Sort"
             style="width: 110px"
             @click="getTransaction()"
           >
-            Оновити
+            Пересорт
           </el-button>
+
           <el-button
             type="primary"
             plain
@@ -139,7 +139,7 @@
             style="width: 110px"
             @click="getTransaction()"
           >
-            Пересорт
+            Оновити
           </el-button>
         </el-button-group>
       </el-space>
@@ -283,7 +283,13 @@ import {
   h,
 } from "vue";
 import { useStore } from "vuex";
-import { Search, Calendar, CaretTop, Refresh } from "@element-plus/icons-vue";
+import {
+  Search,
+  Calendar,
+  CaretTop,
+  Refresh,
+  Sort,
+} from "@element-plus/icons-vue";
 import {
   ElMessage,
   ElMessageBox,
