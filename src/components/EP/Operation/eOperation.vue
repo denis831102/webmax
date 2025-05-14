@@ -35,7 +35,7 @@
                 <div class="footer-item">
                   <span>з минулим днем </span>
                   <span class="green">
-                    16%
+                    {{ percent }}%
                     <el-icon>
                       <CaretTop />
                     </el-icon>
@@ -283,6 +283,7 @@ const setPagination = reactive({
 const debouncedChange = ref();
 const loading = ref(true);
 const kassa = ref(0);
+const percent = ref(10);
 
 watch(
   () => [activeName.value, setting.value.dialog["editOperation"].visible],
@@ -327,6 +328,7 @@ const getTransaction = async () => {
     setting.value.tables["tabTransaction"].data = response.data.ar_data;
     setPagination.total = response.data.total;
     kassa.value = response.data.kassa;
+    percent.value = response.data.percent;
     loading.value = false;
 
     if (getSettingUser.value.isShowMes) {
