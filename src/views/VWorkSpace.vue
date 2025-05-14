@@ -196,4 +196,7 @@ onMounted(() => {
   height: 100%;
   right: 20px;
 }
+.box-card {
+  /* background: #f4f5f700; */
+}
 </style>

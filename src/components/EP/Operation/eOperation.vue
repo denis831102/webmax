@@ -93,6 +93,7 @@
                 :start-placeholder="getDate"
                 :end-placeholder="getDate"
                 :disabled="!isPeriod"
+                :shortcuts="shortCuts"
                 @change="getTransaction"
                 style="width: 210px; padding: 20px 10px; margin-left: -10px"
               />
@@ -542,6 +543,36 @@ const getBits = () => {
 const changeTab = (tab) => {
   changeSettingUser({ nameTab: tab });
 };
+
+const shortCuts = [
+  {
+    text: "- день",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
+      return [start, end];
+    },
+  },
+  {
+    text: "- тиждень",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      return [start, end];
+    },
+  },
+  {
+    text: "- місяць",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+      return [start, end];
+    },
+  },
+];
 
 onActivated(async () => {
   setPagination.sizePage = getSettingUser.value.countTrans;

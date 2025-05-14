@@ -33,7 +33,7 @@
           <el-button-group>
             <el-button type="primary" :icon="HomeFilled" @click="getOperation">
               <el-icon><Connection /></el-icon>
-              Поточні операції
+              <span style="margin-left: 5px">Поточні операції</span>
             </el-button>
             <el-button type="primary" plain :icon="Refresh" @click="getBits()">
               Оновити
