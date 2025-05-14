@@ -16,7 +16,7 @@
 
       <el-space :size="10" style="margin: -15px 0 10px 0">
         <el-card>
-          <el-space :size="10">
+          <el-space :size="10" style="padding: 10px 5px">
             <div class="statistic-card">
               <el-statistic
                 :value="kassa"
@@ -46,14 +46,31 @@
           </el-space>
         </el-card>
 
-        <el-card
-          v-if="setting.displaySize == 'large'"
-          style="padding: 15px 10px"
+        <el-button
+          :size="20"
+          style="width: 110px; height: 140px; margin: -15px 10 10px 10"
+          :icon="HomeFilled"
+          type="primary"
+          @click="getBits"
         >
+          <div
+            style="position: relative; left: 42px; top: -16px; font-size: 41px"
+          >
+            <el-icon><Refresh /></el-icon>
+          </div>
+          <div
+            style="position: relative; left: -23px; top: 24px; font-size: 20px"
+          >
+            Залишки
+          </div>
+        </el-button>
+
+        <el-card v-if="setting.displaySize == 'large'" style="padding: 0px 5px">
           <el-row :gutter="10">
             <el-col :span="3">
               <el-switch v-model="isPeriod" @change="getTransaction" />
             </el-col>
+            <el-col :span="2"> </el-col>
 
             <el-col :span="8">
               <el-date-picker
@@ -64,17 +81,17 @@
                 :end-placeholder="getDate"
                 :disabled="!isPeriod"
                 @change="getTransaction"
-                style="width: 210px; padding: 20px 10px; margin-left: -15px"
+                style="width: 210px; padding: 20px 10px; margin-left: -10px"
               />
             </el-col>
-
-            <el-col :span="2"> </el-col>
-
+          </el-row>
+          <el-row :gutter="10">
+            <el-col :span="4"> </el-col>
             <el-col :span="11">
               <el-input
                 v-model="search"
                 size="large"
-                style="width: 100%"
+                style="width: 210px"
                 placeholder="Пошук за коментарем"
                 @input="debouncedChange"
                 :prefix-icon="Search"
@@ -261,7 +278,7 @@ import {
   h,
 } from "vue";
 import { useStore } from "vuex";
-import { Search, Calendar, CaretTop } from "@element-plus/icons-vue";
+import { Search, Calendar, CaretTop, Refresh } from "@element-plus/icons-vue";
 import {
   ElMessage,
   ElMessageBox,
@@ -494,6 +511,11 @@ const loadFiltr = () => {
       }),
     ],
   });
+};
+
+const getBits = () => {
+  setting.value.comps.curComp = "eBits";
+  setting.value.titleTable = setting.value.tables["tabBits"].title;
 };
 
 onActivated(async () => {
