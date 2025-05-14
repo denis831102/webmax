@@ -24,7 +24,7 @@
           <el-space :size="10" style="padding: 10px 5px">
             <div class="statistic-card">
               <el-statistic
-                :value="kassa"
+                :value="kassa.summa"
                 title=""
                 precision="2"
                 group-separator=" "
@@ -46,10 +46,14 @@
               <div class="statistic-footer">
                 <div class="footer-item">
                   <span>з минулим днем </span>
-                  <span class="green">
-                    {{ percent }}%
+                  <span
+                    :class="[kassa.percent > 0 ? 'green' : 'red']"
+                    :title="kassa.oldSumma"
+                  >
+                    {{ kassa.percent }}%
                     <el-icon>
-                      <CaretTop />
+                      <CaretTop v-if="kassa.percent > 0" />
+                      <CaretBottom v-else />
                     </el-icon>
                   </span>
                 </div>
@@ -355,8 +359,11 @@ const setPagination = reactive({
 });
 const debouncedChange = ref();
 const loading = ref(true);
-const kassa = ref(0);
-const percent = ref(10);
+const kassa = reactive({
+  summa: 0,
+  oldSumma: 0,
+  percent: 0,
+});
 
 watch(
   () => [activeName.value, setting.value.dialog["editOperation"].visible],
@@ -400,8 +407,9 @@ const getTransaction = async () => {
 
     setting.value.tables["tabTransaction"].data = response.data.ar_data;
     setPagination.total = response.data.total;
-    kassa.value = response.data.kassa;
-    percent.value = response.data.percent;
+    kassa.summa = response.data.kassa;
+    kassa.oldSumma = response.data.oldkassa;
+    kassa.percent = response.data.percent;
     loading.value = false;
 
     if (getSettingUser.value.isShowMes) {
