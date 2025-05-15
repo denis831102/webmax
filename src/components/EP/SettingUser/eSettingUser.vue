@@ -106,12 +106,12 @@ const changeCount = () => {
 };
 
 const changeShowMes = () => {
-  changeSettingUser({ isShowMes: isShowMes.value });
+  changeSettingUser({ isShowMes: isShowMes.value ? 1 : 0 });
 };
 
 onMounted(() => {
   colOper.value = getSettingUser.value.colOper;
   countTrans.value = getSettingUser.value.countTrans;
-  isShowMes.value = getSettingUser.value.isShowMes == "true";
+  isShowMes.value = +getSettingUser.value.isShowMes == 1;
 });
 </script>

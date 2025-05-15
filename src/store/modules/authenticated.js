@@ -8,7 +8,7 @@ export default {
     settingUser: {
       colOper: "price",
       countTrans: 5,
-      isShowMes: true,
+      isShowMes: 1,
       nameTab: "",
     },
   },
@@ -69,7 +69,7 @@ export default {
       //   store.setItem("settingUser", JSON.stringify(state.settingUser));
       // }
       for (let key in state.settingUser) {
-        if (store.getItem(key)) {
+        if (store.getItem(key) !== null) {
           state.settingUser[key] = store.getItem(key);
         } else {
           store.setItem(key, state.settingUser[key]);

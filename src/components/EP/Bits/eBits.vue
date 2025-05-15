@@ -161,7 +161,7 @@ const getBits = async () => {
 
     setting.value.tables["tabBits"].data = response.data;
 
-    if (getSettingUser.value.isShowMes) {
+    if (+getSettingUser.value.isShowMes) {
       ElMessage.success("Залишки оновлені");
     }
   } catch (e) {

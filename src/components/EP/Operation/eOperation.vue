@@ -412,7 +412,7 @@ const getTransaction = async () => {
     kassa.percent = response.data.percent;
     loading.value = false;
 
-    if (getSettingUser.value.isShowMes) {
+    if (+getSettingUser.value.isShowMes) {
       ElMessage.success(
         response.data.total > 0
           ? `Транзакції для ${getCurUser.value.PIB.toUpperCase()} оновлені`
