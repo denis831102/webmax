@@ -181,118 +181,119 @@
           </el-button>
         </el-button-group>
       </el-space>
+      <el-scrollbar height="400px">
+        <el-table :data="filterTable" v-loading="loading">
+          <el-table-column type="expand">
+            <template #default="props">
+              <div style="padding: 20px; background: #c6e2ff69">
+                <h3 style="margin: 0px 0 10px 0">
+                  Транзакція за операцією
+                  <el-check-tag type="primary">
+                    {{ props.row.comment }}
+                  </el-check-tag>
+                  <el-check-tag type="success" style="margin-left: 5px">
+                    {{ props.row.date }} - {{ props.row.time }}
+                  </el-check-tag>
+                </h3>
+                <el-table
+                  :data="props.row.listOper"
+                  border="true"
+                  style="background: #c6e2ff"
+                  show-summary
+                >
+                  <el-table-column label="вид операції" prop="name_V" />
+                  <el-table-column label="номенклатура" prop="name_M" />
+                  <el-table-column label="кількість" prop="count">
+                    <template #default="props">
+                      {{ parseFloat(props.row.count).toLocaleString("ua") }}
+                      {{ props.row.unit != "грн" ? props.row.unit : "" }}
+                    </template>
+                  </el-table-column>
 
-      <el-table :data="filterTable" v-loading="loading">
-        <el-table-column type="expand">
-          <template #default="props">
-            <div style="padding: 20px; background: #c6e2ff69">
-              <h3 style="margin: 0px 0 10px 0">
-                Транзакція за операцією
-                <el-check-tag type="primary">
-                  {{ props.row.comment }}
-                </el-check-tag>
-                <el-check-tag type="success" style="margin-left: 5px">
-                  {{ props.row.date }} - {{ props.row.time }}
-                </el-check-tag>
-              </h3>
-              <el-table
-                :data="props.row.listOper"
-                border="true"
-                style="background: #c6e2ff"
-                show-summary
-              >
-                <el-table-column label="вид операції" prop="name_V" />
-                <el-table-column label="номенклатура" prop="name_M" />
-                <el-table-column label="кількість" prop="count">
-                  <template #default="props">
-                    {{ parseFloat(props.row.count).toLocaleString("ua") }}
-                    {{ props.row.unit != "грн" ? props.row.unit : "" }}
-                  </template>
-                </el-table-column>
+                  <el-table-column label="ціна одиниці">
+                    <template #default="props">
+                      {{ parseFloat(props.row.price).toLocaleString("ua") }}
+                      {{
+                        props.row.unit == "грн"
+                          ? props.row.unit
+                          : `грн/${props.row.unit}`
+                      }}
+                    </template>
+                  </el-table-column>
 
-                <el-table-column label="ціна одиниці">
-                  <template #default="props">
-                    {{ parseFloat(props.row.price).toLocaleString("ua") }}
-                    {{
-                      props.row.unit == "грн"
-                        ? props.row.unit
-                        : `грн/${props.row.unit}`
-                    }}
-                  </template>
-                </el-table-column>
+                  <el-table-column label="сума" prop="suma">
+                    <template #default="props">
+                      {{ parseFloat(props.row.suma).toLocaleString("ua") }} грн
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </template>
+          </el-table-column>
 
-                <el-table-column label="сума" prop="suma">
-                  <template #default="props">
-                    {{ parseFloat(props.row.suma).toLocaleString("ua") }} грн
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-          </template>
-        </el-table-column>
+          <el-table-column type="index" v-if="setting.displaySize == 'large'" />
 
-        <el-table-column type="index" v-if="setting.displaySize == 'large'" />
+          <el-table-column prop="date">
+            <template #header>
+              <el-icon><Calendar /></el-icon>
+              <span style="margin-left: 10px">Дата</span>
+            </template>
+            <template #default="scope">
+              <div style="display: flex; align-items: center">
+                <span style="margin-left: 10px"
+                  >{{ scope.row.date }} - {{ scope.row.time }}</span
+                >
+              </div>
+            </template>
+          </el-table-column>
 
-        <el-table-column prop="date">
-          <template #header>
-            <el-icon><Calendar /></el-icon>
-            <span style="margin-left: 10px">Дата</span>
-          </template>
-          <template #default="scope">
-            <div style="display: flex; align-items: center">
-              <span style="margin-left: 10px"
-                >{{ scope.row.date }} - {{ scope.row.time }}</span
-              >
-            </div>
-          </template>
-        </el-table-column>
+          <el-table-column label="Коментар" prop="comment"> </el-table-column>
 
-        <el-table-column label="Коментар" prop="comment"> </el-table-column>
+          <el-table-column label="Сума" prop="suma" width="150">
+            <template #default="scope">
+              <div style="display: flex; align-items: center">
+                <span style="margin-left: 10px"
+                  >{{
+                    parseFloat(scope.row.suma).toLocaleString("ua")
+                  }}
+                  грн.</span
+                >
+              </div>
+            </template>
+          </el-table-column>
 
-        <el-table-column label="Сума" prop="suma" width="150">
-          <template #default="scope">
-            <div style="display: flex; align-items: center">
-              <span style="margin-left: 10px"
-                >{{
-                  parseFloat(scope.row.suma).toLocaleString("ua")
-                }}
-                грн.</span
-              >
-            </div>
-          </template>
-        </el-table-column>
+          <el-table-column label="Дії">
+            <template #default="scope">
+              <el-button-group class="ml-4">
+                <el-button
+                  size="small"
+                  @click="editTransaction(scope.$index, scope.row)"
+                  title="Редагування транзакції"
+                >
+                  <el-icon><Edit /></el-icon>
+                </el-button>
 
-        <el-table-column label="Дії">
-          <template #default="scope">
-            <el-button-group class="ml-4">
-              <el-button
-                size="small"
-                @click="editTransaction(scope.$index, scope.row)"
-                title="Редагування транзакції"
-              >
-                <el-icon><Edit /></el-icon>
-              </el-button>
-
-              <el-button
-                size="small"
-                type="danger"
-                @click="delTransaction(scope.$index, scope.row)"
-                title="Видалення транзакції"
-              >
-                <el-icon><DeleteFilled /></el-icon>
-              </el-button>
-              <el-button
-                size="small"
-                type="success"
-                @click="copyTransaction(scope.$index, scope.row)"
-                title="Створення транзакції за зразком"
-              >
-                <el-icon><CopyDocument /></el-icon>
-              </el-button>
-            </el-button-group>
-          </template>
-        </el-table-column>
-      </el-table>
+                <el-button
+                  size="small"
+                  type="danger"
+                  @click="delTransaction(scope.$index, scope.row)"
+                  title="Видалення транзакції"
+                >
+                  <el-icon><DeleteFilled /></el-icon>
+                </el-button>
+                <el-button
+                  size="small"
+                  type="success"
+                  @click="copyTransaction(scope.$index, scope.row)"
+                  title="Створення транзакції за зразком"
+                >
+                  <el-icon><CopyDocument /></el-icon>
+                </el-button>
+              </el-button-group>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-scrollbar>
 
       <el-pagination
         background
