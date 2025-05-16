@@ -4,6 +4,11 @@
     :namePunkt="activeName"
     :idPunkt="activeIdPunkt"
   />
+  <eDialog_Sort
+    v-model:visible="setting.dialog['createPeresort'].visible"
+    :namePunkt="activeName"
+    :idPunkt="activeIdPunkt"
+  />
 
   <el-tabs
     v-model="activeName"
@@ -165,7 +170,7 @@
             type="info"
             :icon="Sort"
             style="width: 110px"
-            @click="getTransaction()"
+            @click="createPeresort()"
           >
             Пересорт
           </el-button>
@@ -339,6 +344,7 @@ import {
   ElInput,
 } from "element-plus";
 import eDialog_Operation from "@/components/EP/Operation/eDialog_Operation";
+import eDialog_Sort from "@/components/EP/Operation/eDialog_Sort";
 import { HTTP } from "@/hooks/http";
 import * as _ from "lodash";
 
@@ -607,6 +613,11 @@ const shortCuts = [
     },
   },
 ];
+
+const createPeresort = () => {
+  setting.value.dialog["createPeresort"].initiator = "createPeresort";
+  setting.value.dialog["createPeresort"].visible = true;
+};
 
 onActivated(async () => {
   setPagination.sizePage = getSettingUser.value.countTrans;
