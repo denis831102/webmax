@@ -23,7 +23,8 @@
 }
 .hMain {
   padding: 10px;
-  background: #ecf5ff;
+  background: linear-gradient(rgba(0, 0, 255, 0.4), rgba(255, 255, 0, 0.4));
+  /* background: #ecf5ff; */
   box-shadow: 1px 0px 9px 3px #568989;
   text-align: center;
 }
