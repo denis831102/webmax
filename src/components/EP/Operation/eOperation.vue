@@ -548,6 +548,7 @@ const loadFiltr = () => {
         "start-placeholder": getDate.value,
         "end-placeholder": getDate.value,
         disabled: !isPeriod.value,
+        shortcuts: shortCuts,
         style: "width: 210px; padding: 20px 10px; margin-left: 15px",
         onChange: () => {
           getTransaction();
