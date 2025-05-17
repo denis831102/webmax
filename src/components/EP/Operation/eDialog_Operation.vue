@@ -368,7 +368,9 @@ const addTransaction = async () => {
 
     if (response.data.isSuccesfull) {
       emit("update:visible", false);
-      ElMessage.success(response.data.message);
+      if (+getSettingUser.value.isShowMes) {
+        ElMessage.success(response.data.message);
+      }
     } else {
       ElMessage.error(response.data.message);
     }
@@ -432,7 +434,9 @@ const changeTransaction = async () => {
 
     if (response.data.isSuccesfull) {
       emit("update:visible", false);
-      ElMessage.success(response.data.message);
+      if (+getSettingUser.value.isShowMes) {
+        ElMessage.success(response.data.message);
+      }
     } else {
       ElMessage.error(response.data.message);
     }

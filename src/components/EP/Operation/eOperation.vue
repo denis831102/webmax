@@ -147,6 +147,7 @@
             <el-icon><ShoppingCartFull /></el-icon>
             <span style="margin-left: 5px">Залишки</span>
           </el-button>
+
           <el-button
             v-if="setting.displaySize == 'small'"
             type="warning"
