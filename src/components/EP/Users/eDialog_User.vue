@@ -239,6 +239,13 @@ onUpdated(async () => {
       form.title = "Додавання користувача";
       form.disabledStatus = false;
 
+      const response = await HTTP.get("", {
+        params: {
+          _method: "getStatuses",
+        },
+      });
+      setting.value.tables["tabStatus"].data = response.data;
+
       form.pib = "";
       form.login = "";
       form.password = "";
