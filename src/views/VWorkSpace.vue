@@ -164,7 +164,7 @@ const curComponent = computed(() => {
 
 const onResize = () => {
   setting.value.displaySize =
-    document.documentElement.clientWidth >= 1000 ? "large" : "small";
+    document.documentElement.clientWidth >= 1242 ? "large" : "small";
 };
 
 onMounted(() => {

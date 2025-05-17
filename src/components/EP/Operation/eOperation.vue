@@ -62,26 +62,19 @@
           </el-space>
           <el-button
             :size="20"
-            style="width: 90px; height: 90px; margin: -15px 10 10px 10"
-            :icon="HomeFilled"
+            style="width: 90px; height: 90px; margin: 10px 10px 10px 10px"
             type="primary"
             plain
             @click="getBits"
           >
+            <el-icon
+              style="position: relative; left: 24pt; top: -8px; font-size: 30pt"
+              ><ShoppingCartFull
+            /></el-icon>
             <div
               style="
                 position: relative;
-                left: 24pt;
-                top: -16px;
-                font-size: 30pt;
-              "
-            >
-              <el-icon><ShoppingCartFull /></el-icon>
-            </div>
-            <div
-              style="
-                position: relative;
-                left: -23px;
+                left: -20px;
                 top: 24px;
                 font-size: 13pt;
               "
