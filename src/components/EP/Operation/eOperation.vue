@@ -90,22 +90,6 @@
             </div>
           </el-button>
         </el-card>
-        <el-row v-if="setting.displaySize == 'small'">
-          <el-button-group style="margin-top: 10px">
-            <el-button style="width: 110px" plain @click="getBits">
-              <el-icon><Money /></el-icon>
-              <span>{{ kassa.summa }}</span>
-            </el-button>
-            <el-button
-              style="width: 110px; font-style: 5pt"
-              plain
-              @click="getBits"
-            >
-              <el-icon><ShoppingCartFull /></el-icon>
-              Залишки
-            </el-button>
-          </el-button-group>
-        </el-row>
 
         <el-card v-if="setting.displaySize == 'large'" style="padding: 0px 5px">
           <el-row :gutter="10">
@@ -146,11 +130,32 @@
         <el-button-group>
           <el-button
             v-if="setting.displaySize == 'small'"
+            style="width: 110px"
+            plain
+            @click="getBits"
+          >
+            <el-icon><Money /></el-icon>
+            <span>{{ kassa.summa }}</span>
+          </el-button>
+
+          <el-button
+            v-if="setting.displaySize == 'small'"
+            style="width: 110px; font-style: 5pt; background: #90939959"
+            plain
+            @click="getBits"
+          >
+            <el-icon><ShoppingCartFull /></el-icon>
+            <span style="margin-left: 5px">Залишки</span>
+          </el-button>
+          <el-button
+            v-if="setting.displaySize == 'small'"
             type="warning"
             :icon="HomeFilled"
             style="width: 110px"
             @click="loadFiltr"
-            >Фільтр
+          >
+            <el-icon><Filter /></el-icon>
+            <span style="margin-left: 5px">Фільтр</span>
           </el-button>
 
           <el-button
