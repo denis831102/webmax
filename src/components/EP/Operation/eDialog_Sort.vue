@@ -54,7 +54,7 @@
 
         <el-card style="width: 100%">
           <el-row>
-            <el-col :span="11">
+            <el-col :span="10">
               <el-select v-model="form.name_M_old">
                 <el-option
                   v-for="item in sourceTable_M"
@@ -64,10 +64,10 @@
                 ></el-option>
               </el-select>
             </el-col>
-            <el-col :span="2">
+            <el-col :span="3">
               <el-icon style="font-size: 18pt"><Right /></el-icon>
             </el-col>
-            <el-col :span="11">
+            <el-col :span="10">
               <el-select v-model="form.name_M_new">
                 <el-option
                   v-for="item in sourceTable_M"
@@ -77,6 +77,10 @@
                 >
                 </el-option>
               </el-select>
+            </el-col>
+            <el-col :span="11">
+              <el-input-number :precision="3" :step="1" :min="0">
+              </el-input-number>
             </el-col>
           </el-row>
         </el-card>
@@ -219,8 +223,12 @@ const getMaterial = async () => {
 onUpdated(async () => {
   form.namePunkt = props.namePunkt;
   form.date = form.curDate;
+  form.name_K = setting.value.tables["tabKategories"].data[2].name_K;
   await getKategories();
   await getMaterial();
+  form.name_M_old = setting.value.tables["tabMaterial"].data[6].name_M;
+
+  form.name_M_new = setting.value.tables["tabMaterial"].data[4].name_M;
 });
 </script>
 
