@@ -95,6 +95,7 @@ const setting = ref({
     editOperation: { visible: false, initiator: "" },
     editMaterial: { visible: false, initiator: "" },
     editBits: { visible: false, initiator: "" },
+    createPeresort: { visible: false, initiator: "" },
   },
   comps: {
     list: {
