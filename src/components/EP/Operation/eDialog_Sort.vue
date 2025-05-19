@@ -117,6 +117,7 @@ import {
   defineEmits,
   reactive,
   onUpdated,
+  onUnmounted,
 } from "vue";
 import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
@@ -135,7 +136,7 @@ const form = reactive({
   nameUser: getCurUser.value.PIB,
   namePunkt: "",
   date: "",
-  count_Sort: "",
+  count_Sort: 0,
   comment: "",
   name_K: "",
   name_M_new: "",
@@ -207,6 +208,7 @@ const getKategories = async () => {
         _method: "getKategories",
       },
     });
+
     setting.value.tables["tabKategories"].data = response.data;
     ElMessage.success("Категоріїї оновлені");
   } catch (e) {
@@ -221,6 +223,7 @@ const getMaterial = async () => {
         _method: "getMaterial",
       },
     });
+
     setting.value.tables["tabMaterial"].data = response.data;
     ElMessage.success("Матеріали оновлені");
   } catch (e) {
@@ -280,15 +283,27 @@ const addTransactionPeresort = async () => {
   }
 };
 
+const startTimer = () => {
+  form.timer = setInterval(() => {
+    form.curDate = new Date();
+  }, 1000);
+};
+
 onUpdated(async () => {
+  startTimer();
   form.namePunkt = props.namePunkt;
   form.date = form.curDate;
+
   await getKategories();
   form.name_K = setting.value.tables["tabKategories"].data[2].name_K;
+
   await getMaterial();
   form.name_M_old = setting.value.tables["tabMaterial"].data[6].name_M;
-
   form.name_M_new = setting.value.tables["tabMaterial"].data[4].name_M;
+});
+
+onUnmounted(() => {
+  clearInterval(form.timer);
 });
 </script>
 
