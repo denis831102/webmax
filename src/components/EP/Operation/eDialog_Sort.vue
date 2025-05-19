@@ -221,6 +221,7 @@ const getMaterial = async () => {
     const response = await HTTP.get("", {
       params: {
         _method: "getMaterial",
+        _idPunkt: props.idPunkt,
       },
     });
 
