@@ -79,8 +79,13 @@
               </el-select>
             </el-col>
             <el-col :span="11">
-              <el-input-number :precision="3" :step="1" :min="0">
-              </el-input-number>
+              <el-input-number
+                v-model="count_Sort"
+                :precision="3"
+                :step="1"
+                :max="500"
+                :min="0"
+              />
             </el-col>
           </el-row>
         </el-card>
@@ -96,7 +101,9 @@
           >Очистити</el-button
         >
         <el-button @click="closeForm">Вийти</el-button>
-        <el-button type="primary">Зберегти</el-button>
+        <el-button type="primary" @click="addTransactionPeresort"
+          >Зберегти</el-button
+        >
       </div>
     </template>
   </el-dialog>
@@ -128,6 +135,7 @@ const form = reactive({
   nameUser: getCurUser.value.PIB,
   namePunkt: "",
   date: "",
+  count_Sort: "",
   comment: "",
   name_K: "",
   name_M_new: "",
@@ -220,11 +228,63 @@ const getMaterial = async () => {
   }
 };
 
+const addTransactionPeresort = async () => {
+  try {
+    const id_M_old = setting.value.tables["tabMaterial"].data.find((el) => {
+      return form.name_M_old == el.name_M;
+    }).id_M;
+    const id_M_new = setting.value.tables["tabMaterial"].date.find((el) => {
+      return form.name_M_new == el.name_M;
+    }).id_M;
+    const groupOperation = [
+      {
+        id_V: 6,
+        id_M: id_M_old,
+        d_count: form.count_Sort,
+        d_price: 0,
+        old_count: 0,
+        old_price: 0,
+        new_count: 0,
+        new_price: 0,
+      },
+      {
+        id_V: 7,
+        id_M: id_M_new,
+        d_count: form.count_Sort,
+        d_price: 0,
+        old_count: 0,
+        old_price: 0,
+        new_count: 0,
+        new_price: 0,
+      },
+    ];
+
+    const response = await HTTP.post("", {
+      _method: "addTransaction",
+      _idUser: getCurUser.value.id,
+      _idPunkt: props.idPunkt,
+      _date: form.date,
+      _time: getTime.value,
+      _comment: form.comment,
+      _opers: groupOperation,
+    });
+
+    if (response.data.isSuccesfull) {
+      emit("update:visible", false);
+      ElMessage.success(response.data.message);
+    } else {
+      ElMessage.error(response.data.message);
+    }
+  } catch (e) {
+    ElMessage.error("Помилка збереження транзакції");
+  }
+};
+
 onUpdated(async () => {
   form.namePunkt = props.namePunkt;
   form.date = form.curDate;
-  form.name_K = setting.value.tables["tabKategories"].data[2].name_K;
   await getKategories();
+  form.name_K = setting.value.tables["tabKategories"].data[2].name_K;
   await getMaterial();
   form.name_M_old = setting.value.tables["tabMaterial"].data[6].name_M;
 
