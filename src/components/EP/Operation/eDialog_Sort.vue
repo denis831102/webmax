@@ -55,38 +55,53 @@
         <el-card style="width: 100%">
           <el-row>
             <el-col :span="10">
-              <el-select v-model="form.name_M_old">
-                <el-option
-                  v-for="item in sourceTable_M"
-                  :key="item.name_M"
-                  :label="item.name_M"
-                  :value="item.name_M"
-                ></el-option>
-              </el-select>
+              <el-badge
+                :value="countPeresortOld"
+                style="width: 100%"
+                :offset="[-40, 0]"
+              >
+                <el-select v-model="form.name_M_old">
+                  <el-option
+                    v-for="item in sourceTable_M"
+                    :key="item.name_M"
+                    :label="item.name_M"
+                    :value="item.name_M"
+                  ></el-option>
+                </el-select>
+              </el-badge>
             </el-col>
             <el-col :span="3">
               <el-icon style="font-size: 18pt"><Right /></el-icon>
             </el-col>
             <el-col :span="10">
-              <el-select v-model="form.name_M_new">
-                <el-option
-                  v-for="item in sourceTable_M"
-                  :key="item.name_M"
-                  :label="item.name_M"
-                  :value="item.name_M"
-                >
-                </el-option>
-              </el-select>
+              <el-badge
+                :value="countPeresortNew"
+                style="width: 100%"
+                :offset="[-40, 0]"
+              >
+                <el-select v-model="form.name_M_new">
+                  <el-option
+                    v-for="item in sourceTable_M"
+                    :key="item.name_M"
+                    :label="item.name_M"
+                    :value="item.name_M"
+                  >
+                  </el-option>
+                </el-select>
+              </el-badge>
             </el-col>
-            <el-col :span="11">
+            <el-col :span="4"></el-col>
+            <el-col :span="10">
               <el-input-number
                 v-model="form.count_Sort"
                 :precision="3"
                 :step="1"
-                :max="500"
+                :max="countPeresortOld"
                 :min="0"
+                style="margin: 18px 4px 0 95px"
               />
             </el-col>
+            <el-col :span="5"></el-col>
           </el-row>
         </el-card>
       </el-form-item>
@@ -118,6 +133,7 @@ import {
   reactive,
   onUpdated,
   onUnmounted,
+  watch,
 } from "vue";
 import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
@@ -144,6 +160,13 @@ const form = reactive({
   timer: {},
   curDate: new Date(),
 });
+
+watch(
+  () => form.name_M_old,
+  () => {
+    form.count_Sort = 0;
+  }
+);
 
 const getWidth = computed(() => {
   return [
@@ -238,15 +261,9 @@ const addTransactionPeresort = async () => {
       (el) => el.name_M == form.name_M_old
     ).id_M;
 
-    console.log(form.name_M_old);
-    console.log(id_M_old);
-
     const id_M_new = setting.value.tables["tabMaterial"].data.find(
       (el) => el.name_M == form.name_M_new
     ).id_M;
-
-    console.log(form.name_M_new);
-    console.log(id_M_new);
 
     const groupOperation = [
       {
@@ -297,6 +314,20 @@ const startTimer = () => {
     form.curDate = new Date();
   }, 1000);
 };
+
+const countPeresortOld = computed(() => {
+  const countP = setting.value.tables["tabMaterial"].data.find((el) => {
+    return el.name_M == form.name_M_old;
+  }).count;
+  return countP;
+});
+
+const countPeresortNew = computed(() => {
+  const countP = setting.value.tables["tabMaterial"].data.find((el) => {
+    return el.name_M == form.name_M_new;
+  }).count;
+  return countP;
+});
 
 onUpdated(async () => {
   startTimer();
