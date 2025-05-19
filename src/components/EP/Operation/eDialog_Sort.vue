@@ -80,7 +80,7 @@
             </el-col>
             <el-col :span="11">
               <el-input-number
-                v-model="count_Sort"
+                v-model="form.count_Sort"
                 :precision="3"
                 :step="1"
                 :max="500"
