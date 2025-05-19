@@ -233,12 +233,20 @@ const getMaterial = async () => {
 
 const addTransactionPeresort = async () => {
   try {
-    const id_M_old = setting.value.tables["tabMaterial"].data.find((el) => {
-      return form.name_M_old == el.name_M;
-    }).id_M;
-    const id_M_new = setting.value.tables["tabMaterial"].date.find((el) => {
-      return form.name_M_new == el.name_M;
-    }).id_M;
+    const id_M_old = setting.value.tables["tabMaterial"].data.find(
+      (el) => el.name_M == form.name_M_old
+    ).id_M;
+
+    console.log(form.name_M_old);
+    console.log(id_M_old);
+
+    const id_M_new = setting.value.tables["tabMaterial"].data.find(
+      (el) => el.name_M == form.name_M_new
+    ).id_M;
+
+    console.log(form.name_M_new);
+    console.log(id_M_new);
+
     const groupOperation = [
       {
         id_V: 6,
@@ -268,7 +276,7 @@ const addTransactionPeresort = async () => {
       _idPunkt: props.idPunkt,
       _date: form.date,
       _time: getTime.value,
-      _comment: form.comment,
+      _comment: `пересорт; ${form.comment}`,
       _opers: groupOperation,
     });
 
