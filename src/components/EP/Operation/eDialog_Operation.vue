@@ -470,10 +470,11 @@ const getWidth = computed(() => {
 });
 
 const getDate = computed(() => {
+  if (!form.date || typeof form.date != "object") return "";
   const date = {
-    d: form.curDate.getDate(),
-    m: form.curDate.getMonth() + 1,
-    y: form.curDate.getFullYear(),
+    d: form.date.getDate(),
+    m: form.date.getMonth() + 1,
+    y: form.date.getFullYear(),
   };
   return [
     (date.d < 10 ? "0" : "") + date.d,
@@ -503,7 +504,6 @@ const startTimer = () => {
 
 onUpdated(async () => {
   form.namePunkt = props.namePunkt;
-  form.date = form.curDate;
   await getOperation();
   startTimer();
 
@@ -514,6 +514,7 @@ onUpdated(async () => {
       selOperation.value = [];
       form.comment = "";
       form.isSave = true;
+      form.date = form.curDate;
       break;
     }
     case "copyOperation": {
@@ -522,6 +523,7 @@ onUpdated(async () => {
 
       form.tableOperation = [];
       form.isSave = true;
+      form.date = form.curDate;
       selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       loadOperation();
       break;
@@ -529,10 +531,12 @@ onUpdated(async () => {
     case "editOperation": {
       form.title = "Редагування транзакції операцій";
       const _tab = setting.value.tables["tabTransaction"];
+      const arDate = _tab.curRow.date.split(".");
 
       form.tableOperation = [];
       form.delOperation = [];
       form.isSave = false;
+      form.date = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
       selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       loadOperation(true);
       break;
