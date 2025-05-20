@@ -77,7 +77,15 @@
             </el-col>
 
             <el-col :span="2">
-              <el-icon style="font-size: 18pt"><Right /></el-icon>
+              <el-icon
+                style="
+                  font-size: 20pt;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                "
+                ><Right
+              /></el-icon>
             </el-col>
 
             <el-col :span="11">
@@ -225,6 +233,7 @@ const clearForm = () => {
 };
 
 const closeForm = () => {
+  clearForm();
   emit("update:visible", false);
 };
 
@@ -325,6 +334,7 @@ const addTransactionPeresort = async () => {
     });
 
     if (response.data.isSuccesfull) {
+      clearForm();
       emit("update:visible", false);
       if (+getSettingUser.value.isShowMes) {
         ElMessage.success(response.data.message);
