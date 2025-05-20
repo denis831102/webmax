@@ -274,9 +274,7 @@
                 size="small"
                 @click="editTransaction(scope.$index, scope.row)"
                 title="Редагування транзакції"
-                :disabled="
-                  scope.row.listOper ? scope.row.listOper[0].id_V == 6 : false
-                "
+                :disabled="scope.row.listOper[0].id_V == 6"
               >
                 <el-icon><Edit /></el-icon>
               </el-button>
@@ -294,9 +292,7 @@
                 type="success"
                 @click="copyTransaction(scope.$index, scope.row)"
                 title="Створення транзакції за зразком"
-                :disabled="
-                  scope.row.listOper ? scope.row.listOper[0].id_V == 6 : false
-                "
+                :disabled="scope.row.listOper[0].id_V == 6"
               >
                 <el-icon><CopyDocument /></el-icon>
               </el-button>
