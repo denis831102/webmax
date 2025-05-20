@@ -274,7 +274,7 @@
                 size="small"
                 @click="editTransaction(scope.$index, scope.row)"
                 title="Редагування транзакції"
-                :disabled="scope.row.listOper[0].id_V == 6"
+                :disabled="scope.row.suma == 0"
               >
                 <el-icon><Edit /></el-icon>
               </el-button>
@@ -292,7 +292,7 @@
                 type="success"
                 @click="copyTransaction(scope.$index, scope.row)"
                 title="Створення транзакції за зразком"
-                :disabled="scope.row.listOper[0].id_V == 6"
+                :disabled="scope.row.suma == 0"
               >
                 <el-icon><CopyDocument /></el-icon>
               </el-button>
@@ -629,7 +629,7 @@ const createPeresort = () => {
 onActivated(async () => {
   setPagination.sizePage = getSettingUser.value.countTrans;
   await getPunktCur();
-  // await getTransaction();
+  await getTransaction();
 
   activeName.value = getSettingUser.value.nameTab.length
     ? getSettingUser.value.nameTab

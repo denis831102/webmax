@@ -183,7 +183,7 @@ import {
 } from "vue";
 import { HTTP } from "@/hooks/http";
 import { useStore } from "vuex";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { Delete } from "@element-plus/icons-vue";
 
 const props = defineProps({
@@ -372,7 +372,11 @@ const addTransaction = async () => {
         ElMessage.success(response.data.message);
       }
     } else {
-      ElMessage.error(response.data.message);
+      ElMessageBox({
+        title: "Увага!",
+        type: "error",
+        message: response.data.message,
+      });
     }
   } catch (e) {
     ElMessage.error("Помилка збереження транзакції");
