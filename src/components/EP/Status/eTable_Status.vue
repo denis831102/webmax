@@ -83,7 +83,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="доступ 3">
+    <el-table-column label="доступ до аналітики по ВП">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-switch
@@ -94,7 +94,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="доступ 4">
+    <el-table-column label="доступ до аналітики">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-switch

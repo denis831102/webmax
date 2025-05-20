@@ -88,19 +88,27 @@
         </el-menu-item-group>
       </el-sub-menu>
 
-      <el-sub-menu index="3">
+      <el-sub-menu index="3" :disabled="isDisabled_Monitoring">
         <template #title>
           <el-icon><document /></el-icon>
           <span>Моніторинг</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="3-1">
+          <el-menu-item index="3-1" :disabled="isDisabled_Analitika_1">
             <el-icon><TrendCharts /></el-icon>
             Аналітика по власним пунктам
           </el-menu-item>
-          <el-menu-item index="3-2"
+          <el-menu-item index="3-2" :disabled="isDisabled_Analitika_2"
             ><el-icon><Management /></el-icon>
             Аналітика - 2
+          </el-menu-item>
+          <el-menu-item index="3-3" :disabled="isDisabled_Analitika_2"
+            ><el-icon><Management /></el-icon>
+            Аналітика - 3
+          </el-menu-item>
+          <el-menu-item index="3-4" :disabled="isDisabled_Analitika_2"
+            ><el-icon><Management /></el-icon>
+            Аналітика - 4
           </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
@@ -204,6 +212,16 @@ const isDisabled_User = computed(() => {
 });
 const isDisabled_Status = computed(() => {
   return !+getCurUser.value.listAccess[2];
+});
+
+const isDisabled_Monitoring = computed(() => {
+  return !+getCurUser.value.listAccess[3] && !+getCurUser.value.listAccess[4];
+});
+const isDisabled_Analitika_1 = computed(() => {
+  return !+getCurUser.value.listAccess[3];
+});
+const isDisabled_Analitika_2 = computed(() => {
+  return !+getCurUser.value.listAccess[4];
 });
 
 onMounted(() => {
