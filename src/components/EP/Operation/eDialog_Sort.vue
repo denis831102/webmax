@@ -13,9 +13,11 @@
             form.namePunkt
           }}</el-tag>
         </el-col>
+
         <el-col :span="1" style="text-align: center">
           <span>/</span>
         </el-col>
+
         <el-col :span="8">
           <el-tag type="primary">{{ form.nameUser }}</el-tag>
         </el-col>
@@ -31,9 +33,11 @@
             style="width: 100%"
           />
         </el-col>
+
         <el-col :span="2" style="text-align: center">
           <span>-</span>
         </el-col>
+
         <el-col :span="11">
           <el-tag type="info" size="large" style="font-size: 13pt">{{
             getTime
@@ -54,15 +58,16 @@
 
         <el-card style="width: 100%">
           <el-row>
-            <el-col :span="10">
+            <el-col :span="11">
               <el-badge
                 :value="countPeresortOld"
                 style="width: 100%"
-                :offset="[-40, 0]"
+                :offset="[-40, -3]"
+                color="#499efc"
               >
                 <el-select v-model="form.name_M_old">
                   <el-option
-                    v-for="item in sourceTable_M"
+                    v-for="item in sourceTable_M_old"
                     :key="item.name_M"
                     :label="item.name_M"
                     :value="item.name_M"
@@ -70,18 +75,21 @@
                 </el-select>
               </el-badge>
             </el-col>
-            <el-col :span="3">
+
+            <el-col :span="2">
               <el-icon style="font-size: 18pt"><Right /></el-icon>
             </el-col>
-            <el-col :span="10">
+
+            <el-col :span="11">
               <el-badge
                 :value="countPeresortNew"
                 style="width: 100%"
-                :offset="[-40, 0]"
+                :offset="[-40, -3]"
+                color="#499efc"
               >
                 <el-select v-model="form.name_M_new">
                   <el-option
-                    v-for="item in sourceTable_M"
+                    v-for="item in sourceTable_M_new"
                     :key="item.name_M"
                     :label="item.name_M"
                     :value="item.name_M"
@@ -90,18 +98,19 @@
                 </el-select>
               </el-badge>
             </el-col>
-            <el-col :span="4"></el-col>
-            <el-col :span="10">
+          </el-row>
+
+          <el-row>
+            <el-col :span="24">
               <el-input-number
                 v-model="form.count_Sort"
                 :precision="3"
                 :step="1"
                 :max="countPeresortOld"
                 :min="0"
-                style="margin: 18px 4px 0 95px"
+                style="top: 50%; left: 50%; transform: translate(-50%, -50%)"
               />
             </el-col>
-            <el-col :span="5"></el-col>
           </el-row>
         </el-card>
       </el-form-item>
@@ -112,9 +121,7 @@
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="clearForm" :disabled="!form.isSave"
-          >Очистити</el-button
-        >
+        <el-button @click="clearForm">Очистити</el-button>
         <el-button @click="closeForm">Вийти</el-button>
         <el-button type="primary" @click="addTransactionPeresort"
           >Зберегти</el-button
@@ -143,6 +150,7 @@ const emit = defineEmits([]);
 const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
+const getSettingUser = computed(() => store.getters.getSettingUser);
 const props = defineProps({
   visible: Boolean,
   namePunkt: String,
@@ -165,6 +173,14 @@ watch(
   () => form.name_M_old,
   () => {
     form.count_Sort = 0;
+  }
+);
+
+watch(
+  () => form.name_K,
+  () => {
+    form.name_M_old = "зробіть вибір...";
+    form.name_M_new = "зробіть вибір...";
   }
 );
 
@@ -203,28 +219,24 @@ const getTime = computed(() => {
 
 const clearForm = () => {
   form.comment = "";
+  form.name_M_old = "зробіть вибір...";
+  form.name_M_new = "зробіть вибір...";
+  form.count_Sort = 0;
 };
 
 const closeForm = () => {
   emit("update:visible", false);
 };
 
-const sourceTable_K = computed(() => {
-  const _tabK = setting.value.tables["tabKategories"].data;
-  return _tabK.filter((row) => {
-    return +row.id_K == 3 || +row.id_K == 4;
-  });
-});
-
-const sourceTable_M = computed(() => {
-  const _tab = setting.value.tables["tabMaterial"].data;
-
-  return _tab.filter((row) => {
-    return row.name_K == form.name_K;
-  });
-});
+const startTimer = () => {
+  form.timer = setInterval(() => {
+    form.curDate = new Date();
+  }, 1000);
+};
 
 const getKategories = async () => {
+  if (!setting.value.dialog["createPeresort"].visible) return;
+
   try {
     const response = await HTTP.get("", {
       params: {
@@ -233,13 +245,17 @@ const getKategories = async () => {
     });
 
     setting.value.tables["tabKategories"].data = response.data;
-    ElMessage.success("Категоріїї оновлені");
+    if (+getSettingUser.value.isShowMes) {
+      ElMessage.success("Категоріїї оновлені");
+    }
   } catch (e) {
     ElMessage("Помилка завантаження...");
   }
 };
 
 const getMaterial = async () => {
+  if (!setting.value.dialog["createPeresort"].visible) return;
+
   try {
     const response = await HTTP.get("", {
       params: {
@@ -249,7 +265,9 @@ const getMaterial = async () => {
     });
 
     setting.value.tables["tabMaterial"].data = response.data;
-    ElMessage.success("Матеріали оновлені");
+    if (+getSettingUser.value.isShowMes) {
+      ElMessage.success("Матеріали оновлені");
+    }
   } catch (e) {
     ElMessage("Помилка завантаження...");
   }
@@ -257,18 +275,26 @@ const getMaterial = async () => {
 
 const addTransactionPeresort = async () => {
   try {
-    const id_M_old = setting.value.tables["tabMaterial"].data.find(
+    const M_old = setting.value.tables["tabMaterial"].data.find(
       (el) => el.name_M == form.name_M_old
-    ).id_M;
-
-    const id_M_new = setting.value.tables["tabMaterial"].data.find(
+    );
+    const M_new = setting.value.tables["tabMaterial"].data.find(
       (el) => el.name_M == form.name_M_new
-    ).id_M;
+    );
+
+    if (!M_old || !M_new) {
+      ElMessage.error(`Зробіть вибір матеріалу для пересорта!`);
+      return;
+    }
+    if (form.count_Sort == 0) {
+      ElMessage.error(`Введіть кількість матеріалу для пересорта!`);
+      return;
+    }
 
     const groupOperation = [
       {
         id_V: 6,
-        id_M: id_M_old,
+        id_M: M_old.id_M,
         d_count: form.count_Sort,
         d_price: 0,
         old_count: 0,
@@ -278,7 +304,7 @@ const addTransactionPeresort = async () => {
       },
       {
         id_V: 7,
-        id_M: id_M_new,
+        id_M: M_new.id_M,
         d_count: form.count_Sort,
         d_price: 0,
         old_count: 0,
@@ -300,7 +326,9 @@ const addTransactionPeresort = async () => {
 
     if (response.data.isSuccesfull) {
       emit("update:visible", false);
-      ElMessage.success(response.data.message);
+      if (+getSettingUser.value.isShowMes) {
+        ElMessage.success(response.data.message);
+      }
     } else {
       ElMessage.error(response.data.message);
     }
@@ -309,24 +337,40 @@ const addTransactionPeresort = async () => {
   }
 };
 
-const startTimer = () => {
-  form.timer = setInterval(() => {
-    form.curDate = new Date();
-  }, 1000);
-};
+const sourceTable_K = computed(() => {
+  const _tabK = setting.value.tables["tabKategories"].data;
+
+  return _tabK.filter((row) => {
+    return +row.id_K == 3 || +row.id_K == 4;
+  });
+});
+
+const sourceTable_M_old = computed(() => {
+  const _tab = setting.value.tables["tabMaterial"].data;
+
+  return _tab.filter((row) => row.name_K == form.name_K && row.count > 0);
+});
+
+const sourceTable_M_new = computed(() => {
+  const _tab = setting.value.tables["tabMaterial"].data;
+
+  return _tab.filter(
+    (row) => row.name_K == form.name_K && row.name_M != form.name_M_old
+  );
+});
 
 const countPeresortOld = computed(() => {
-  const countP = setting.value.tables["tabMaterial"].data.find((el) => {
+  const obj = setting.value.tables["tabMaterial"].data.find((el) => {
     return el.name_M == form.name_M_old;
-  }).count;
-  return countP;
+  });
+  return obj ? obj.count : 0;
 });
 
 const countPeresortNew = computed(() => {
-  const countP = setting.value.tables["tabMaterial"].data.find((el) => {
+  const obj = setting.value.tables["tabMaterial"].data.find((el) => {
     return el.name_M == form.name_M_new;
-  }).count;
-  return countP;
+  });
+  return obj ? obj.count : 0;
 });
 
 onUpdated(async () => {
@@ -335,11 +379,11 @@ onUpdated(async () => {
   form.date = form.curDate;
 
   await getKategories();
-  form.name_K = setting.value.tables["tabKategories"].data[2].name_K;
+  if (setting.value.tables["tabKategories"].data.length) {
+    form.name_K = setting.value.tables["tabKategories"].data[2].name_K;
+  }
 
   await getMaterial();
-  form.name_M_old = setting.value.tables["tabMaterial"].data[6].name_M;
-  form.name_M_new = setting.value.tables["tabMaterial"].data[4].name_M;
 });
 
 onUnmounted(() => {

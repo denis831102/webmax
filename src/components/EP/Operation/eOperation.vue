@@ -396,7 +396,11 @@ const getPunktCur = async () => {
 };
 
 const getTransaction = async () => {
-  if (setting.value.dialog["editOperation"].visible) return;
+  if (
+    setting.value.dialog["editOperation"].visible ||
+    setting.value.dialog["createPeresort"].visible
+  )
+    return;
 
   try {
     loading.value = true;
@@ -625,7 +629,7 @@ const createPeresort = () => {
 onActivated(async () => {
   setPagination.sizePage = getSettingUser.value.countTrans;
   await getPunktCur();
-  await getTransaction();
+  // await getTransaction();
 
   activeName.value = getSettingUser.value.nameTab.length
     ? getSettingUser.value.nameTab
@@ -638,6 +642,7 @@ onActivated(async () => {
 
 onUpdated(async () => {
   setPagination.sizePage = getSettingUser.value.countTrans;
+  await getTransaction();
 });
 
 onUnmounted(() => {
