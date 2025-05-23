@@ -45,7 +45,6 @@
             :value="item.value"
           />
         </el-select>
-
         <el-button-group class="ml-4">
           <el-button
             type="primary"
@@ -57,6 +56,18 @@
           </el-button>
         </el-button-group>
       </el-space>
+    </el-card>
+    <el-card>
+      <el-cascader
+        v-model="checkMaterial"
+        :options="options"
+        :props="propsCascader"
+        clearable
+        collapse-tags
+        placeholder="оберіть матеріал..."
+        :max-collapse-tags="2"
+        style="width: 240px"
+      />
     </el-card>
   </el-space>
 
@@ -194,7 +205,10 @@ const colors = [
 const checkAll = ref(false);
 const indeterminate = ref(false);
 const checkManeger = ref([]);
+const checkMaterial = ref([]);
 const listManeger = ref([]);
+const options = ref([]);
+const propsCascader = { multiple: true, expandTrigger: "hover" };
 
 watch(checkManeger, (val) => {
   if (val.length === 0) {
@@ -222,6 +236,7 @@ const getMonitoring = async () => {
       _date_r: formatDate(valueDate.value[1], "eng"),
       _isPeriod: isPeriod.value ? 1 : 0,
       _checkManeger: checkManeger.value,
+      _checkMaterial: checkMaterial.value,
     });
 
     setting.value.tables["tabAnalitika"].data = response.data.ar_data;
@@ -253,6 +268,31 @@ const getDate = computed(() => {
   return formatDate(curDate.value);
 });
 
+const getKategories = async () => {
+  try {
+    const response = await HTTP.get("", {
+      params: {
+        _method: "getKategories",
+      },
+    });
+
+    options.value = response.data
+      .map((el) => {
+        const newChildren = el.listMaterial.map((mat) => {
+          return { value: mat.id_M, label: mat.name_M };
+        });
+        return { value: el.id_K, label: el.name_K, children: newChildren };
+      })
+      .filter((el) => {
+        return el.value != 1 && el.value != 6;
+      });
+
+    ElMessage.success("Категоріїї оновлені");
+  } catch (e) {
+    ElMessage("Помилка завантаження...");
+  }
+};
+
 const formatDate = (valDate, mode = "ukr") => {
   const date = {
     d: valDate.getDate(),
@@ -283,6 +323,7 @@ const handleCheckAll = (val) => {
 
 onActivated(async () => {
   await getManeger();
+  await getKategories();
   await getMonitoring();
 });
 </script>
