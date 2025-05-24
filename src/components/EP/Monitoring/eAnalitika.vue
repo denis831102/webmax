@@ -159,25 +159,50 @@
         </el-space>
       </template>
     </el-table-column>
-
     <el-table-column label="Деталізація">
-      <el-descriptions
-        title="Деталізація"
-        direction="vertical"
-        :column="4"
-        size="default"
-        border
-      >
-        <el-descriptions-item label="Дані 1">Значення 1</el-descriptions-item>
-        <el-descriptions-item label="Дані 2">Значення 2</el-descriptions-item>
-        <el-descriptions-item label="Дані 3" :span="2"
-          >Значення 3</el-descriptions-item
-        >
-        <el-descriptions-item label="Дані 4">
-          <el-tag size="small">Значення 4</el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item label="Дані 4"> Значення 5 </el-descriptions-item>
-      </el-descriptions>
+      <template #default="scope">
+        <el-table :data="scope.row.listBits">
+          <el-table-column type="expand">
+            <template #default="props">
+              <h3 style="margin: 0px 0 10px 0">
+                <el-icon><PieChart /></el-icon>
+                <span style="margin-left: 5px">Залишки по категоріїї</span>
+                <el-check-tag type="primary">
+                  {{ props.row.name_K }}
+                </el-check-tag>
+              </h3>
+              <el-table
+                :data="props.row.listMater"
+                border="true"
+                style="margin-left: 2%; width: 98%"
+                show-summary
+              >
+                <el-table-column type="index" width="60" />
+
+                <el-table-column label="номенклатура" prop="name_M" />
+
+                <el-table-column label="кількість" width="150" prop="count">
+                  <template #default="props">
+                    <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
+                      {{ parseFloat(props.row.count).toLocaleString("ru") }}
+                      {{ props.row.unit }}
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </template>
+          </el-table-column>
+          <el-table-column type="index" />
+          <el-table-column label="Категорія" prop="name_K"> </el-table-column>
+          <el-table-column label="Загальна кількість">
+            <template #default="props">
+              <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
+                {{ parseFloat(props.row.summa_K).toLocaleString("ua") }}
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
     </el-table-column>
   </el-table>
 </template>
