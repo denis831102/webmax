@@ -71,7 +71,7 @@
     </el-card>
   </el-space>
 
-  <el-card>
+  <el-card v-if="false">
     <div class="demo-progress">
       <el-row :gutter="20">
         <el-col :span="4"
@@ -134,7 +134,7 @@
   <el-table :data="filterTable">
     <el-table-column type="index" />
 
-    <el-table-column label="Менеджер" prop="pib" width="250">
+    <el-table-column label="Менеджер" prop="pib" width="200">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-icon><User /></el-icon>
@@ -143,28 +143,24 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="Дані">
+    <el-table-column label="Дані" width="150" v-if="false">
       <template #default="scope">
         <el-space :size="40">
           <el-progress
             type="dashboard"
-            :percentage="scope.row.percentage_1"
-            :color="colors"
-          />
-          <el-progress
-            type="dashboard"
-            :percentage="scope.row.percentage_2"
+            :percentage="scope.row.percentage"
             :color="colors"
           />
         </el-space>
       </template>
     </el-table-column>
+
     <el-table-column label="Деталізація">
       <template #default="scope">
-        <el-table :data="scope.row.listBits">
+        <el-table :data="scope.row.listKateg">
           <el-table-column type="expand">
             <template #default="props">
-              <h3 style="margin: 0px 0 10px 0">
+              <h3 style="margin: 0px 0 10px 10px">
                 <el-icon><PieChart /></el-icon>
                 <span style="margin-left: 5px">Залишки по категоріїї</span>
                 <el-check-tag type="primary">
@@ -172,14 +168,28 @@
                 </el-check-tag>
               </h3>
               <el-table
-                :data="props.row.listMater"
+                :data="props.row.listMaterial"
                 border="true"
                 style="margin-left: 2%; width: 98%"
                 show-summary
               >
                 <el-table-column type="index" width="60" />
 
-                <el-table-column label="номенклатура" prop="name_M" />
+                <el-table-column
+                  label="номенклатура"
+                  prop="name_M"
+                  width="150"
+                />
+
+                <el-table-column label="частина" width="150">
+                  <template #default="props">
+                    <el-progress
+                      type="dashboard"
+                      :percentage="props.row.percent"
+                      :color="colors"
+                    />
+                  </template>
+                </el-table-column>
 
                 <el-table-column label="кількість" width="150" prop="count">
                   <template #default="props">
@@ -192,12 +202,16 @@
               </el-table>
             </template>
           </el-table-column>
+
           <el-table-column type="index" />
+
           <el-table-column label="Категорія" prop="name_K"> </el-table-column>
+
           <el-table-column label="Загальна кількість">
             <template #default="props">
               <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
                 {{ parseFloat(props.row.summa_K).toLocaleString("ua") }}
+                {{ props.row.unit }}
               </div>
             </template>
           </el-table-column>
