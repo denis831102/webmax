@@ -163,17 +163,28 @@
                   width="150"
                 />
 
-                <el-table-column label="частина" width="150">
+                <el-table-column
+                  label="частина"
+                  width="150"
+                  prop="percent"
+                  sortable
+                >
                   <template #default="props">
                     <el-progress
                       type="dashboard"
                       :percentage="props.row.percent"
                       :color="colors"
+                      :stroke-width="15"
                     />
                   </template>
                 </el-table-column>
 
-                <el-table-column label="кількість" width="150" prop="count">
+                <el-table-column
+                  label="кількість"
+                  width="150"
+                  prop="count"
+                  sortable
+                >
                   <template #default="props">
                     <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
                       {{ parseFloat(props.row.count).toLocaleString("ru") }}
@@ -215,6 +226,7 @@ const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 const getSettingUser = computed(() => store.getters.getSettingUser);
 const colors = [
+  { color: "#ff55ff", percentage: 10 },
   { color: "#f56c6c", percentage: 20 },
   { color: "#e6a23c", percentage: 40 },
   { color: "#5cb87a", percentage: 60 },
