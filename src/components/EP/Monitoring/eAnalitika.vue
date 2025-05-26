@@ -163,7 +163,7 @@
               <h3 style="margin: 0px 0 10px 10px">
                 <el-icon><PieChart /></el-icon>
                 <span style="margin-left: 5px">Залишки по категоріїї</span>
-                <el-check-tag type="primary">
+                <el-check-tag type="primary" style="margin-left: 10px">
                   {{ props.row.name_K }}
                 </el-check-tag>
               </h3>
