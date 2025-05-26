@@ -88,6 +88,7 @@
               <template #default="props">
                 <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
                   {{ parseFloat(props.row.summa_K).toLocaleString("ua") }}
+                  {{ props.row.unit }}
                 </div>
               </template>
             </el-table-column>
