@@ -2,22 +2,6 @@
   <el-space :size="10" style="margin: 0 0 10px 0">
     <el-card>
       <el-space :size="10">
-        <el-switch v-model="isPeriod" @change="getTransaction" />
-        <el-date-picker
-          v-model="valueDate"
-          type="daterange"
-          format="DD.MM.YYYY"
-          :start-placeholder="getDate"
-          :end-placeholder="getDate"
-          :disabled="!isPeriod"
-          @change="getTransaction"
-          style="width: 230px"
-        />
-      </el-space>
-    </el-card>
-
-    <el-card>
-      <el-space :size="10">
         <el-select
           v-model="checkManeger"
           multiple
@@ -45,29 +29,27 @@
             :value="item.value"
           />
         </el-select>
-        <el-button-group class="ml-4">
-          <el-button
-            type="primary"
-            plain
-            :icon="Refresh"
-            @click="getMonitoring()"
-          >
-            Оновити
-          </el-button>
-        </el-button-group>
+
+        <el-cascader
+          v-model="checkMaterial"
+          :options="options"
+          :props="propsCascader"
+          clearable
+          collapse-tags
+          placeholder="оберіть матеріал..."
+          :max-collapse-tags="2"
+          style="width: 240px"
+        />
+
+        <el-button
+          type="primary"
+          plain
+          :icon="Refresh"
+          @click="getMonitoring()"
+        >
+          Оновити
+        </el-button>
       </el-space>
-    </el-card>
-    <el-card>
-      <el-cascader
-        v-model="checkMaterial"
-        :options="options"
-        :props="propsCascader"
-        clearable
-        collapse-tags
-        placeholder="оберіть матеріал..."
-        :max-collapse-tags="2"
-        style="width: 240px"
-      />
     </el-card>
   </el-space>
 
@@ -231,9 +213,7 @@ import { HTTP } from "@/hooks/http";
 const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
-const valueDate = ref([new Date(), new Date()]);
-const isPeriod = ref(false);
-const curDate = ref(new Date());
+const getSettingUser = computed(() => store.getters.getSettingUser);
 const colors = [
   { color: "#f56c6c", percentage: 20 },
   { color: "#e6a23c", percentage: 40 },
@@ -271,16 +251,15 @@ const getMonitoring = async () => {
     const response = await HTTP.post("", {
       _method: "getMonitoring",
       _id_U: getCurUser.value.id,
-      _date_l: formatDate(valueDate.value[0], "eng"),
-      _date_r: formatDate(valueDate.value[1], "eng"),
-      _isPeriod: isPeriod.value ? 1 : 0,
       _checkManeger: checkManeger.value,
       _checkMaterial: checkMaterial.value,
     });
 
     setting.value.tables["tabAnalitika"].data = response.data.ar_data;
 
-    ElMessage.success("Аналітика оновлена");
+    if (+getSettingUser.value.isShowMes) {
+      ElMessage.success("Аналітика оновлена");
+    }
   } catch (e) {
     ElMessage.error("Помилка завантаження аналітики");
   }
@@ -297,15 +276,13 @@ const getManeger = async () => {
 
     listManeger.value = response.data.ar_data;
 
-    ElMessage.success("Список менеджерів оновлений");
+    if (+getSettingUser.value.isShowMes) {
+      ElMessage.success("Список менеджерів оновлений");
+    }
   } catch (e) {
     ElMessage.error("Помилка завантаження менеджеров");
   }
 };
-
-const getDate = computed(() => {
-  return formatDate(curDate.value);
-});
 
 const getKategories = async () => {
   try {
@@ -326,29 +303,12 @@ const getKategories = async () => {
         return el.value != 1 && el.value != 6;
       });
 
-    ElMessage.success("Категоріїї оновлені");
+    if (+getSettingUser.value.isShowMes) {
+      ElMessage.success("Категоріїї оновлені");
+    }
   } catch (e) {
     ElMessage("Помилка завантаження...");
   }
-};
-
-const formatDate = (valDate, mode = "ukr") => {
-  const date = {
-    d: valDate.getDate(),
-    m: valDate.getMonth() + 1,
-    y: valDate.getFullYear(),
-  };
-  return mode == "ukr"
-    ? [
-        (date.d < 10 ? "0" : "") + date.d,
-        (date.m < 10 ? "0" : "") + date.m,
-        date.y,
-      ].join(".")
-    : [
-        date.y,
-        (date.m < 10 ? "0" : "") + date.m,
-        (date.d < 10 ? "0" : "") + date.d,
-      ].join("-");
 };
 
 const handleCheckAll = (val) => {
