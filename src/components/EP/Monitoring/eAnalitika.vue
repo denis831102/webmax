@@ -113,7 +113,7 @@
     </div>
   </el-card>
 
-  <el-table :data="filterTable">
+  <el-table :data="filterTable" row-style="background:#f4f4f5">
     <el-table-column type="index" />
 
     <el-table-column label="Менеджер" prop="pib" width="200">
