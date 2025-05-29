@@ -192,6 +192,30 @@
                     </div>
                   </template>
                 </el-table-column>
+
+                <el-table-column label="Детальніше" width="350">
+                  <template #default="props">
+                    <el-table :data="props.row.listPunkt">
+                      <el-table-column label="Пункт" prop="name_P" />
+
+                      <el-table-column label="Кількість" prop="count">
+                        <template #default="props">
+                          <div
+                            style="
+                              padding: 5px 0 5px 10px;
+                              background: #c6e2ff69;
+                            "
+                          >
+                            {{
+                              parseFloat(props.row.count).toLocaleString("ru")
+                            }}
+                            {{ props.row.unit }}
+                          </div>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </template>
+                </el-table-column>
               </el-table>
             </template>
           </el-table-column>
