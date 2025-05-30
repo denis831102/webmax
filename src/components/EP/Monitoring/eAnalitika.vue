@@ -113,7 +113,11 @@
     </div>
   </el-card>
 
-  <el-table :data="filterTable" row-style="background:#f4f4f5">
+  <el-table
+    :data="filterTable"
+    row-style="background:#f4f4f5"
+    v-loading="loading"
+  >
     <el-table-column type="index" />
 
     <el-table-column label="Менеджер" prop="pib" width="200">
@@ -193,12 +197,12 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column label="Детальніше" width="350">
+                <el-table-column label="детальніше">
                   <template #default="props">
                     <el-table :data="props.row.listPunkt">
-                      <el-table-column label="Пункт" prop="name_P" />
+                      <el-table-column label="пункт" prop="name_P" sortable />
 
-                      <el-table-column label="Кількість" prop="count">
+                      <el-table-column label="кількість" prop="count" sortable>
                         <template #default="props">
                           <div
                             style="
@@ -211,6 +215,16 @@
                             }}
                             {{ props.row.unit }}
                           </div>
+                        </template>
+                      </el-table-column>
+
+                      <el-table-column label="відсоток" prop="percent">
+                        <template #default="props">
+                          <el-progress
+                            :text-inside="true"
+                            :stroke-width="26"
+                            :percentage="props.row.percent"
+                          />
                         </template>
                       </el-table-column>
                     </el-table>
@@ -263,6 +277,7 @@ const checkManeger = ref([]);
 const checkMaterial = ref([]);
 const listManeger = ref([]);
 const options = ref([]);
+const loading = ref(true);
 const propsCascader = { multiple: true, expandTrigger: "hover" };
 
 watch(checkManeger, (val) => {
@@ -283,6 +298,7 @@ const filterTable = computed(() => {
 });
 
 const getMonitoring = async () => {
+  loading.value = true;
   try {
     const response = await HTTP.post("", {
       _method: "getMonitoring",
@@ -292,6 +308,7 @@ const getMonitoring = async () => {
     });
 
     setting.value.tables["tabAnalitika"].data = response.data.ar_data;
+    loading.value = false;
 
     if (+getSettingUser.value.isShowMes) {
       ElMessage.success("Аналітика оновлена");
