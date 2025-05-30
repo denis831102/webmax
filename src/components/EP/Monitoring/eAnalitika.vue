@@ -1,7 +1,7 @@
 <template>
   <el-space :size="10" style="margin: 0 0 10px 0">
     <el-card>
-      <el-space :size="10">
+      <el-space :size="10" wrap>
         <el-select
           v-model="checkManeger"
           multiple
@@ -382,6 +382,7 @@ const handleCheckAll = (val) => {
   } else {
     checkManeger.value = [];
   }
+  getMonitoring();
 };
 
 onActivated(async () => {

@@ -20,15 +20,14 @@
       </template>
 
       <el-row :gutter="20" style="margin: 0 0 20px 10px">
-        <el-col :span="12">
+        <el-space :size="10" wrap>
           <el-input
             v-model="search"
             size="large"
             placeholder="Пошук матеріала"
             :prefix-icon="Search"
           />
-        </el-col>
-        <el-col :span="12">
+
           <el-button-group>
             <el-button type="primary" :icon="HomeFilled" @click="getOperation">
               <el-icon><Connection /></el-icon>
@@ -39,7 +38,7 @@
               Оновити
             </el-button>
           </el-button-group>
-        </el-col>
+        </el-space>
       </el-row>
 
       <el-row :gutter="20">
