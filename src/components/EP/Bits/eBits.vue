@@ -42,9 +42,12 @@
         </el-col>
       </el-row>
 
-      <el-row :gutter="20" style="margin: 0 20% 20px 20%">
+      <el-row :gutter="20">
         <el-col :span="24">
-          <el-table :data="filterTable">
+          <el-table
+            :data="filterTable"
+            :class="{ marginTabl: setting.displaySize == 'large' }"
+          >
             <el-table-column type="expand">
               <template #default="props">
                 <div style="padding: 20px; background: #c6e2ff69">
@@ -136,6 +139,10 @@ const activeIdPunkt = computed(() => {
   return punkts.value.length && punkt ? punkt.id : 0;
 });
 
+// const classMargin = computed(() => ({
+//   marginTabl: setting.value.displaySize == "large",
+// }));
+
 const getPunktCur = async () => {
   try {
     const response = await HTTP.get("", {
@@ -206,5 +213,9 @@ onUpdated(async () => {
 .demo-tabs .custom-tabs-label span {
   vertical-align: middle;
   margin-left: 4px;
+}
+.marginTabl {
+  margin: 0 10% 20% 10%;
+  width: 80%;
 }
 </style>
