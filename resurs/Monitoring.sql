@@ -12,6 +12,6 @@ FROM users
   LEFT JOIN bits ON punkt.id_P = bits.id_P
   LEFT JOIN material ON bits.id_M = material.id_M
   LEFT JOIN matKategories ON material.id_K = matKategories.id_K
-WHERE users.id IN (30) AND matKategories.id_G != 1
+WHERE users.id IN (30) -- AND matKategories.id_G <> 1
 -- GROUP BY id_U, id_K, id_M
 ORDER BY id_U, id_M
