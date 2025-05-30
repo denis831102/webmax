@@ -20,21 +20,21 @@
       </template>
 
       <el-row :gutter="20" style="margin: 0 0 20px 10px">
-        <el-col :span="5">
+        <el-col :span="12">
           <el-input
             v-model="search"
-            size="small"
-            style="width: 100%; height: 100%"
+            size="large"
             placeholder="Пошук матеріала"
             :prefix-icon="Search"
           />
         </el-col>
-        <el-col :span="13">
+        <el-col :span="12">
           <el-button-group>
             <el-button type="primary" :icon="HomeFilled" @click="getOperation">
               <el-icon><Connection /></el-icon>
-              <span style="margin-left: 5px">Поточні операції</span>
+              <span style="margin-left: 5px">Операції</span>
             </el-button>
+
             <el-button type="primary" plain :icon="Refresh" @click="getBits()">
               Оновити
             </el-button>
@@ -83,7 +83,10 @@
               </template>
             </el-table-column>
 
-            <el-table-column type="index" />
+            <el-table-column
+              type="index"
+              v-if="setting.displaySize == 'large'"
+            />
 
             <el-table-column label="Категорія" prop="name_K"> </el-table-column>
 
