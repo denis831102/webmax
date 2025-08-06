@@ -66,6 +66,7 @@ import eTable_Status from "@/components/EP/Status/eTable_Status";
 import eTable_Punkt from "@/components/EP/Punkt/eTable_Punkt";
 import eTable_Material from "@/components/EP/Material/eTable_Material";
 import eTable_Kategories from "@/components/EP/Kategories/eTable_Kategories";
+import eTable_Buyers from "@/components/EP/Buyers/eTable_Buyers";
 import eOperation from "@/components/EP/Operation/eOperation";
 import eBits from "@/components/EP/Bits/eBits";
 import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
@@ -94,6 +95,7 @@ const setting = ref({
     editPunkt: { visible: false, initiator: "" },
     editOperation: { visible: false, initiator: "" },
     editMaterial: { visible: false, initiator: "" },
+    editBuyers: { visible: false, initiator: "" },
     editBits: { visible: false, initiator: "" },
     createPeresort: { visible: false, initiator: "" },
   },
@@ -105,6 +107,7 @@ const setting = ref({
       eTable_Punkt,
       eTable_Material,
       eTable_Kategories,
+      eTable_Buyers,
       eOperation,
       eBits,
       eAnalitika,
@@ -135,6 +138,11 @@ const setting = ref({
     },
     tabKategories: {
       title: "КАТЕГОРІЇ НОМЕНКЛАТУРИ",
+      curRow: {},
+      data: [],
+    },
+    tabBuyers: {
+      title: "ПОКУПЦІ",
       curRow: {},
       data: [],
     },

@@ -55,13 +55,13 @@
         </el-menu-item-group>
         <el-sub-menu index="1-5">
           <template #title
-            ><span
-              ><el-icon><SetUp /></el-icon>Довідник</span
+            ><span>
+              <el-icon><Avatar /></el-icon> Контрагенти</span
             ></template
           >
           <el-menu-item index="1-5-1"
-            ><el-icon><EditPen /></el-icon>Компонент - 1</el-menu-item
-          >
+            ><el-icon><ShoppingCart /></el-icon> Покупці
+          </el-menu-item>
           <el-menu-item index="1-5-2"
             ><el-icon><Edit /></el-icon>Компонент - 2</el-menu-item
           >
@@ -176,6 +176,10 @@ const handleSelect = (key, keyPath) => {
     case "1-4-2":
       setting.value.comps.curComp = "eTable_Material";
       setting.value.titleTable = setting.value.tables["tabMaterial"].title;
+      break;
+    case "1-5-1":
+      setting.value.comps.curComp = "eTable_Buyers";
+      setting.value.titleTable = setting.value.tables["tabBuyers"].title;
       break;
     case "2-1":
       setting.value.comps.curComp = "eBits";
