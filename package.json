@@ -13,7 +13,7 @@
     "core-js": "^3.8.3",
     "element-plus": "^2.9.7",
     "lodash": "^4.17.21",
-    "vue": "^3.2.13",
+    "vue": "^3.5.18",
     "vue-router": "^4.2.5",
     "vuex": "^4.1.0"
   },
@@ -47,5 +47,18 @@
     "last 2 versions",
     "not dead",
     "not ie 11"
-  ]
+  ],
+  "description": "```\r npm install\r ```",
+  "main": "babel.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/denis831102/webmax.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/denis831102/webmax/issues"
+  },
+  "homepage": "https://github.com/denis831102/webmax#readme"
 }
