@@ -60,6 +60,17 @@
       </template>
     </el-table-column>
 
+    <el-table-column label="Тип пункту" sortable prop="typeP">
+      <template #default="scope">
+        <div style="display: flex; align-items: center">
+          <el-icon><MagicStick /></el-icon>
+          <span style="margin-left: 10px">{{
+            scope.row.typeP == "sz" ? "СЗ" : "ЦМ"
+          }}</span>
+        </div>
+      </template>
+    </el-table-column>
+
     <el-table-column label="Редагування ПП">
       <template #default="scope">
         <el-button size="small" @click="editPunkt(scope.$index, scope.row)">

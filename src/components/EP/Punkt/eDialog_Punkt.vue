@@ -22,6 +22,12 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="Тип Пункту" :label-width="formLabelWidth">
+        <el-radio-group v-model="form.typeP" size="large" fill="#6cf">
+          <el-radio-button label="СЗ" value="sz" />
+          <el-radio-button label="ЦМ" value="cm" />
+        </el-radio-group>
+      </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
@@ -56,7 +62,9 @@ const form = reactive({
   nameP: "",
   pib: "",
   adres: "",
+  typeP: "sz",
 });
+
 // const store = useStore();
 // const setCurUser = (user) => store.commit("setCurUser", user);
 // const getCurUser = computed(() => store.getters.getCurUser);
@@ -80,15 +88,17 @@ const save = async () => {
           _name: form.nameP,
           _idU: idU,
           _adres: form.adres,
+          _typeP: form.typeP,
         },
       });
 
       if (response.data.isSuccesfull) {
         const punkt = _tab.data.find((el) => el.id == _tab.curRow.id);
-        [punkt.name, punkt.adres, punkt.pib] = [
+        [punkt.name, punkt.adres, punkt.pib, punkt.typeP] = [
           form.nameP,
           form.adres,
           form.pib,
+          form.typeP,
         ];
         emit("update:visible", false);
       } else {
@@ -148,10 +158,11 @@ onUpdated(async () => {
       });
       setting.value.tables["tabUser"].data = response.data;
 
-      [form.nameP, form.adres, form.pib] = [
+      [form.nameP, form.adres, form.pib, form.typeP] = [
         _tab.curRow.name,
         _tab.curRow.adres,
         _tab.curRow.pib,
+        _tab.curRow.typeP,
       ];
       break;
     }
@@ -166,20 +177,28 @@ onUpdated(async () => {
       });
       setting.value.tables["tabUser"].data = response.data;
 
-      [form.nameP, form.adres, form.pib] = [
+      [form.nameP, form.adres, form.pib, form.typeP] = [
         _tab.curRow.name,
         _tab.curRow.adres,
         _tab.curRow.pib,
+        _tab.curRow.typeP,
       ];
-
       break;
     }
     case "table_Punkt_add": {
       form.title = "Додавання Пункту прийому";
 
+      const response = await HTTP.get("", {
+        params: {
+          _method: "getUsers",
+        },
+      });
+      setting.value.tables["tabUser"].data = response.data;
+
       form.nameP = "";
       form.adres = "";
       form.pib = setting.value.tables["tabUser"].data[0].PIB;
+      form.typeP = "SZ";
 
       break;
     }
