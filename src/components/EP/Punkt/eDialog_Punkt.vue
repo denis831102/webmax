@@ -118,6 +118,7 @@ const save = async () => {
           _name: form.nameP,
           _idU: idU,
           _adres: form.adres,
+          _typeP: form.typeP,
         },
       });
 
@@ -128,6 +129,7 @@ const save = async () => {
           name: response.data.name,
           adres: response.data.adres,
           pib: form.pib,
+          typeP: form.typeP,
         };
 
         _tab.data.push(punkt);
@@ -198,7 +200,7 @@ onUpdated(async () => {
       form.nameP = "";
       form.adres = "";
       form.pib = setting.value.tables["tabUser"].data[0].PIB;
-      form.typeP = "SZ";
+      form.typeP = "sz";
 
       break;
     }
