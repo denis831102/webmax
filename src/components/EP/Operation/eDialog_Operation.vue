@@ -144,7 +144,7 @@
         </el-col>
 
         <el-col :span="8" v-if="form.visibleContrAgent">
-          <el-radio-group v-model="form.modeOtg">
+          <el-radio-group v-model="form.modeOtg" v-on:change="getSklad">
             <el-radio-button label="склад ЦМ" value="cm" />
             <el-radio-button label="покупець" value="ca" />
           </el-radio-group>
@@ -154,9 +154,9 @@
           <el-select v-model="form.curContragent" style="width: 100%">
             <el-option
               v-for="item in form.optionContragent"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
             />
           </el-select>
         </el-col>
@@ -188,6 +188,7 @@ import {
   defineProps,
   defineEmits,
   ref,
+  watch,
   watchEffect,
   computed,
   onUnmounted,
@@ -233,6 +234,11 @@ const form = reactive({
   curContragent: "",
 });
 const selOperation = ref([]);
+
+watch(
+  () => form.visibleContrAgent,
+  () => getSklad()
+);
 
 watchEffect(() => {
   form.tableOperation.forEach((el) => {
@@ -488,6 +494,7 @@ const closeForm = () => {
   form.delOperation = [];
   form.addOperation = [];
   form.chnOperation = [];
+  form.visibleContrAgent = false;
   emit("update:visible", false);
 };
 
@@ -499,6 +506,7 @@ const clearForm = () => {
   form.tableOperation = [];
   selOperation.value = [];
   form.comment = "";
+  form.visibleContrAgent = false;
 };
 
 const getWidth = computed(() => {
@@ -539,6 +547,34 @@ const startTimer = () => {
   form.timer = setInterval(() => {
     form.curDate = new Date();
   }, 1000);
+};
+
+const getSklad = async () => {
+  if (!form.visibleContrAgent) return;
+  switch (form.modeOtg) {
+    case "cm": {
+      const response = await HTTP.get("", {
+        params: {
+          _method: "getPunkt",
+        },
+      });
+      form.optionContragent = response.data.filter((el) => {
+        return el.typeP == "cm";
+      });
+      form.curContragent = form.optionContragent[0].name;
+      break;
+    }
+    case "ca": {
+      const response = await HTTP.get("", {
+        params: {
+          _method: "getBuyer",
+        },
+      });
+      form.optionContragent = response.data;
+      form.curContragent = form.optionContragent[0].name;
+      break;
+    }
+  }
 };
 
 onUpdated(async () => {
