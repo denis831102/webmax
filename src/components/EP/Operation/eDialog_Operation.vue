@@ -22,7 +22,7 @@
       </el-form-item>
 
       <el-form-item label="Дата операції">
-        <el-col :span="11">
+        <el-col :span="5">
           <el-date-picker
             v-model="form.date"
             type="date"
@@ -32,11 +32,9 @@
             style="width: 100%"
           />
         </el-col>
-        <el-col :span="2" style="text-align: center">
-          <span>-</span>
-        </el-col>
-        <el-col :span="11">
-          <el-tag type="info" size="large" style="font-size: 13pt">{{
+
+        <el-col :span="5">
+          <el-tag type="info" size="large" style="font-size: 12pt">{{
             getTime
           }}</el-tag>
         </el-col>
@@ -130,7 +128,7 @@
       </el-form-item>
 
       <el-form-item label="Додати операцію">
-        <el-col :span="24">
+        <el-col :span="3">
           <el-cascader
             v-model="selOperation"
             :options="form.options"
@@ -139,10 +137,28 @@
             clearable
             collapse-tags
             collapse-tags-tooltip
-            :max-collapse-tags="2"
-            placeholder="зробіть вибір..."
-            style="width: 100%"
+            :max-collapse-tags="0"
+            placeholder=" "
+            style="width: 50px"
           />
+        </el-col>
+
+        <el-col :span="8" v-if="form.visibleContrAgent">
+          <el-radio-group v-model="form.modeOtg">
+            <el-radio-button label="склад ЦМ" value="cm" />
+            <el-radio-button label="контрагент" value="ca" />
+          </el-radio-group>
+        </el-col>
+
+        <el-col :span="13" v-if="form.visibleContrAgent">
+          <el-select v-model="curContragent" style="width: 100%">
+            <el-option
+              v-for="item in optionContragent"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-col>
       </el-form-item>
 
@@ -211,6 +227,10 @@ const form = reactive({
   delOperation: [],
   addOperation: [],
   chnOperation: [],
+  modeOtg: "cm",
+  visibleContrAgent: false,
+  optionContragent: [],
+  curContragent: "",
 });
 const selOperation = ref([]);
 
@@ -313,6 +333,7 @@ const addOperation = () => {
   };
   // form.tableOperation = [...form.tableOperation, ...newOperation];
   form.tableOperation.push(newOperation);
+  checkVidOper();
 };
 
 const delOperation = (row) => {
@@ -335,6 +356,20 @@ const delOperation = (row) => {
 
     return isAdd;
   });
+
+  selOperation.value = [];
+  checkVidOper();
+};
+
+const checkVidOper = () => {
+  // let vid = false;
+  // form.tableOperation.forEach((el) => {
+  //   vid |= el.id_V == 2;
+  // });
+  form.visibleContrAgent = form.tableOperation.reduce(
+    (res, el) => res | (el.id_V == 2),
+    false
+  );
 };
 
 const saveTransaction = () => {
