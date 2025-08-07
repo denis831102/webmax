@@ -146,14 +146,14 @@
         <el-col :span="8" v-if="form.visibleContrAgent">
           <el-radio-group v-model="form.modeOtg">
             <el-radio-button label="склад ЦМ" value="cm" />
-            <el-radio-button label="контрагент" value="ca" />
+            <el-radio-button label="покупець" value="ca" />
           </el-radio-group>
         </el-col>
 
         <el-col :span="13" v-if="form.visibleContrAgent">
-          <el-select v-model="curContragent" style="width: 100%">
+          <el-select v-model="form.curContragent" style="width: 100%">
             <el-option
-              v-for="item in optionContragent"
+              v-for="item in form.optionContragent"
               :key="item.value"
               :label="item.label"
               :value="item.value"
