@@ -306,6 +306,8 @@ const loadOperation = (isRedactor = false) => {
     curTransaction.id_Bu != 0 || curTransaction.id_cm != 0;
   form.modeOtg = curTransaction.id_Bu != 0 ? "ca" : "cm";
 
+  // alert(form.visibleContrAgent);
+
   getSklad(
     curTransaction.id_Bu > 0 ? curTransaction.id_Bu : curTransaction.id_cm
   );
@@ -392,8 +394,28 @@ const saveTransaction = () => {
 
 const addTransaction = async () => {
   try {
-    const groupOperation = form.tableOperation.map((oper) => {
-      return {
+    // const groupOperation = form.tableOperation.map((oper) => {
+    //   return {
+    //     id_V: oper.id_V,
+    //     id_M: oper.id_M,
+    //     d_count: oper.count,
+    //     d_price: oper.price,
+    //     old_count: 0,
+    //     old_price: 0,
+    //     new_count: oper.count,
+    //     new_price: oper.price,
+    //     mode_otg: form.visibleContrAgent ? form.modeOtg : "",
+    //     id_agent: form.visibleContrAgent ? form.curContragent : 0,
+    //   };
+    // });
+
+    let idTChild = 0,
+      nameContragent = "";
+    const groupOperation = [];
+    const groupOperationChild = [];
+
+    form.tableOperation.forEach((oper) => {
+      groupOperation.push({
         id_V: oper.id_V,
         id_M: oper.id_M,
         d_count: oper.count,
@@ -404,12 +426,40 @@ const addTransaction = async () => {
         new_price: oper.price,
         mode_otg: form.visibleContrAgent ? form.modeOtg : "",
         id_agent: form.visibleContrAgent ? form.curContragent : 0,
-      };
+      });
+
+      if (oper.id_V == 2) {
+        groupOperationChild.push({
+          id_V: 1,
+          id_M: oper.id_M,
+          d_count: oper.count,
+          d_price: oper.price,
+          old_count: 0,
+          old_price: 0,
+          new_count: oper.count,
+          new_price: oper.price,
+          mode_otg: "",
+          id_agent: 0,
+        });
+      }
     });
 
-    // const agent = form.optionContragent.find((el) => {
-    //   return el.name == form.curContragent;
-    // });
+    if (groupOperationChild.length) {
+      const responseChild = await HTTP.post("", {
+        _method: "addTransaction",
+        _idUser: getCurUser.value.id,
+        _idPunkt: form.curContragent,
+        _date: form.date,
+        _time: getTime.value,
+        _comment: form.comment,
+        _idTChild: 0,
+        _opers: groupOperationChild,
+      });
+      idTChild = responseChild.data.idT;
+      nameContragent = form.optionContragent.find(
+        (el) => el.id == form.curContragent
+      ).name;
+    }
 
     const response = await HTTP.post("", {
       _method: "addTransaction",
@@ -417,7 +467,11 @@ const addTransaction = async () => {
       _idPunkt: props.idPunkt,
       _date: form.date,
       _time: getTime.value,
-      _comment: form.comment,
+      _comment: [
+        groupOperationChild.length ? `${nameContragent};` : "",
+        form.comment,
+      ].join(" "),
+      _idTChild: idTChild,
       _opers: groupOperation,
     });
 
