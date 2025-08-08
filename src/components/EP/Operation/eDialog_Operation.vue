@@ -144,7 +144,7 @@
         </el-col>
 
         <el-col :span="8" v-if="form.visibleContrAgent">
-          <el-radio-group v-model="form.modeOtg" v-on:change="getSklad">
+          <el-radio-group v-model="form.modeOtg" v-on:change="getSklad()">
             <el-radio-button label="склад ЦМ" value="cm" />
             <el-radio-button label="покупець" value="ca" />
           </el-radio-group>
@@ -301,6 +301,14 @@ const loadOperation = (isRedactor = false) => {
   });
 
   form.comment = curTransaction.comment;
+
+  form.visibleContrAgent =
+    curTransaction.id_Bu != 0 || curTransaction.id_cm != 0;
+  form.modeOtg = curTransaction.id_Bu != 0 ? "ca" : "cm";
+
+  getSklad(
+    curTransaction.id_Bu > 0 ? curTransaction.id_Bu : curTransaction.id_cm
+  );
 };
 
 const addOperation = () => {
@@ -394,8 +402,14 @@ const addTransaction = async () => {
         old_price: 0,
         new_count: oper.count,
         new_price: oper.price,
+        mode_otg: form.visibleContrAgent ? form.modeOtg : "",
+        id_agent: form.visibleContrAgent ? form.curContragent : 0,
       };
     });
+
+    // const agent = form.optionContragent.find((el) => {
+    //   return el.name == form.curContragent;
+    // });
 
     const response = await HTTP.post("", {
       _method: "addTransaction",
@@ -441,6 +455,9 @@ const changeTransaction = async () => {
           old_price: 0,
           new_count: oper.count,
           new_price: oper.price,
+          mode_otg: form.visibleContrAgent ? form.modeOtg : "",
+          id_agent:
+            form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
         });
       } else {
         let dCount = oper.count - oper.old.count,
@@ -448,7 +465,7 @@ const changeTransaction = async () => {
 
         id_T = oper.id_T;
 
-        if (dCount != 0 || dPrice != 0) {
+        if (dCount != 0 || dPrice != 0 || oper.id_V == 2) {
           form.chnOperation.push({
             id_O: oper.id_O,
             id_V: oper.id_V,
@@ -459,6 +476,9 @@ const changeTransaction = async () => {
             old_price: oper.old.price,
             new_count: oper.count,
             new_price: oper.price,
+            mode_otg: form.visibleContrAgent ? form.modeOtg : "",
+            id_agent:
+              form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
           });
         }
       }
@@ -549,8 +569,9 @@ const startTimer = () => {
   }, 1000);
 };
 
-const getSklad = async () => {
+const getSklad = async (id_agent = 0) => {
   if (!form.visibleContrAgent) return;
+
   switch (form.modeOtg) {
     case "cm": {
       const response = await HTTP.get("", {
@@ -561,7 +582,6 @@ const getSklad = async () => {
       form.optionContragent = response.data.filter((el) => {
         return el.typeP == "cm";
       });
-      form.curContragent = form.optionContragent[0].name;
       break;
     }
     case "ca": {
@@ -571,10 +591,10 @@ const getSklad = async () => {
         },
       });
       form.optionContragent = response.data;
-      form.curContragent = form.optionContragent[0].name;
       break;
     }
   }
+  form.curContragent = id_agent == 0 ? form.optionContragent[0].id : id_agent;
 };
 
 onUpdated(async () => {
