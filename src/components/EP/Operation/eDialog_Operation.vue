@@ -438,7 +438,7 @@ const addTransaction = async () => {
           old_price: 0,
           new_count: oper.count,
           new_price: oper.price,
-          mode_otg: "ch",
+          mode_otg: "not_kassa",
           id_agent: 0,
         });
       }

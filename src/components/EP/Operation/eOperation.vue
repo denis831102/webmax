@@ -469,6 +469,15 @@ const delTransaction_Ok = async (row) => {
       },
     });
 
+    if (row.id_T_child !== 0) {
+      await HTTP.get("", {
+        params: {
+          _method: "delTransaction",
+          _id_T: row.id_T_child,
+        },
+      });
+    }
+
     if (response.data.isSuccesfull) {
       const _tab = setting.value.tables["tabTransaction"];
       _tab.data = _tab.data.filter((el) => el.id_T !== row.id_T);
