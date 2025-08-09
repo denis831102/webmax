@@ -438,7 +438,7 @@ const addTransaction = async () => {
           old_price: 0,
           new_count: oper.count,
           new_price: oper.price,
-          mode_otg: "",
+          mode_otg: "ch",
           id_agent: 0,
         });
       }
@@ -673,7 +673,7 @@ onUpdated(async () => {
       form.tableOperation = [];
       form.isSave = true;
       form.date = form.curDate;
-      selOperation.value = JSON.parse(_tab.curRow.groupOperation);
+      // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       loadOperation();
       break;
     }
@@ -686,7 +686,7 @@ onUpdated(async () => {
       form.delOperation = [];
       form.isSave = false;
       form.date = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
-      selOperation.value = JSON.parse(_tab.curRow.groupOperation);
+      // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       loadOperation(true);
       break;
     }
