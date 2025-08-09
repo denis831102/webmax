@@ -451,7 +451,7 @@ const addTransaction = async () => {
         _idPunkt: form.curContragent,
         _date: form.date,
         _time: getTime.value,
-        _comment: form.comment,
+        _comment: [`${form.namePunkt};`, form.comment].join(" "),
         _idTChild: 0,
         _opers: groupOperationChild,
       });
