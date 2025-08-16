@@ -330,6 +330,8 @@ const addTransactionPeresort = async () => {
       _date: form.date,
       _time: getTime.value,
       _comment: `пересорт; ${form.comment}`,
+      _isEdit: 0,
+      _isDel: 0,
       _opers: groupOperation,
     });
 

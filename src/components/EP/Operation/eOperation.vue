@@ -274,7 +274,7 @@
                 size="small"
                 @click="editTransaction(scope.$index, scope.row)"
                 title="Редагування транзакції"
-                :disabled="scope.row.suma == 0"
+                :disabled="scope.row.isEdit == 0"
               >
                 <el-icon><Edit /></el-icon>
               </el-button>
@@ -284,6 +284,7 @@
                 type="danger"
                 @click="delTransaction(scope.$index, scope.row)"
                 title="Видалення транзакції"
+                :disabled="scope.row.isDel == 0"
               >
                 <el-icon><DeleteFilled /></el-icon>
               </el-button>
@@ -292,7 +293,7 @@
                 type="success"
                 @click="copyTransaction(scope.$index, scope.row)"
                 title="Створення транзакції за зразком"
-                :disabled="scope.row.suma == 0"
+                :disabled="scope.row.isEdit == 0"
               >
                 <el-icon><CopyDocument /></el-icon>
               </el-button>

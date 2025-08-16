@@ -426,9 +426,10 @@ const addTransaction = async () => {
         new_price: oper.price,
         mode_otg: form.visibleContrAgent ? form.modeOtg : "",
         id_agent: form.visibleContrAgent ? form.curContragent : 0,
+        is_move_kassa: 1,
       });
 
-      if (oper.id_V == 2) {
+      if (oper.id_V == 2 && form.modeOtg == "cm") {
         groupOperationChild.push({
           id_V: 1,
           id_M: oper.id_M,
@@ -438,8 +439,9 @@ const addTransaction = async () => {
           old_price: 0,
           new_count: oper.count,
           new_price: oper.price,
-          mode_otg: "not_kassa",
+          mode_otg: "",
           id_agent: 0,
+          is_move_kassa: 0,
         });
       }
     });
@@ -451,8 +453,10 @@ const addTransaction = async () => {
         _idPunkt: form.curContragent,
         _date: form.date,
         _time: getTime.value,
-        _comment: [`${form.namePunkt};`, form.comment].join(" "),
+        _comment: `переміщення з ${form.namePunkt}; ${form.comment}`,
         _idTChild: 0,
+        _isEdit: 0,
+        _isDel: 0,
         _opers: groupOperationChild,
       });
       idTChild = responseChild.data.idT;
@@ -468,10 +472,14 @@ const addTransaction = async () => {
       _date: form.date,
       _time: getTime.value,
       _comment: [
-        groupOperationChild.length ? `${nameContragent};` : "",
+        groupOperationChild.length ? `відвантаження на ${nameContragent};` : "",
         form.comment,
-      ].join(" "),
+      ]
+        .join(" ")
+        .trim(),
       _idTChild: idTChild,
+      _isEdit: form.visibleContrAgent && form.modeOtg == "cm" ? 0 : 1,
+      _isDel: 1,
       _opers: groupOperation,
     });
 
@@ -512,6 +520,7 @@ const changeTransaction = async () => {
           mode_otg: form.visibleContrAgent ? form.modeOtg : "",
           id_agent:
             form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
+          is_move_kassa: 1,
         });
       } else {
         let dCount = oper.count - oper.old.count,
@@ -533,6 +542,7 @@ const changeTransaction = async () => {
             mode_otg: form.visibleContrAgent ? form.modeOtg : "",
             id_agent:
               form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
+            is_move_kassa: 1,
           });
         }
       }
@@ -568,6 +578,7 @@ const closeForm = () => {
   form.delOperation = [];
   form.addOperation = [];
   form.chnOperation = [];
+  form.tableOperation = [];
   form.visibleContrAgent = false;
   emit("update:visible", false);
 };
