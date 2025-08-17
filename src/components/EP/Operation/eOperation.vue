@@ -200,6 +200,7 @@
                   {{ props.row.date }} - {{ props.row.time }}
                 </el-check-tag>
               </h3>
+
               <el-table
                 :data="props.row.listOper"
                 border="true"
@@ -293,11 +294,29 @@
                 type="success"
                 @click="copyTransaction(scope.$index, scope.row)"
                 title="Створення транзакції за зразком"
-                :disabled="scope.row.isEdit == 0"
               >
                 <el-icon><CopyDocument /></el-icon>
               </el-button>
             </el-button-group>
+
+            <el-switch
+              v-if="+getCurUser.listAccess[5]"
+              inline-prompt
+              active-text="edit"
+              inactive-text="edit"
+              :modelValue="scope.row.isEdit == 1"
+              @change="changeCheck(scope.row, 'Edit')"
+              style="margin-left: 10px"
+            />
+            <el-switch
+              v-if="+getCurUser.listAccess[6]"
+              inline-prompt
+              active-text="del"
+              inactive-text="del"
+              :modelValue="scope.row.isDel == 1"
+              @change="changeCheck(scope.row, 'Del')"
+              style="margin-left: 10px"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -634,6 +653,27 @@ const shortCuts = [
 const createPeresort = () => {
   setting.value.dialog["createPeresort"].initiator = "createPeresort";
   setting.value.dialog["createPeresort"].visible = true;
+};
+
+const changeCheck = async (row, atr) => {
+  const _tabl = setting.value.tables["tabTransaction"];
+  const curTransaction = _tabl.data.find((el) => el.id_T == row.id_T);
+  const curVal = +curTransaction[`is${atr}`];
+
+  const response = await HTTP.get("", {
+    params: {
+      _method: "setAccessTransaction",
+      _id_T: row.id_T,
+      _atr: `is${atr}`,
+      _val: !curVal,
+    },
+  });
+
+  if (response.data.isSuccesfull) {
+    curTransaction[`is${atr}`] = !curVal;
+  } else {
+    ElMessage("Помилка зміни");
+  }
 };
 
 onActivated(async () => {

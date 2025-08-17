@@ -105,6 +105,28 @@
       </template>
     </el-table-column>
 
+    <el-table-column label="дозвіл на зміну транзакцій">
+      <template #default="scope">
+        <div style="display: flex; align-items: center">
+          <el-switch
+            :modelValue="scope.row.v5 == 1"
+            @change="changeCheck(scope.row, 5)"
+          />
+        </div>
+      </template>
+    </el-table-column>
+
+    <el-table-column label="дозвіл на видалення транзакцій">
+      <template #default="scope">
+        <div style="display: flex; align-items: center">
+          <el-switch
+            :modelValue="scope.row.v6 == 1"
+            @change="changeCheck(scope.row, 6)"
+          />
+        </div>
+      </template>
+    </el-table-column>
+
     <el-table-column label="Операція">
       <template #default="scope">
         <el-button size="small" @click="editStatus(scope.$index, scope.row)">
