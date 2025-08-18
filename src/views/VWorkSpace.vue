@@ -70,6 +70,7 @@ import eTable_Buyers from "@/components/EP/Buyers/eTable_Buyers";
 import eOperation from "@/components/EP/Operation/eOperation";
 import eBits from "@/components/EP/Bits/eBits";
 import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
+import eEconomist from "@/components/EP/Monitoring/eEconomist";
 import eSettingUser from "@/components/EP/SettingUser/eSettingUser";
 
 const store = useStore();
@@ -111,6 +112,7 @@ const setting = ref({
       eOperation,
       eBits,
       eAnalitika,
+      eEconomist,
       eSettingUser,
     },
     curComp: "eAvatar",
@@ -158,6 +160,11 @@ const setting = ref({
     },
     tabAnalitika: {
       title: "АНАЛІТИКА ПО ВЛАСНИМ ПУНКТАМ",
+      curRow: {},
+      data: [],
+    },
+    tabEconomist: {
+      title: "Щоденний звіт по ВЛАСНИМ ПУНКТАМ",
       curRow: {},
       data: [],
     },

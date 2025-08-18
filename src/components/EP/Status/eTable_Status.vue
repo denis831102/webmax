@@ -83,7 +83,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="доступ до аналітики по ВП">
+    <el-table-column label="аналітики по ВП">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-switch
@@ -94,7 +94,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="доступ до аналітики">
+    <el-table-column label="щодений звіт">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-switch
@@ -105,7 +105,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="дозвіл на зміну транзакцій">
+    <el-table-column label="зміна транзакцій">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-switch
@@ -116,7 +116,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="дозвіл на видалення транзакцій">
+    <el-table-column label="видалення транзакцій">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-switch

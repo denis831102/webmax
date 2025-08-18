@@ -100,13 +100,13 @@
           </el-menu-item>
           <el-menu-item index="3-2" :disabled="isDisabled_Analitika_2"
             ><el-icon><Management /></el-icon>
-            Аналітика - 2
+            Щоденний звіт економіста
           </el-menu-item>
-          <el-menu-item index="3-3" :disabled="isDisabled_Analitika_2"
+          <el-menu-item index="3-3" :disabled="true"
             ><el-icon><Management /></el-icon>
             Аналітика - 3
           </el-menu-item>
-          <el-menu-item index="3-4" :disabled="isDisabled_Analitika_2"
+          <el-menu-item index="3-4" :disabled="true"
             ><el-icon><Management /></el-icon>
             Аналітика - 4
           </el-menu-item>
@@ -193,6 +193,11 @@ const handleSelect = (key, keyPath) => {
       setting.value.comps.curComp = "eAnalitika";
       setting.value.titleTable = setting.value.tables["tabAnalitika"].title;
       break;
+    case "3-2":
+      setting.value.comps.curComp = "eEconomist";
+      setting.value.titleTable = setting.value.tables["tabEconomist"].title;
+      break;
+
     case "4":
       setting.value.comps.curComp = "eSettingUser";
       setting.value.titleTable = "НАЛАШТУВАННЯ КОРИСТУВАЧА";
