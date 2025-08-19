@@ -20,25 +20,41 @@
       </template>
 
       <el-row :gutter="20" style="margin: 0 0 20px 10px">
-        <el-space :size="10" wrap>
+        <el-space :size="10" wrap class="card">
+          <el-switch v-model="isFilter" @change="getBits" />
+
           <el-input
             v-model="search"
             size="large"
             placeholder="Пошук матеріала"
             :prefix-icon="Search"
+            :disabled="!isFilter"
           />
 
-          <el-button-group>
-            <el-button type="primary" :icon="HomeFilled" @click="getOperation">
-              <el-icon><Connection /></el-icon>
-              <span style="margin-left: 5px">Операції</span>
-            </el-button>
-
-            <el-button type="primary" plain :icon="Refresh" @click="getBits()">
-              Оновити
-            </el-button>
-          </el-button-group>
+          <el-date-picker
+            v-model="curDate"
+            type="date"
+            format="DD.MM.YYYY"
+            :start-placeholder="getDate"
+            :end-placeholder="getDate"
+            :disabled="!isFilter"
+            :shortcuts="shortCuts"
+            @change="getBits"
+            style="margin-left: 10px"
+            size="large"
+          />
         </el-space>
+
+        <el-button-group class="card">
+          <el-button type="primary" :icon="HomeFilled" @click="getOperation">
+            <el-icon><Connection /></el-icon>
+            <span style="margin-left: 5px">Операції</span>
+          </el-button>
+
+          <el-button type="primary" plain :icon="Refresh" @click="getBits()">
+            Оновити
+          </el-button>
+        </el-button-group>
       </el-row>
 
       <el-row :gutter="20">
@@ -46,6 +62,7 @@
           <el-table
             :data="filterTable"
             :class="{ marginTabl: setting.displaySize == 'large' }"
+            stripe
           >
             <el-table-column type="expand">
               <template #default="props">
@@ -119,10 +136,12 @@ const changeSettingUser = (obj) => store.commit("changeSettingUser", obj);
 const search = ref("");
 const punkts = ref([]);
 const activeName = ref("");
+const isFilter = ref(false);
+const curDate = ref(new Date());
 
 const filterTable = computed(() => {
   // const _tabl = [...setting.value.tables["tabBits"].data];
-  return !search.value.length
+  return !search.value.length || !isFilter.value
     ? setting.value.tables["tabBits"].data
     : JSON.parse(JSON.stringify(setting.value.tables["tabBits"].data)).filter(
         (row) => {
@@ -167,12 +186,18 @@ const getBits = async () => {
       _method: "getBits",
       _id_U: getCurUser.value.id,
       _id_P: activeIdPunkt.value,
+      _date: isFilter.value ? formatDate(curDate.value, "eng") : "",
     });
 
     setting.value.tables["tabBits"].data = response.data;
 
     if (+getSettingUser.value.isShowMes) {
-      ElMessage.success("Залишки оновлені");
+      let limitDate = isFilter.value
+        ? " до " + formatDate(curDate.value, "ukr")
+        : "";
+      ElMessage.success(
+        `Залишки оновлені для "${activeName.value}" ${limitDate}`
+      );
     }
   } catch (e) {
     ElMessage("Помилка завантаження залишків на складі");
@@ -187,6 +212,59 @@ const getOperation = () => {
   setting.value.comps.curComp = "eOperation";
   setting.value.titleTable = setting.value.tables["tabTransaction"].title;
 };
+
+const getDate = computed(() => {
+  return formatDate(curDate.value);
+});
+
+const formatDate = (valDate, mode = "ukr") => {
+  const date = {
+    d: valDate.getDate(),
+    m: valDate.getMonth() + 1,
+    y: valDate.getFullYear(),
+  };
+  return mode == "ukr"
+    ? [
+        (date.d < 10 ? "0" : "") + date.d,
+        (date.m < 10 ? "0" : "") + date.m,
+        date.y,
+      ].join(".")
+    : [
+        date.y,
+        (date.m < 10 ? "0" : "") + date.m,
+        (date.d < 10 ? "0" : "") + date.d,
+      ].join("-");
+};
+
+const shortCuts = [
+  {
+    text: "- день",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
+      return [start, end];
+    },
+  },
+  {
+    text: "- тиждень",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      return [start, end];
+    },
+  },
+  {
+    text: "- місяць",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+      return [start, end];
+    },
+  },
+];
 
 onActivated(async () => {
   await getPunktCur();
@@ -219,5 +297,11 @@ onUpdated(async () => {
 .marginTabl {
   margin: 0 10% 20% 10%;
   width: 80%;
+}
+
+.card {
+  border: 1px solid var(--el-border-color);
+  margin-left: 10px;
+  padding: 20px;
 }
 </style>

@@ -187,7 +187,7 @@
       </el-space>
 
       <!-- <el-scrollbar height="600px"> -->
-      <el-table :data="filterTable" v-loading="loading">
+      <el-table :data="filterTable" v-loading="loading" stripe>
         <el-table-column type="expand">
           <template #default="props">
             <div style="padding: 20px; background: #c6e2ff69">
