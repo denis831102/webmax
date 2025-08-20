@@ -84,6 +84,8 @@
     </el-card>
   </el-space>
 
+  <!-- default-expand-all -->
+
   <el-table
     :data="filterTable"
     row-style="background:#f4f4f5"
@@ -104,16 +106,37 @@
           >
             <el-table-column style="width: 98%" type="expand">
               <template #default="scope">
-                <el-table :data="scope.row.listTransaction">
+                <el-table
+                  :data="scope.row.listTransaction"
+                  style="margin-left: 4%; background: #124578; width: 95%"
+                  stripe
+                  border
+                >
                   <el-table-column
                     type="index"
                     v-if="setting.displaySize == 'large'"
                   />
 
-                  <el-table-column label="1C" prop="loid">
-                    <div>
-                      <el-checkbox v-model="checked" size="large" />
-                    </div>
+                  <el-table-column
+                    type="selection"
+                    :selectable="isSelect"
+                    width="55"
+                  />
+
+                  <el-table-column label="завантажувати">
+                    <template #default="transaction">
+                      <el-switch
+                        :modelValue="transaction.row.isLoad == 1"
+                        @change="changeCheck(transaction.row)"
+                        inline-prompt
+                        style="
+                          --el-switch-on-color: #13ce66;
+                          --el-switch-off-color: #92ba11;
+                        "
+                        active-text="завантажити"
+                        inactive-text="не вантажити"
+                      />
+                    </template>
                   </el-table-column>
 
                   <el-table-column prop="date">
@@ -147,7 +170,7 @@
 
     <el-table-column type="index" v-if="setting.displaySize == 'large'" />
 
-    <el-table-column v-if="setting.displaySize == 'large'">
+    <el-table-column>
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-icon><User /></el-icon>
@@ -169,14 +192,6 @@ const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 const getSettingUser = computed(() => store.getters.getSettingUser);
-// const colors = [
-//   { color: "#ff55ff", percentage: 10 },
-//   { color: "#f56c6c", percentage: 20 },
-//   { color: "#e6a23c", percentage: 40 },
-//   { color: "#5cb87a", percentage: 60 },
-//   { color: "#1989fa", percentage: 80 },
-//   { color: "#6f7ad3", percentage: 100 },
-// ];
 const checkAll = ref(false);
 const indeterminate = ref(false);
 const checkManeger = ref([]);
@@ -186,7 +201,7 @@ const options = ref([]);
 const loading = ref(false);
 const valueDate = ref([new Date(), new Date()]);
 const isPeriod = ref(true);
-const checked = ref(true);
+// const checked = ref(true);
 
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabEconomist"];
@@ -247,6 +262,8 @@ const getVidOperation = async () => {
           options.value.push({ idV: 22, name: `${el.name}  на покупця` });
         }
       });
+
+    checkOperation.value = options.value[0].idV;
 
     if (+getSettingUser.value.isShowMes) {
       ElMessage.success("Операції оновлені");
@@ -332,6 +349,20 @@ const formatDate = (valDate, mode = "ukr") => {
         (date.m < 10 ? "0" : "") + date.m,
         (date.d < 10 ? "0" : "") + date.d,
       ].join("-");
+};
+
+const changeCheck = (rowT) => {
+  const _tabl = setting.value.tables["tabEconomist"];
+  const curTrans = _tabl.data
+    .find((el) => el.id_U == rowT.id_U)
+    .listPunkt.find((el) => el.id_P == rowT.id_P)
+    .listTransaction.find((el) => el.id_T == rowT.id_T);
+  const curVal = +curTrans[`isLoad`];
+  curTrans[`isLoad`] = !curVal;
+};
+
+const isSelect = (row) => {
+  return +row.isLoad;
 };
 
 onActivated(async () => {
