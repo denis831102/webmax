@@ -118,6 +118,7 @@
               <template #default="scope">
                 <el-table
                   :data="scope.row.listTransaction"
+                  :default-sort="{ prop: 'date', order: 'ascending' }"
                   style="margin-left: 4%; background: #124578; width: 95%"
                   stripe
                   border
@@ -143,7 +144,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="date" min-width="25">
+                  <el-table-column prop="date" sortable min-width="25">
                     <template #header>
                       <el-icon><Calendar /></el-icon>
                       <span style="margin-left: 10px">Дата</span>
@@ -186,7 +187,7 @@
 </template>
 
 <script setup>
-import { inject, ref, computed, onActivated } from "vue";
+import { inject, ref, computed, onActivated, watch } from "vue";
 import { useStore } from "vuex";
 import { User } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
@@ -209,6 +210,11 @@ const isPeriod = ref(true);
 const userLayout = ref("false");
 const punktLayout = ref("false");
 const forceRenderUser = ref(0);
+
+watch(
+  () => [checkOperation.value],
+  () => getETransaction()
+);
 
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabEconomist"];
@@ -263,7 +269,11 @@ const getVidOperation = async () => {
       })
       .forEach((el) => {
         if (el.idV != 2) {
-          options.value.push(el);
+          if (el.idV == 6) {
+            options.value.push({ idV: 6, name: `Сортування` });
+          } else {
+            options.value.push(el);
+          }
         } else {
           options.value.push({ idV: 21, name: `${el.name}  на склад` });
           options.value.push({ idV: 22, name: `${el.name}  на покупця` });
