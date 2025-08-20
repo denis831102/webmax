@@ -45,6 +45,16 @@
           />
         </el-select>
 
+        <el-radio-group v-model="userLayout" @change="changeLayout()">
+          <el-radio-button value="true" label="+м" />
+          <el-radio-button value="false" label="-м" />
+        </el-radio-group>
+
+        <el-radio-group v-model="punktLayout" @change="changeLayout()">
+          <el-radio-button value="true" label="+п" />
+          <el-radio-button value="false" label="-п" />
+        </el-radio-group>
+
         <el-button
           type="primary"
           plain
@@ -84,13 +94,13 @@
     </el-card>
   </el-space>
 
-  <!-- default-expand-all -->
-
   <el-table
     :data="filterTable"
     row-style="background:#f4f4f5"
     v-loading="loading"
     stripe
+    :key="forceRenderUser"
+    :default-expand-all="userLayout == 'true'"
   >
     <el-table-column type="expand">
       <template #default="props">
@@ -102,7 +112,7 @@
             v-if="props.row.listPunkt.length"
             border="true"
             style="margin-left: 2%; width: 98%"
-            stripe
+            :default-expand-all="punktLayout == 'true'"
           >
             <el-table-column style="width: 98%" type="expand">
               <template #default="scope">
@@ -117,13 +127,7 @@
                     v-if="setting.displaySize == 'large'"
                   />
 
-                  <el-table-column
-                    type="selection"
-                    :selectable="isSelect"
-                    width="55"
-                  />
-
-                  <el-table-column label="завантажувати">
+                  <el-table-column label="врахувати" min-width="15">
                     <template #default="transaction">
                       <el-switch
                         :modelValue="transaction.row.isLoad == 1"
@@ -131,15 +135,15 @@
                         inline-prompt
                         style="
                           --el-switch-on-color: #13ce66;
-                          --el-switch-off-color: #92ba11;
+                          --el-switch-off-color: #e48c18;
                         "
-                        active-text="завантажити"
-                        inactive-text="не вантажити"
+                        active-text="+"
+                        inactive-text="-"
                       />
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="date">
+                  <el-table-column prop="date" min-width="25">
                     <template #header>
                       <el-icon><Calendar /></el-icon>
                       <span style="margin-left: 10px">Дата</span>
@@ -201,7 +205,10 @@ const options = ref([]);
 const loading = ref(false);
 const valueDate = ref([new Date(), new Date()]);
 const isPeriod = ref(true);
-// const checked = ref(true);
+
+const userLayout = ref("false");
+const punktLayout = ref("false");
+const forceRenderUser = ref(0);
 
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabEconomist"];
@@ -252,7 +259,7 @@ const getVidOperation = async () => {
     options.value = [];
     response.data
       .filter((el) => {
-        return el.idV != 7 && el.idV != 4;
+        return el.idV != 7 && el.idV != 4; // ![4, 7].includes(el.idV)
       })
       .forEach((el) => {
         if (el.idV != 2) {
@@ -361,8 +368,8 @@ const changeCheck = (rowT) => {
   curTrans[`isLoad`] = !curVal;
 };
 
-const isSelect = (row) => {
-  return +row.isLoad;
+const changeLayout = () => {
+  forceRenderUser.value++;
 };
 
 onActivated(async () => {
