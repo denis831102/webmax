@@ -292,8 +292,15 @@ const getVidOperation = async () => {
 };
 
 const getETransaction = async () => {
-  loading.value = true;
   try {
+    if (!checkManeger.value.length) {
+      ElMessage.success("Оберіть менеджера");
+      setting.value.tables["tabEconomist"].data = [];
+      return;
+    }
+
+    loading.value = true;
+
     const response = await HTTP.post("", {
       _method: "getETransaction",
       _id_U: getCurUser.value.id,
@@ -308,10 +315,10 @@ const getETransaction = async () => {
     loading.value = false;
 
     if (+getSettingUser.value.isShowMes) {
-      ElMessage.success("Операції оновлені");
+      ElMessage.success("Список з пунктами та транзакціями завантажений");
     }
   } catch (e) {
-    ElMessage.error("Помилка завантаження звіту");
+    ElMessage.error("Помилка завантаження списку");
   }
 };
 
@@ -341,6 +348,7 @@ const handleCheckAll = (val) => {
   } else {
     checkManeger.value = [];
   }
+  getETransaction();
 };
 
 const nameColumnT = computed(() => {
