@@ -111,6 +111,7 @@
             :data="props.row.listPunkt"
             v-if="props.row.listPunkt.length"
             border="true"
+            :show-header="false"
             style="margin-left: 2%; width: 98%"
             :default-expand-all="punktLayout == 'true'"
           >
@@ -343,10 +344,12 @@ const handleCheckAll = (val) => {
 };
 
 const nameColumnT = computed(() => {
-  const nameO = options.value.find((el) => {
-    return el.idV == checkOperation.value;
-  }).name;
-  return ` Транзакції  ${nameO}`;
+  const nameO = options.value
+    .find((el) => {
+      return el.idV == checkOperation.value;
+    })
+    .name.toUpperCase();
+  return `Транзакції за операцією "${nameO}"`;
 });
 
 const formatDate = (valDate, mode = "ukr") => {
