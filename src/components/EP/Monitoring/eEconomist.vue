@@ -46,13 +46,13 @@
         </el-select>
 
         <el-radio-group v-model="userLayout" @change="changeLayout()">
-          <el-radio-button value="true" label="+м" />
-          <el-radio-button value="false" label="-м" />
+          <el-radio-button value="false" label="+м" />
+          <el-radio-button value="true" label="-м" />
         </el-radio-group>
 
         <el-radio-group v-model="punktLayout" @change="changeLayout()">
-          <el-radio-button value="true" label="+п" />
-          <el-radio-button value="false" label="-п" />
+          <el-radio-button value="false" label="+п" />
+          <el-radio-button value="true" label="-п" />
         </el-radio-group>
 
         <el-button
