@@ -425,6 +425,7 @@ const loadReport = async () => {
     const response = await HTTP.post("", {
       _method: "loadReport",
       _id_U: getCurUser.value.id,
+      _checkOperation: checkOperation.value,
       _arTransaction: arTransaction,
     });
 
