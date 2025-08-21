@@ -182,3 +182,18 @@ export const HTTP = axioc.create({
     Token: "",
   },
 });
+
+export const loadFile = (fileName, content, mime) => {
+  const byteCharacters = atob(content);
+  const byteNumbers = Array.from(byteCharacters, (c) => c.charCodeAt(0));
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: mime });
+
+  // создаем ссылку для скачивания
+  const link = document.createElement("a"); // создаем элемент <a>
+  link.href = URL.createObjectURL(blob); // создаем временный URL
+  link.download = fileName; // имя файла для скачивания
+  link.click(); // имитируем клик для скачивания
+  URL.revokeObjectURL(link.href); // очищаем URL
+  link.remove(); // удаляем ссылку из DOM
+};

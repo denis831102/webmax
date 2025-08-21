@@ -194,11 +194,13 @@
 </template>
 
 <script setup>
+/* eslint-disable */
 import { inject, ref, computed, onActivated, watch } from "vue";
 import { useStore } from "vuex";
 import { User, Refresh, Tickets } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { HTTP } from "@/hooks/http";
+import { loadFile } from "@/hooks/http";
 
 const setting = inject("setting");
 const store = useStore();
@@ -430,6 +432,12 @@ const loadReport = async () => {
     });
 
     if (response.data.isSuccesfull) {
+      loadFile(
+        response.data.fileName,
+        response.data.content,
+        response.data.mime
+      );
+
       ElMessage.success("Звіт сформовано");
     } else {
       ElMessage.error("Звіт не сформовано");
