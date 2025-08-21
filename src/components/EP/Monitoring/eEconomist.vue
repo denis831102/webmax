@@ -1,5 +1,5 @@
 <template>
-  <el-space :size="10" style="margin: 0 0 10px 0">
+  <el-space :size="10" style="margin: 0px 0 0px 0">
     <el-card>
       <el-space :size="10" wrap>
         <el-select
@@ -55,17 +55,24 @@
           <el-radio-button value="true" label="-п" />
         </el-radio-group>
 
-        <el-button
-          type="primary"
-          plain
-          :icon="Refresh"
-          @click="getETransaction()"
-        >
-          Оновити
-        </el-button>
+        <el-button-group>
+          <el-button type="success" :icon="Tickets" @click="loadReport()">
+            Формувати звіт
+          </el-button>
+
+          <el-button
+            type="primary"
+            plain
+            :icon="Refresh"
+            @click="getETransaction()"
+          >
+            Оновити
+          </el-button>
+        </el-button-group>
       </el-space>
     </el-card>
-    <el-card>
+
+    <el-card style="max-height: 75px">
       <el-row :gutter="10">
         <el-col :span="3">
           <el-switch v-model="isPeriod" @change="getETransaction" />
@@ -81,16 +88,10 @@
             :end-placeholder="getDate"
             :disabled="!isPeriod"
             :shortcuts="shortCuts"
-            style="width: 210px; padding: 20px 10px; margin-left: -10px"
+            style="width: 210px; margin-left: -10px"
           />
         </el-col>
       </el-row>
-    </el-card>
-    <el-card>
-      <el-radio-group>
-        <el-radio-button label="НЕ завантажені" value="not" />
-        <el-radio-button label="завантажені" value="yes" />
-      </el-radio-group>
     </el-card>
   </el-space>
 
@@ -110,6 +111,7 @@
           <el-table
             :data="props.row.listPunkt"
             v-if="props.row.listPunkt.length"
+            row-style="background:#bad7da;"
             border="true"
             :show-header="false"
             style="margin-left: 2%; width: 98%"
@@ -163,7 +165,11 @@
                   <el-table-column label="Коментар" prop="comment">
                   </el-table-column>
 
-                  <el-table-column label="Сума" prop="suma"> </el-table-column>
+                  <el-table-column label="Сума" prop="suma">
+                    <template #default="props">
+                      {{ parseFloat(props.row.suma).toLocaleString("ua") }} грн.
+                    </template>
+                  </el-table-column>
                 </el-table>
               </template>
             </el-table-column>
@@ -190,7 +196,7 @@
 <script setup>
 import { inject, ref, computed, onActivated, watch } from "vue";
 import { useStore } from "vuex";
-import { User } from "@element-plus/icons-vue";
+import { User, Refresh, Tickets } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { HTTP } from "@/hooks/http";
 
@@ -315,7 +321,10 @@ const getETransaction = async () => {
     loading.value = false;
 
     if (+getSettingUser.value.isShowMes) {
-      ElMessage.success("Список з пунктами та транзакціями завантажений");
+      const info = setting.value.tables["tabEconomist"].data.length
+        ? "ЗАВАНТАЖЕНИЙ"
+        : "ПУСТИЙ";
+      ElMessage.success(`Список з пунктами та транзакціями ${info}`);
     }
   } catch (e) {
     ElMessage.error("Помилка завантаження списку");
@@ -391,6 +400,42 @@ const changeCheck = (rowT) => {
 
 const changeLayout = () => {
   forceRenderUser.value++;
+};
+
+const loadReport = async () => {
+  try {
+    const _tabl = setting.value.tables["tabEconomist"];
+    const arTransaction = [];
+
+    _tabl.data.forEach((maneger) => {
+      maneger.listPunkt.forEach((punkt) => {
+        punkt.listTransaction.forEach((transaction) => {
+          if (transaction.isLoad) {
+            arTransaction.push(transaction.id_T);
+          }
+        });
+      });
+    });
+
+    if (!arTransaction.length) {
+      ElMessage.error("Транзакції для обробки відсутні");
+      return;
+    }
+
+    const response = await HTTP.post("", {
+      _method: "loadReport",
+      _id_U: getCurUser.value.id,
+      _arTransaction: arTransaction,
+    });
+
+    if (response.data.isSuccesfull) {
+      ElMessage.success("Звіт сформовано");
+    } else {
+      ElMessage.error("Звіт не сформовано");
+    }
+  } catch (e) {
+    ElMessage("Помилка завантаження...");
+  }
 };
 
 onActivated(async () => {
