@@ -89,6 +89,7 @@
             :disabled="!isPeriod"
             :shortcuts="shortCuts"
             style="width: 210px; margin-left: -10px"
+            @change="getETransaction"
           />
         </el-col>
       </el-row>
@@ -209,7 +210,7 @@ const getSettingUser = computed(() => store.getters.getSettingUser);
 const checkAll = ref(false);
 const indeterminate = ref(false);
 const checkManeger = ref([]);
-const checkOperation = ref();
+const checkOperation = ref(0);
 const listManeger = ref([]);
 const options = ref([]);
 const loading = ref(false);
@@ -271,7 +272,9 @@ const getVidOperation = async () => {
         _method: "getVidOperation",
       },
     });
+
     options.value = [];
+
     response.data
       .filter((el) => {
         return el.idV != 7 && el.idV != 4; // ![4, 7].includes(el.idV)
@@ -289,7 +292,7 @@ const getVidOperation = async () => {
         }
       });
 
-    checkOperation.value = options.value[0].idV;
+    checkOperation.value = options.value[0].name;
 
     if (+getSettingUser.value.isShowMes) {
       ElMessage.success("Операції оновлені");
@@ -424,10 +427,15 @@ const loadReport = async () => {
       return;
     }
 
+    const nameOperation = options.value.find(
+      (el) => el.idV == checkOperation.value
+    ).name;
+
     const response = await HTTP.post("", {
       _method: "loadReport",
       _id_U: getCurUser.value.id,
       _checkOperation: checkOperation.value,
+      _nameOperation: nameOperation,
       _arTransaction: arTransaction,
     });
 
