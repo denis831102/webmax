@@ -38,7 +38,6 @@
             :start-placeholder="getDate"
             :end-placeholder="getDate"
             :disabled="!isFilter"
-            :shortcuts="shortCuts"
             @change="getBits"
             style="margin-left: 10px"
             size="large"
@@ -62,6 +61,7 @@
           <el-table
             :data="filterTable"
             :class="{ marginTabl: setting.displaySize == 'large' }"
+            v-loading="loading"
             stripe
           >
             <el-table-column type="expand">
@@ -138,6 +138,7 @@ const punkts = ref([]);
 const activeName = ref("");
 const isFilter = ref(false);
 const curDate = ref(new Date());
+const loading = ref(true);
 
 const filterTable = computed(() => {
   // const _tabl = [...setting.value.tables["tabBits"].data];
@@ -182,6 +183,7 @@ const getPunktCur = async () => {
 
 const getBits = async () => {
   try {
+    loading.value = true;
     const response = await HTTP.post("", {
       _method: "getBits",
       _id_U: getCurUser.value.id,
@@ -190,6 +192,7 @@ const getBits = async () => {
     });
 
     setting.value.tables["tabBits"].data = response.data;
+    loading.value = false;
 
     if (+getSettingUser.value.isShowMes) {
       let limitDate = isFilter.value
@@ -235,36 +238,6 @@ const formatDate = (valDate, mode = "ukr") => {
         (date.d < 10 ? "0" : "") + date.d,
       ].join("-");
 };
-
-const shortCuts = [
-  {
-    text: "- день",
-    value: () => {
-      const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
-      return [start, end];
-    },
-  },
-  {
-    text: "- тиждень",
-    value: () => {
-      const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      return [start, end];
-    },
-  },
-  {
-    text: "- місяць",
-    value: () => {
-      const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-      return [start, end];
-    },
-  },
-];
 
 onActivated(async () => {
   await getPunktCur();

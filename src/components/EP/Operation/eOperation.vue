@@ -448,8 +448,12 @@ const getTransaction = async () => {
     if (+getSettingUser.value.isShowMes) {
       ElMessage.success(
         response.data.total > 0
-          ? `Транзакції для ${getCurUser.value.PIB.toUpperCase()} оновлені`
-          : `Транзакції для ${getCurUser.value.PIB.toUpperCase()} відсутні`
+          ? `Транзакції ${getCurUser.value.PIB.toUpperCase()} для ${
+              activeName.value
+            } оновлені`
+          : `Транзакції ${getCurUser.value.PIB.toUpperCase()} для ${
+              activeName.value
+            } відсутні`
       );
     }
   } catch (e) {
