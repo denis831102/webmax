@@ -159,7 +159,7 @@ const setting = ref({
       data: [],
     },
     tabAnalitika: {
-      title: "АНАЛІТИКА ПО ВЛАСНИМ ПУНКТАМ",
+      title: "АНАЛІТИКА ПО НОМЕНКЛАТУРІ НА ВЛАСНИХ ПУНКТАХ",
       curRow: {},
       data: [],
     },

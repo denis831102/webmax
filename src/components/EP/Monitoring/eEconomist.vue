@@ -305,7 +305,7 @@ const getVidOperation = async () => {
 const getETransaction = async () => {
   try {
     if (!checkManeger.value.length) {
-      ElMessage.success("Оберіть менеджера");
+      ElMessage.error("Оберіть менеджера");
       setting.value.tables["tabEconomist"].data = [];
       return;
     }
@@ -329,7 +329,13 @@ const getETransaction = async () => {
       const info = setting.value.tables["tabEconomist"].data.length
         ? "ЗАВАНТАЖЕНИЙ"
         : "ПУСТИЙ";
-      ElMessage.success(`Список з пунктами та транзакціями ${info}`);
+      const type = setting.value.tables["tabEconomist"].data.length
+        ? "success"
+        : "error";
+      ElMessage({
+        message: `Список з пунктами та транзакціями ${info}`,
+        type,
+      });
     }
   } catch (e) {
     ElMessage.error("Помилка завантаження списку");

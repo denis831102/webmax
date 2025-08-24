@@ -39,6 +39,7 @@
           placeholder="оберіть матеріал..."
           :max-collapse-tags="2"
           style="width: 240px"
+          @change="getMonitoring"
         />
 
         <el-col :span="3">
@@ -362,7 +363,10 @@ const getMonitoring = async () => {
     loading.value = false;
 
     if (+getSettingUser.value.isShowMes) {
-      ElMessage.success("Аналітика оновлена");
+      let limitDate = isFilter.value
+        ? formatDate(curDate.value, "ukr")
+        : formatDate(new Date(), "ukr");
+      ElMessage.success(`Аналітика по номенклатурі на ${limitDate} оновлена`);
     }
   } catch (e) {
     ElMessage.error("Помилка завантаження аналітики");

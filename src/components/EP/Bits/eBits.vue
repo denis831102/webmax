@@ -196,10 +196,10 @@ const getBits = async () => {
 
     if (+getSettingUser.value.isShowMes) {
       let limitDate = isFilter.value
-        ? " до " + formatDate(curDate.value, "ukr")
-        : "";
+        ? formatDate(curDate.value, "ukr")
+        : formatDate(new Date(), "ukr");
       ElMessage.success(
-        `Залишки оновлені для "${activeName.value}" ${limitDate}`
+        `Залишки оновлені для "${activeName.value}" до ${limitDate}`
       );
     }
   } catch (e) {
