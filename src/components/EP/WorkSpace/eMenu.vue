@@ -96,15 +96,15 @@
         <el-menu-item-group>
           <el-menu-item index="3-1" :disabled="isDisabled_Analitika_1">
             <el-icon><TrendCharts /></el-icon>
-            Аналітика по власним пунктам
+            Аналітика по матеріалам ВП
           </el-menu-item>
           <el-menu-item index="3-2" :disabled="isDisabled_Analitika_2"
             ><el-icon><Management /></el-icon>
             Щоденний звіт економіста
           </el-menu-item>
-          <el-menu-item index="3-3" :disabled="true"
+          <el-menu-item index="3-3" :disabled="false"
             ><el-icon><Management /></el-icon>
-            Аналітика - 3
+            Аналітика по руху коштів на ВП
           </el-menu-item>
           <el-menu-item index="3-4" :disabled="true"
             ><el-icon><Management /></el-icon>
@@ -197,6 +197,10 @@ const handleSelect = (key, keyPath) => {
       setting.value.comps.curComp = "eEconomist";
       setting.value.titleTable = setting.value.tables["tabEconomist"].title;
       break;
+    case "3-3":
+      setting.value.comps.curComp = "eMoney";
+      setting.value.titleTable = setting.value.tables["tabMoney"].title;
+      break;
 
     case "4":
       setting.value.comps.curComp = "eSettingUser";
@@ -230,6 +234,9 @@ const isDisabled_Analitika_1 = computed(() => {
   return !+getCurUser.value.listAccess[3];
 });
 const isDisabled_Analitika_2 = computed(() => {
+  return !+getCurUser.value.listAccess[4];
+});
+const isDisabled_Analitika_3 = computed(() => {
   return !+getCurUser.value.listAccess[4];
 });
 

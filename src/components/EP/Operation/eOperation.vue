@@ -229,7 +229,7 @@
 
                 <el-table-column label="сума" prop="suma">
                   <template #default="props">
-                    {{ parseFloat(props.row.suma).toLocaleString("ua") }} грн.
+                    {{ parseFloat(props.row.suma).toLocaleString("ua") }} грн
                   </template>
                 </el-table-column>
               </el-table>
