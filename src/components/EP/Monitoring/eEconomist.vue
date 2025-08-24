@@ -287,8 +287,8 @@ const getVidOperation = async () => {
             options.value.push(el);
           }
         } else {
-          options.value.push({ idV: 21, name: `${el.name}  на склад` });
-          options.value.push({ idV: 22, name: `${el.name}  на покупця` });
+          options.value.push({ idV: 21, name: `${el.name} на склад` });
+          options.value.push({ idV: 22, name: `${el.name} на покупця` });
         }
       });
 

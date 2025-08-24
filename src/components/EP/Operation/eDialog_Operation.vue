@@ -389,7 +389,17 @@ const checkVidOper = () => {
 };
 
 const saveTransaction = () => {
-  form.isSave ? addTransaction() : changeTransaction();
+  // const countDay = daysBetween(form.date, form.curDate);
+  // const limitDay = 3;
+
+  // if (countDay > limitDay) {
+  if (!checkMonth(form.date, form.curDate)) {
+    ElMessage.error(
+      `Транзакція не збережена. Правити дозволено в поточному місяці `
+    );
+  } else {
+    form.isSave ? addTransaction() : changeTransaction();
+  }
 };
 
 const addTransaction = async () => {
@@ -627,6 +637,25 @@ const getTime = computed(() => {
     (time.s < 10 ? "0" : "") + time.s,
   ].join(":");
 });
+
+const daysBetween = (date1, date2) => {
+  // Преобразуем в объекты Date
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+
+  // Разница в миллисекундах
+  const diffTime = Math.abs(d2 - d1);
+
+  // Переводим в дни (1000 мс * 60 сек * 60 мин * 24 ч)
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+};
+
+const checkMonth = (date1, date2) => {
+  // Преобразуем в объекты Date
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  return d1.getMonth() == d2.getMonth();
+};
 
 const startTimer = () => {
   form.timer = setInterval(() => {
