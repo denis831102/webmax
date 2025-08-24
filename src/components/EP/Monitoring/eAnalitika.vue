@@ -41,6 +41,24 @@
           style="width: 240px"
         />
 
+        <el-col :span="3">
+          <el-switch v-model="isFilter" @change="getMonitoring" />
+        </el-col>
+
+        <el-col :span="3">
+          <el-date-picker
+            v-model="curDate"
+            type="date"
+            format="DD.MM.YYYY"
+            :start-placeholder="getDate"
+            :end-placeholder="getDate"
+            :disabled="!isFilter"
+            @change="getMonitoring"
+            size="normal"
+            style="margin-left: -10px"
+          />
+        </el-col>
+
         <el-button
           type="primary"
           plain
@@ -266,7 +284,7 @@
 <script setup>
 import { inject, ref, computed, onActivated, watch } from "vue";
 import { useStore } from "vuex";
-import { User } from "@element-plus/icons-vue";
+import { User, Refresh } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { HTTP } from "@/hooks/http";
 
@@ -290,6 +308,8 @@ const listManeger = ref([]);
 const options = ref([]);
 const loading = ref(true);
 const propsCascader = { multiple: true, expandTrigger: "hover" };
+const isFilter = ref(false);
+const curDate = ref(new Date());
 
 watch(checkManeger, (val) => {
   if (val.length === 0) {
@@ -308,6 +328,25 @@ const filterTable = computed(() => {
   return _tabl.data;
 });
 
+const formatDate = (valDate, mode = "ukr") => {
+  const date = {
+    d: valDate.getDate(),
+    m: valDate.getMonth() + 1,
+    y: valDate.getFullYear(),
+  };
+  return mode == "ukr"
+    ? [
+        (date.d < 10 ? "0" : "") + date.d,
+        (date.m < 10 ? "0" : "") + date.m,
+        date.y,
+      ].join(".")
+    : [
+        date.y,
+        (date.m < 10 ? "0" : "") + date.m,
+        (date.d < 10 ? "0" : "") + date.d,
+      ].join("-");
+};
+
 const getMonitoring = async () => {
   loading.value = true;
   try {
@@ -316,6 +355,7 @@ const getMonitoring = async () => {
       _id_U: getCurUser.value.id,
       _checkManeger: checkManeger.value,
       _checkMaterial: checkMaterial.value,
+      _date: isFilter.value ? formatDate(curDate.value, "eng") : "",
     });
 
     setting.value.tables["tabAnalitika"].data = response.data.ar_data;
