@@ -127,19 +127,32 @@
       </template>
     </el-table-column>
 
+    <el-table-column label="аналітика по коштам">
+      <template #default="scope">
+        <div style="display: flex; align-items: center">
+          <el-switch
+            :modelValue="scope.row.v7 == 1"
+            @change="changeCheck(scope.row, 7)"
+          />
+        </div>
+      </template>
+    </el-table-column>
+
     <el-table-column label="Операція">
       <template #default="scope">
-        <el-button size="small" @click="editStatus(scope.$index, scope.row)">
-          <el-icon><Edit /></el-icon>
-        </el-button>
+        <el-button-group>
+          <el-button size="small" @click="editStatus(scope.$index, scope.row)">
+            <el-icon><Edit /></el-icon>
+          </el-button>
 
-        <el-button
-          size="small"
-          type="danger"
-          @click="deleteStatus(scope.$index, scope.row)"
-        >
-          <el-icon><DeleteFilled /></el-icon>
-        </el-button>
+          <el-button
+            size="small"
+            type="danger"
+            @click="deleteStatus(scope.$index, scope.row)"
+          >
+            <el-icon><DeleteFilled /></el-icon>
+          </el-button>
+        </el-button-group>
       </template>
     </el-table-column>
   </el-table>

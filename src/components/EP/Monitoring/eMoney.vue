@@ -362,8 +362,14 @@ const handleCheckAll = (val) => {
 };
 
 const getMoney = async () => {
-  loading.value = true;
   try {
+    if (!checkManeger.value.length) {
+      ElMessage.error("Оберіть менеджера");
+      setting.value.tables["tabEconomist"].data = [];
+      return;
+    }
+
+    loading.value = true;
     const response = await HTTP.post("", {
       _method: "getMoney",
       _id_U: getCurUser.value.id,
@@ -377,7 +383,16 @@ const getMoney = async () => {
     loading.value = false;
 
     if (+getSettingUser.value.isShowMes) {
-      ElMessage.success("Аналітика по руху коштів оновлена");
+      let limitDate = isPeriod.value
+        ? [
+            "на",
+            formatDate(valueDate.value[0], "ukr"),
+            "-",
+            formatDate(valueDate.value[1], "ukr"),
+          ].join(" ")
+        : formatDate(new Date(), "ukr");
+
+      ElMessage.success(`Аналітика по руху коштів на ${limitDate} оновлена`);
     }
   } catch (e) {
     ElMessage.error("Помилка завантаження аналітики");

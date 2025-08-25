@@ -62,9 +62,9 @@
           <el-menu-item index="1-5-1"
             ><el-icon><ShoppingCart /></el-icon> Покупці
           </el-menu-item>
-          <el-menu-item index="1-5-2"
-            ><el-icon><Edit /></el-icon>Компонент - 2</el-menu-item
-          >
+          <el-menu-item index="1-5-2" :disabled="true">
+            <el-icon><Edit /></el-icon>Компонент ( в розробці)
+          </el-menu-item>
         </el-sub-menu>
       </el-sub-menu>
 
@@ -81,9 +81,9 @@
             <el-icon><CircleCheck /></el-icon>
             Операції по ВП
           </el-menu-item>
-          <el-menu-item index="2-3">
+          <el-menu-item index="2-3" :disabled="true">
             <el-icon><EditPen /></el-icon>
-            Додатково
+            Параметри ( в розробці)
           </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
@@ -98,17 +98,17 @@
             <el-icon><TrendCharts /></el-icon>
             Аналітика по номенклатурі на власним пунктам
           </el-menu-item>
-          <el-menu-item index="3-2" :disabled="isDisabled_Analitika_2"
+          <el-menu-item index="3-2" :disabled="!+getCurUser.listAccess[7]"
+            ><el-icon><Money /></el-icon>
+            Аналітика по руху коштів на власних пунктах
+          </el-menu-item>
+          <el-menu-item index="3-3" :disabled="isDisabled_Analitika_2"
             ><el-icon><Management /></el-icon>
             Щоденний звіт економіста
           </el-menu-item>
-          <el-menu-item index="3-3" :disabled="false"
-            ><el-icon><Management /></el-icon>
-            Аналітика по руху коштів на ВП
-          </el-menu-item>
           <el-menu-item index="3-4" :disabled="true"
             ><el-icon><Management /></el-icon>
-            Аналітика - 4
+            Аналітика ( в розробці)
           </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
@@ -194,12 +194,12 @@ const handleSelect = (key, keyPath) => {
       setting.value.titleTable = setting.value.tables["tabAnalitika"].title;
       break;
     case "3-2":
-      setting.value.comps.curComp = "eEconomist";
-      setting.value.titleTable = setting.value.tables["tabEconomist"].title;
-      break;
-    case "3-3":
       setting.value.comps.curComp = "eMoney";
       setting.value.titleTable = setting.value.tables["tabMoney"].title;
+      break;
+    case "3-3":
+      setting.value.comps.curComp = "eEconomist";
+      setting.value.titleTable = setting.value.tables["tabEconomist"].title;
       break;
 
     case "4":
