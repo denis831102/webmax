@@ -11,9 +11,14 @@
           popper-class="custom-header"
           :max-collapse-tags="1"
           style="width: 240px"
+          @change="getMoney()"
         >
           <template #header>
-            <el-checkbox v-model="checkAll" :indeterminate="indeterminate">
+            <el-checkbox
+              v-model="checkAll"
+              :indeterminate="indeterminate"
+              @change="handleCheckAll"
+            >
               Усі
             </el-checkbox>
           </template>
@@ -25,14 +30,16 @@
           />
         </el-select>
 
-        <el-button type="primary" plain :icon="Refresh"> Оновити </el-button>
+        <el-button type="primary" @click="getMoney()" plain :icon="Refresh">
+          Оновити
+        </el-button>
       </el-space>
     </el-card>
 
     <el-card style="max-height: 75px">
       <el-row :gutter="10">
         <el-col :span="3">
-          <el-switch v-model="isPeriod" @change="getETransaction" />
+          <el-switch v-model="isPeriod" @change="getMoney" />
         </el-col>
         <el-col :span="2"> </el-col>
 
@@ -62,9 +69,7 @@
   >
     <el-table-column type="expand">
       <template #default="props">
-        <div style="padding: 20px; background: #c6e2ff69">
-          <div style="margin: 0 0 20px 40px">{{ nameColumnT }}</div>
-
+        <div style="padding: 10px; background: #c6e2ff69">
           <el-table
             :data="props.row.listPunkt"
             v-if="props.row.listPunkt.length"
@@ -79,7 +84,8 @@
                 <el-table
                   :data="scope.row.listVidKasa"
                   :default-sort="{ prop: 'date', order: 'ascending' }"
-                  style="margin-left: 4%; background: #124578; width: 95%"
+                  style="margin-left: 5%; background: #124578; width: 95%"
+                  :show-header="false"
                   stripe
                   border
                 >
@@ -92,30 +98,59 @@
                         stripe
                         border="true"
                         :show-header="false"
-                        show-summary
                       >
                         <el-table-column>
                           <template #default="scope">
                             <div style="display: flex; align-items: center">
-                              <span style="margin-left: 3%">{{
+                              <span style="margin-left: 5%">{{
                                 scope.row.nameN
                               }}</span>
                             </div>
                           </template>
                         </el-table-column>
-                        <el-table-column label="Сума, грн " prop="suma" />
+
+                        <el-table-column label="Сума, грн " prop="suma">
+                          <template #default="props">
+                            <div>
+                              {{
+                                parseFloat(props.row.suma).toLocaleString("ru")
+                              }}
+                              {{ props.row.unit }}
+                            </div>
+                          </template>
+                        </el-table-column>
                       </el-table>
                     </template>
                   </el-table-column>
 
                   <el-table-column label="Рух коштів" prop="nameVidKassa" />
 
-                  <el-table-column label="Сума, грн " />
+                  <el-table-column label="Сума, грн " prop="sumVidKassa">
+                    <template #default="props">
+                      <div>
+                        {{
+                          parseFloat(props.row.sumVidKassa).toLocaleString("ru")
+                        }}
+                        {{ props.row.unit }}
+                      </div>
+                    </template>
+                  </el-table-column>
                 </el-table>
               </template>
             </el-table-column>
 
             <el-table-column label="Назва пункта" prop="namePunkt" />
+
+            <el-table-column>
+              <template #default="scope">
+                <div style="display: flex; align-items: center">
+                  <el-icon><Money /></el-icon>
+                  <span style="margin-left: 10px">{{
+                    parseFloat(scope.row.sumaP).toLocaleString("rus")
+                  }}</span>
+                </div>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
       </template>
@@ -131,15 +166,25 @@
         </div>
       </template>
     </el-table-column>
+
+    <el-table-column>
+      <template #default="scope">
+        <div style="display: flex; align-items: center">
+          <el-icon><Money /></el-icon>
+          <span style="margin-left: 10px">{{
+            parseFloat(scope.row.sumaU).toLocaleString("rus")
+          }}</span>
+        </div>
+      </template>
+    </el-table-column>
   </el-table>
 </template>
 
 <script setup>
-/* eslint-disable */
 //отключает наблюдатель за ошибками
 import { inject, ref, onActivated, computed } from "vue";
 import { useStore } from "vuex";
-// import { User, Refresh, Tickets } from "@element-plus/icons-vue";
+import { User, Refresh, Money } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { HTTP } from "@/hooks/http";
 // import { loadFile } from "@/hooks/http";
@@ -147,113 +192,124 @@ import { HTTP } from "@/hooks/http";
 const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
+const getSettingUser = computed(() => store.getters.getSettingUser);
 const checkManeger = ref([]);
+const checkAll = ref(false);
 const listManeger = ref([]);
 const valueDate = ref([new Date(), new Date()]);
 const isPeriod = ref(true);
+const loading = ref(false);
+const indeterminate = ref(false);
 
 const filterTable = computed(() => {
-  //   const _tabl = setting.value.tables["tabEconomist"];
+  const _tabl = setting.value.tables["tabMoney"];
 
-  const _tabl = {
-    data: [
-      {
-        id_U: "30",
-        pib: "Ратова Євгенія",
-        listPunkt: [
-          {
-            id: "11",
-            namePunkt: "ДМС_ЦМ",
-            listVidKasa: [
-              {
-                id: "4",
-                nameVidKassa: "приход",
-                listInKassa: [
-                  {
-                    id_N: "89",
-                    nameN: "поповнення",
-                    suma: "10000",
-                  },
-                ],
-              },
-              {
-                id: "5",
-                nameVidKassa: "расход",
-                listInKassa: [
-                  {
-                    id_N: "45",
-                    nameN: "закупівля матеріала",
-                    suma: "8000",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "18",
-            namePunkt: "Киев_Отрадный ",
-            listVidKasa: [
-              {
-                id: "4",
-                nameVidKassa: "приход",
-                listInKassa: [
-                  {
-                    id_N: "891",
-                    nameN: "поповнення",
-                    suma: "5000",
-                  },
-                ],
-              },
-              {
-                id: "5",
-                nameVidKassa: "расход",
-                listInKassa: [
-                  {
-                    id_N: "45",
-                    nameN: "закупівля матеріала",
-                    suma: "2000",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "29",
-            namePunkt: "Черноморск",
-            listVidKasa: [
-              {
-                id: "4",
-                nameVidKassa: "приход",
-                listInKassa: [
-                  {
-                    id_N: "89",
-                    nameN: "поповнення",
-                    suma: "3000",
-                  },
-                  {
-                    id_N: "91",
-                    nameN: "надходження за продаж",
-                    suma: "500",
-                  },
-                ],
-              },
-              {
-                id: "5",
-                nameVidKassa: "расход",
-                listInKassa: [
-                  {
-                    id_N: "45",
-                    nameN: "закупівля матеріала",
-                    suma: "2800",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  };
+  // const _tabl = {
+  //   data: [
+  //     {
+  //       id_U: "30",
+  //       pib: "Ратова Євгенія",
+  //       listPunkt: [
+  //         {
+  //           id: "11",
+  //           namePunkt: "ДМС_ЦМ",
+  //           listVidKasa: [
+  //             {
+  //               id: "4",
+  //               nameVidKassa: "приход",
+  //               listInKassa: [
+  //                 {
+  //                   id_N: "89",
+  //                   nameN: "поповнення",
+  //                   suma: "10000",
+  //                 },
+  //               ],
+  //               sumVidKassa: "2000",
+  //             },
+
+  //             {
+  //               id: "5",
+  //               nameVidKassa: "расход",
+  //               listInKassa: [
+  //                 {
+  //                   id_N: "45",
+  //                   nameN: "закупівля матеріала",
+  //                   suma: "8000",
+  //                 },
+  //               ],
+  //               sumVidKassa: "2000",
+  //             },
+  //           ],
+  //         },
+  //         {
+  //           id: "18",
+  //           namePunkt: "Киев_Отрадный ",
+  //           listVidKasa: [
+  //             {
+  //               id: "4",
+  //               nameVidKassa: "приход",
+  //               listInKassa: [
+  //                 {
+  //                   id_N: "891",
+  //                   nameN: "поповнення",
+  //                   suma: "5000",
+  //                 },
+  //               ],
+  //               sumVidKassa: "2000",
+  //             },
+  //             {
+  //               id: "5",
+  //               nameVidKassa: "расход",
+  //               listInKassa: [
+  //                 {
+  //                   id_N: "45",
+  //                   nameN: "закупівля матеріала",
+  //                   suma: "2000",
+  //                 },
+  //               ],
+  //               sumVidKassa: "2000",
+  //             },
+  //           ],
+  //         },
+  //         {
+  //           id: "29",
+  //           namePunkt: "Черноморск",
+  //           listVidKasa: [
+  //             {
+  //               id: "4",
+  //               nameVidKassa: "приход",
+  //               listInKassa: [
+  //                 {
+  //                   id_N: "89",
+  //                   nameN: "поповнення",
+  //                   suma: "3000",
+  //                 },
+  //                 {
+  //                   id_N: "91",
+  //                   nameN: "надходження за продаж",
+  //                   suma: "500",
+  //                 },
+  //               ],
+  //               sumVidKassa: "5000",
+  //             },
+  //             {
+  //               id: "5",
+  //               nameVidKassa: "расход",
+  //               listInKassa: [
+  //                 {
+  //                   id_N: "45",
+  //                   nameN: "закупівля матеріала",
+  //                   suma: "2800",
+  //                 },
+  //               ],
+  //               sumVidKassa: "4800",
+  //             },
+  //           ],
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // };
   return _tabl.data;
 });
 
@@ -292,6 +348,39 @@ const getManeger = async () => {
     }
   } catch (e) {
     ElMessage.error("Помилка завантаження менеджеров");
+  }
+};
+
+const handleCheckAll = (val) => {
+  indeterminate.value = false;
+  if (val) {
+    checkManeger.value = listManeger.value.map((_) => _.value);
+  } else {
+    checkManeger.value = [];
+  }
+  getMoney();
+};
+
+const getMoney = async () => {
+  loading.value = true;
+  try {
+    const response = await HTTP.post("", {
+      _method: "getMoney",
+      _id_U: getCurUser.value.id,
+      _checkManeger: checkManeger.value,
+      _date_l: formatDate(valueDate.value[0], "eng"),
+      _date_r: formatDate(valueDate.value[1], "eng"),
+      _isPeriod: isPeriod.value ? 1 : 0,
+    });
+
+    setting.value.tables["tabMoney"].data = response.data.ar_data;
+    loading.value = false;
+
+    if (+getSettingUser.value.isShowMes) {
+      ElMessage.success("Аналітика по руху коштів оновлена");
+    }
+  } catch (e) {
+    ElMessage.error("Помилка завантаження аналітики");
   }
 };
 
