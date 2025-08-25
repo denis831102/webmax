@@ -71,6 +71,8 @@ import eOperation from "@/components/EP/Operation/eOperation";
 import eBits from "@/components/EP/Bits/eBits";
 import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
 import eEconomist from "@/components/EP/Monitoring/eEconomist";
+import eMoney from "@/components/EP/Monitoring/eMoney";
+
 import eSettingUser from "@/components/EP/SettingUser/eSettingUser";
 
 const store = useStore();
@@ -113,6 +115,7 @@ const setting = ref({
       eBits,
       eAnalitika,
       eEconomist,
+      eMoney,
       eSettingUser,
     },
     curComp: "eAvatar",
@@ -165,6 +168,11 @@ const setting = ref({
     },
     tabEconomist: {
       title: "Щоденний звіт по ВЛАСНИМ ПУНКТАМ",
+      curRow: {},
+      data: [],
+    },
+    tabMoney: {
+      title: "АНАЛІТИКА ПО РУХУ ГРОШОВИХ КОШТІВ ВЛАСНИХ ПУНКТІВ",
       curRow: {},
       data: [],
     },
