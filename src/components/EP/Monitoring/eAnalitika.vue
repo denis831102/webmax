@@ -60,14 +60,20 @@
           />
         </el-col>
 
-        <el-button
-          type="primary"
-          plain
-          :icon="Refresh"
-          @click="getMonitoring()"
-        >
-          Оновити
-        </el-button>
+        <el-button-group>
+          <el-button type="success" :icon="Tickets" @click="loadReport()">
+            Формувати звіт
+          </el-button>
+
+          <el-button
+            type="primary"
+            plain
+            :icon="Refresh"
+            @click="getMonitoring()"
+          >
+            Оновити
+          </el-button>
+        </el-button-group>
       </el-space>
     </el-card>
   </el-space>
@@ -285,9 +291,9 @@
 <script setup>
 import { inject, ref, computed, onActivated, watch } from "vue";
 import { useStore } from "vuex";
-import { User, Refresh } from "@element-plus/icons-vue";
+import { User, Refresh, Tickets } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import { HTTP } from "@/hooks/http";
+import { HTTP, loadFile } from "@/hooks/http";
 
 const setting = inject("setting");
 const store = useStore();
@@ -427,6 +433,33 @@ const handleCheckAll = (val) => {
     checkManeger.value = [];
   }
   getMonitoring();
+};
+
+const loadReport = async () => {
+  try {
+    const response = await HTTP.post("", {
+      _method: "loadReport",
+      _id_U: getCurUser.value.id,
+      _nameReport: "analitikaResurs",
+      _checkManeger: checkManeger.value,
+      _checkMaterial: checkMaterial.value,
+      _date: isFilter.value ? formatDate(curDate.value, "eng") : "",
+    });
+
+    if (response.data.isSuccesfull) {
+      loadFile(
+        response.data.fileName,
+        response.data.content,
+        response.data.mime
+      );
+
+      ElMessage.success("Звіт сформовано");
+    } else {
+      ElMessage.error("Звіт не сформовано");
+    }
+  } catch (e) {
+    ElMessage("Помилка завантаження звіту...");
+  }
 };
 
 onActivated(async () => {

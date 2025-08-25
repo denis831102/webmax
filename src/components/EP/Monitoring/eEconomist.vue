@@ -200,8 +200,7 @@ import { inject, ref, computed, onActivated, watch } from "vue";
 import { useStore } from "vuex";
 import { User, Refresh, Tickets } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import { HTTP } from "@/hooks/http";
-import { loadFile } from "@/hooks/http";
+import { HTTP, loadFile } from "@/hooks/http";
 
 const setting = inject("setting");
 const store = useStore();
@@ -440,6 +439,7 @@ const loadReport = async () => {
     const response = await HTTP.post("", {
       _method: "loadReport",
       _id_U: getCurUser.value.id,
+      _nameReport: "economist",
       _checkOperation: checkOperation.value,
       _nameOperation: nameOperation,
       _arTransaction: arTransaction,
@@ -457,7 +457,7 @@ const loadReport = async () => {
       ElMessage.error("Звіт не сформовано");
     }
   } catch (e) {
-    ElMessage("Помилка завантаження...");
+    ElMessage("Помилка завантаження звіту...");
   }
 };
 
