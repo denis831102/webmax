@@ -44,7 +44,7 @@
 
       <el-form-item style="box-shadow: 0px -1px 6px 2px #b0b3b7">
         <el-table
-          :data="form.tableOperation"
+          :data="form.tableOperation.filter((el) => +el.isMoveKassa != -1)"
           :default-sort="{ prop: 'id', order: 'ascending' }"
           show-summary
           border="true"
