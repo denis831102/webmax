@@ -159,8 +159,7 @@
 
           <el-button
             type="primary"
-            :icon="HomeFilled"
-            style="width: 110px"
+            :icon="DocumentAdd"
             @click="newTransaction()"
             >Нова операція
           </el-button>
@@ -356,6 +355,7 @@ import {
   ShoppingCartFull,
   Refresh,
   Sort,
+  DocumentAdd,
 } from "@element-plus/icons-vue";
 import {
   ElMessage,
@@ -493,7 +493,7 @@ const delTransaction_Ok = async (row) => {
       },
     });
 
-    if (row.id_T_child !== 0) {
+    if (+row.id_T_child !== 0) {
       await HTTP.get("", {
         params: {
           _method: "delTransaction",
@@ -505,7 +505,10 @@ const delTransaction_Ok = async (row) => {
     if (response.data.isSuccesfull) {
       const _tab = setting.value.tables["tabTransaction"];
       _tab.data = _tab.data.filter((el) => el.id_T !== row.id_T);
-      kassa.value = response.data.kassa;
+
+      kassa.summa = response.data.kassa;
+      kassa.oldSumma = response.data.oldkassa;
+      kassa.percent = response.data.percent;
     } else {
       ElMessage.error("Транзакцію не видалено");
     }

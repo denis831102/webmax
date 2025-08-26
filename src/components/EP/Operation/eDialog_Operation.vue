@@ -40,21 +40,18 @@
         </el-col>
       </el-form-item>
 
+      <!-- :data="form.tableOperation.filter((el) => +el.isMoveKassa != -1)" -->
+
       <el-form-item style="box-shadow: 0px -1px 6px 2px #b0b3b7">
         <el-table
-          :data="form.tableOperation"
+          :data="form.tableOperation.filter((el) => +el.isMoveKassa != -1)"
           :default-sort="{ prop: 'id', order: 'ascending' }"
           show-summary
           border="true"
           height="300"
           style="width: 100%; margin: 5px; font-size: 9pt"
         >
-          <el-table-column
-            prop="nameOperation"
-            label="Операція"
-            :width="getWidth[1]"
-            sortable
-          >
+          <el-table-column label="Операція" :width="getWidth[1]" sortable>
             <template #default="props">
               <div>
                 {{ props.row.nameOperation }}
@@ -247,6 +244,11 @@ watchEffect(() => {
     } else {
       el.price = el.count != 0 ? (el.summa / el.count).toFixed(2) : "";
     }
+
+    const kasaEl = form.tableOperation.find(
+      (fEl) => fEl.token == el.token && fEl.isMoveKassa == -1
+    );
+    if (kasaEl) kasaEl.count = el.summa;
   });
 });
 
@@ -278,7 +280,9 @@ const loadOperation = (isRedactor = false) => {
         " / "
       ),
       maxCount:
-        +curOper.dir == -1 && curOper.id_V != 5 ? curOper.count : 999999999,
+        +curOper.dir == -1 && curOper.id_V != 5
+          ? curOper.countBits + curOper.count
+          : 999999999,
       curCount: curOper.countBits,
       unit: curOper.unit,
       mode: "change",
@@ -297,6 +301,8 @@ const loadOperation = (isRedactor = false) => {
       id_K: curOper.id_K,
       id_M: curOper.id_M,
       id: ind,
+      isMoveKassa: curOper.isMoveKassa,
+      token: curOper.token,
     };
   });
 
@@ -305,8 +311,6 @@ const loadOperation = (isRedactor = false) => {
   form.visibleContrAgent =
     curTransaction.id_Bu != 0 || curTransaction.id_cm != 0;
   form.modeOtg = curTransaction.id_Bu != 0 ? "ca" : "cm";
-
-  // alert(form.visibleContrAgent);
 
   getSklad(
     curTransaction.id_Bu > 0 ? curTransaction.id_Bu : curTransaction.id_cm
@@ -354,7 +358,8 @@ const addOperation = () => {
 
 const delOperation = (row) => {
   form.tableOperation = form.tableOperation.filter((el) => {
-    const isAdd = el.id_V != row.id_V || el.id_M != row.id_M;
+    // const isAdd = el.id_V != row.id_V || el.id_M != row.id_M;
+    const isAdd = el.token != row.token;
 
     if (!isAdd && el.mode == "change") {
       form.delOperation.push({
@@ -367,6 +372,7 @@ const delOperation = (row) => {
         old_price: 0,
         new_count: el.count,
         new_price: el.price,
+        isMoveKassa: el.isMoveKassa,
       });
     }
 
