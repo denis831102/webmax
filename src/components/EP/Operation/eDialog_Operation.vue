@@ -44,7 +44,7 @@
 
       <el-form-item style="box-shadow: 0px -1px 6px 2px #b0b3b7">
         <el-table
-          :data="form.tableOperation.filter((el) => +el.isMoveKassa != -1)"
+          :data="form.tableOperation"
           :default-sort="{ prop: 'id', order: 'ascending' }"
           show-summary
           border="true"
@@ -365,7 +365,7 @@ const addOperation = () => {
 const delOperation = (row) => {
   form.tableOperation = form.tableOperation.filter((el) => {
     const isAdd =
-      el.id_V != row.id_V || el.id_M != row.id_M || el.token != row.token;
+      (el.id_V != row.id_V || el.id_M != row.id_M) && el.token != row.token;
 
     if (!isAdd && el.mode == "change") {
       form.delOperation.push({
