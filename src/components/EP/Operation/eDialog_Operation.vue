@@ -306,6 +306,12 @@ const loadOperation = (isRedactor = false) => {
     };
   });
 
+  if (!isRedactor) {
+    form.tableOperation = form.tableOperation.filter(
+      (el) => +el.isMoveKassa != -1
+    );
+  }
+
   form.comment = curTransaction.comment;
 
   form.visibleContrAgent =
@@ -372,7 +378,7 @@ const delOperation = (row) => {
         old_price: 0,
         new_count: el.count,
         new_price: el.price,
-        isMoveKassa: el.isMoveKassa,
+        is_move_kassa: el.isMoveKassa,
       });
     }
 
