@@ -364,8 +364,8 @@ const addOperation = () => {
 
 const delOperation = (row) => {
   form.tableOperation = form.tableOperation.filter((el) => {
-    // const isAdd = el.id_V != row.id_V || el.id_M != row.id_M;
-    const isAdd = el.token != row.token;
+    const isAdd =
+      el.id_V != row.id_V || el.id_M != row.id_M || el.token != row.token;
 
     if (!isAdd && el.mode == "change") {
       form.delOperation.push({
