@@ -337,7 +337,7 @@ const addTransactionPeresort = async () => {
       _time: getTime.value,
       _comment: `пересорт; ${form.comment}`,
       _isEdit: 0,
-      _isDel: 0,
+      _isDel: 1,
       _opers: groupOperation,
     });
 
