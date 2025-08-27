@@ -96,7 +96,7 @@
         <el-menu-item-group>
           <el-menu-item index="3-1" :disabled="isDisabled_Analitika_1">
             <el-icon><TrendCharts /></el-icon>
-            Аналітика по номенклатурі на власним пунктам
+            Аналітика по номенклатурі на власних пунктах
           </el-menu-item>
           <el-menu-item index="3-2" :disabled="!+getCurUser.listAccess[7]"
             ><el-icon><Money /></el-icon>

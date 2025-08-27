@@ -30,9 +30,15 @@
           />
         </el-select>
 
-        <el-button type="primary" @click="getMoney()" plain :icon="Refresh">
-          Оновити
-        </el-button>
+        <el-button-group
+          ><el-button type="success" :icon="Tickets" @click="loadReport()">
+            Формувати звіт
+          </el-button>
+
+          <el-button type="primary" @click="getMoney()" plain :icon="Refresh">
+            Оновити
+          </el-button></el-button-group
+        >
       </el-space>
     </el-card>
 
@@ -145,9 +151,10 @@
               <template #default="scope">
                 <div style="display: flex; align-items: center">
                   <el-icon><Money /></el-icon>
-                  <span style="margin-left: 10px">{{
-                    parseFloat(scope.row.sumaP).toLocaleString("rus")
-                  }}</span>
+                  <span style="margin-left: 10px"
+                    >{{ parseFloat(scope.row.sumaP).toLocaleString("rus") }}
+                    {{ scope.row.unit }}</span
+                  >
                 </div>
               </template>
             </el-table-column>
@@ -171,9 +178,10 @@
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-icon><Money /></el-icon>
-          <span style="margin-left: 10px">{{
-            parseFloat(scope.row.sumaU).toLocaleString("rus")
-          }}</span>
+          <span style="margin-left: 10px"
+            >{{ parseFloat(scope.row.sumaU).toLocaleString("rus") }}
+            {{ scope.row.unit }}</span
+          >
         </div>
       </template>
     </el-table-column>
@@ -184,10 +192,9 @@
 //отключает наблюдатель за ошибками
 import { inject, ref, onActivated, computed } from "vue";
 import { useStore } from "vuex";
-import { User, Refresh, Money } from "@element-plus/icons-vue";
+import { User, Refresh, Money, Tickets } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import { HTTP } from "@/hooks/http";
-// import { loadFile } from "@/hooks/http";
+import { HTTP, loadFile } from "@/hooks/http";
 
 const setting = inject("setting");
 const store = useStore();
@@ -396,6 +403,31 @@ const getMoney = async () => {
     }
   } catch (e) {
     ElMessage.error("Помилка завантаження аналітики");
+  }
+};
+
+const loadReport = async () => {
+  try {
+    const response = await HTTP.post("", {
+      _method: "loadReport",
+      _id_U: getCurUser.value.id,
+      _nameReport: "analitikaMoney",
+      _checkManeger: checkManeger.value,
+    });
+
+    if (response.data.isSuccesfull) {
+      loadFile(
+        response.data.fileName,
+        response.data.content,
+        response.data.mime
+      );
+
+      ElMessage.success("Звіт сформовано");
+    } else {
+      ElMessage.error("Звіт не сформовано");
+    }
+  } catch (e) {
+    ElMessage("Помилка завантаження звіту...");
   }
 };
 
