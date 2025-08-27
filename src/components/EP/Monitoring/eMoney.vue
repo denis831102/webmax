@@ -58,6 +58,7 @@
             :end-placeholder="getDate"
             :disabled="!isPeriod"
             :shortcuts="shortCuts"
+            @change="getMoney"
             style="width: 210px; margin-left: -10px"
           />
         </el-col>
