@@ -328,6 +328,25 @@ const addOperation = () => {
 
   const curOper = selOperation.value[selOperation.value.length - 1];
 
+  const isNotOtg = form.tableOperation.reduce(
+    (res, el) => res | (el.id_V != 2),
+    false
+  );
+  if (curOper[0].id == 2 && isNotOtg) {
+    ElMessage.error(
+      `Операцію "Відвантаження" треба створювати в окремій транзакції.`
+    );
+    return;
+  }
+  if (curOper[0].id != 2 && form.visibleContrAgent) {
+    ElMessage.error(
+      `В транзакцію з відвантаженням заборонено додавати інші операції. Операцію "${
+        form.options[curOper[0].num].label
+      }" треба створювати в окремій транзакції.`
+    );
+    return;
+  }
+
   const newOperation = {
     nameOperation: [
       form.options[curOper[0].num].label,
@@ -356,6 +375,7 @@ const addOperation = () => {
     id_V: curOper[0].id,
     id_K: curOper[1].id,
     id_M: curOper[2].id,
+    token: Math.random(),
   };
   // form.tableOperation = [...form.tableOperation, ...newOperation];
   form.tableOperation.push(newOperation);
@@ -446,8 +466,9 @@ const addTransaction = async () => {
         old_price: 0,
         new_count: oper.count,
         new_price: oper.price,
-        mode_otg: form.visibleContrAgent ? form.modeOtg : "",
-        id_agent: form.visibleContrAgent ? form.curContragent : 0,
+        mode_otg: form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
+        id_agent:
+          form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
         is_move_kassa: 1,
       });
 
@@ -475,7 +496,7 @@ const addTransaction = async () => {
         _idPunkt: form.curContragent,
         _date: form.date,
         _time: getTime.value,
-        _comment: `переміщення з ${form.namePunkt}; ${form.comment}`,
+        _comment: `переміщення з ${form.namePunkt.trim()}; ${form.comment}`,
         _idTChild: 0,
         _isEdit: 0,
         _isDel: 0,
@@ -539,7 +560,8 @@ const changeTransaction = async () => {
           old_price: 0,
           new_count: oper.count,
           new_price: oper.price,
-          mode_otg: form.visibleContrAgent ? form.modeOtg : "",
+          mode_otg:
+            form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
           id_agent:
             form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
           is_move_kassa: 1,
@@ -561,7 +583,8 @@ const changeTransaction = async () => {
             old_price: oper.old.price,
             new_count: oper.count,
             new_price: oper.price,
-            mode_otg: form.visibleContrAgent ? form.modeOtg : "",
+            mode_otg:
+              form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
             id_agent:
               form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
             is_move_kassa: 1,

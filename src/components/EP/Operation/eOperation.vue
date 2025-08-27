@@ -190,15 +190,21 @@
         <el-table-column type="expand">
           <template #default="props">
             <div style="padding: 20px; background: #c6e2ff69">
-              <h3 style="margin: 0px 0 10px 0">
-                Транзакція за операцією
+              <div style="margin: 0px 0 10px 0">
+                <el-tooltip placement="top">
+                  <template #content>
+                    id_T: {{ props.row.id_T }}<br />
+                  </template>
+                  Транзакція за операцією
+                </el-tooltip>
+
                 <el-check-tag type="primary">
                   {{ props.row.comment }}
                 </el-check-tag>
                 <el-check-tag type="success" style="margin-left: 5px">
                   {{ props.row.date }} - {{ props.row.time }}
                 </el-check-tag>
-              </h3>
+              </div>
 
               <el-table
                 :data="props.row.listOper"

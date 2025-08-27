@@ -310,6 +310,9 @@ const addTransactionPeresort = async () => {
         old_price: 0,
         new_count: 0,
         new_price: 0,
+        mode_otg: "",
+        id_agent: 0,
+        is_move_kassa: 0,
       },
       {
         id_V: 7,
@@ -320,6 +323,9 @@ const addTransactionPeresort = async () => {
         old_price: 0,
         new_count: 0,
         new_price: 0,
+        mode_otg: "",
+        id_agent: 0,
+        is_move_kassa: 0,
       },
     ];
 
