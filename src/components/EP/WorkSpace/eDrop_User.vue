@@ -1,6 +1,8 @@
 <template>
   <eDialog_User v-model:visible="setting.dialog['editUser'].visible" />
 
+  <eDialog_Maneger v-model:visible="setting.dialog['editManeger'].visible" />
+
   <div class="toolbar">
     <el-dropdown @command="handleCommand">
       <span class="el-dropdown-link">
@@ -34,6 +36,7 @@
 <script setup>
 import { defineProps, inject } from "vue";
 import eDialog_User from "@/components/EP/Users/eDialog_User";
+import eDialog_Maneger from "@/components/EP/Users/eDialog_Maneger";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 
@@ -59,6 +62,8 @@ const handleCommand = (command) => {
       setting.value.dialog["editUser"].initiator = "drop_user";
       break;
     case "change":
+      setting.value.dialog["editManeger"].visible = true;
+      setting.value.dialog["editManeger"].initiator = "drop_user";
       break;
     case "exit":
       router.push({ name: "authent" });

@@ -94,6 +94,12 @@ const setting = ref({
   dialog: {
     user: { visible: false },
     editUser: { visible: false, initiator: "" },
+    editManeger: {
+      visible: false,
+      initiator: "",
+      idManeger: 0,
+      chooseUser: "user",
+    },
     editStatus: { visible: false, initiator: "" },
     editPunkt: { visible: false, initiator: "" },
     editOperation: { visible: false, initiator: "" },

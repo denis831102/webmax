@@ -406,20 +406,38 @@ watch(
   () => getTransaction()
 );
 
+watch(
+  () => [
+    setting.value.dialog["editManeger"].chooseUser,
+    setting.value.dialog["editManeger"].idManeger,
+  ],
+  () => getPunktCur()
+);
+
 const getPunktCur = async () => {
   try {
     const response = await HTTP.get("", {
       params: {
         _method: "getPunktCur",
-        _id_U: getCurUser.value.id,
+        _id_U:
+          setting.value.dialog["editManeger"].chooseUser == "user"
+            ? getCurUser.value.id
+            : setting.value.dialog["editManeger"].idManeger,
       },
     });
 
     punkts.value = response.data;
 
-    setting.value.titleTable = `${
-      setting.value.tables["tabTransaction"].title
-    }  ${getCurUser.value.PIB.toUpperCase()}`;
+    const nameUser =
+      setting.value.dialog["editManeger"].chooseUser == "user"
+        ? getCurUser.value.PIB.toUpperCase()
+        : setting.value.tables["tabUser"].data
+            .find(
+              (el) => el.id == setting.value.dialog["editManeger"].idManeger
+            )
+            .PIB.toUpperCase();
+
+    setting.value.titleTable = `${setting.value.tables["tabTransaction"].title} ${nameUser}`;
     // ElMessage.success("Пункти поточного користувача оновлені");
   } catch (e) {
     ElMessage("Помилка завантаження пунктів");
