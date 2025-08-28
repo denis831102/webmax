@@ -122,7 +122,7 @@
 </template>
 
 <script setup>
-import { inject, ref, computed, onActivated, onUpdated } from "vue";
+import { inject, ref, computed, onActivated, onUpdated, watch } from "vue";
 import { useStore } from "vuex";
 import { Search, Calendar, Connection, Refresh } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
@@ -139,6 +139,14 @@ const activeName = ref("");
 const isFilter = ref(false);
 const curDate = ref(new Date());
 const loading = ref(true);
+
+watch(
+  () => [
+    setting.value.dialog["editManeger"].chooseUser,
+    setting.value.dialog["editManeger"].idManeger,
+  ],
+  () => getPunktCur()
+);
 
 const filterTable = computed(() => {
   // const _tabl = [...setting.value.tables["tabBits"].data];
