@@ -11,11 +11,15 @@
         <el-dropdown-menu>
           <el-dropdown-item command="data">
             <el-icon><User /></el-icon>
-            Дані
+            Дані користувача
+          </el-dropdown-item>
+          <el-dropdown-item command="redactor">
+            <el-icon><Edit /></el-icon>
+            Редагувати дані
           </el-dropdown-item>
           <el-dropdown-item command="change">
-            <el-icon><Edit /></el-icon>
-            Змінити
+            <el-icon><Platform /></el-icon>
+            Обрати менеджера
           </el-dropdown-item>
           <el-dropdown-item command="exit">
             <el-icon><CloseBold /></el-icon>
@@ -50,9 +54,11 @@ const handleCommand = (command) => {
             <b>логін:</b> ${props.user.login}</div>`,
       });
       break;
-    case "change":
+    case "redactor":
       setting.value.dialog["editUser"].visible = true;
       setting.value.dialog["editUser"].initiator = "drop_user";
+      break;
+    case "change":
       break;
     case "exit":
       router.push({ name: "authent" });

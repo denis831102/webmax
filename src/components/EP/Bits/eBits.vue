@@ -175,6 +175,10 @@ const getPunktCur = async () => {
     });
 
     punkts.value = response.data;
+
+    setting.value.titleTable = `${
+      setting.value.tables["tabBits"].title
+    }  ${getCurUser.value.PIB.toUpperCase()}`;
     // ElMessage.success("Пункти поточного користувача оновлені");
   } catch (e) {
     ElMessage("Помилка завантаження пунктів");

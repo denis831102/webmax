@@ -4,6 +4,7 @@
     :namePunkt="activeName"
     :idPunkt="activeIdPunkt"
   />
+
   <eDialog_Sort
     v-model:visible="setting.dialog['createPeresort'].visible"
     :namePunkt="activeName"
@@ -415,6 +416,10 @@ const getPunktCur = async () => {
     });
 
     punkts.value = response.data;
+
+    setting.value.titleTable = `${
+      setting.value.tables["tabTransaction"].title
+    }  ${getCurUser.value.PIB.toUpperCase()}`;
     // ElMessage.success("Пункти поточного користувача оновлені");
   } catch (e) {
     ElMessage("Помилка завантаження пунктів");
