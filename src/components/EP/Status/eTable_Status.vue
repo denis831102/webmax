@@ -138,6 +138,39 @@
       </template>
     </el-table-column>
 
+    <el-table-column label="прогляд операцій інших менеджерів">
+      <template #default="scope">
+        <div style="display: flex; align-items: center">
+          <el-switch
+            :modelValue="scope.row.v8 == 1"
+            @change="changeCheck(scope.row, 8)"
+          />
+        </div>
+      </template>
+    </el-table-column>
+
+    <el-table-column label="редагування операцій інших менеджерів">
+      <template #default="scope">
+        <div style="display: flex; align-items: center">
+          <el-switch
+            :modelValue="scope.row.v9 == 1"
+            @change="changeCheck(scope.row, 9)"
+          />
+        </div>
+      </template>
+    </el-table-column>
+
+    <el-table-column label="додатково (в розробці)">
+      <template #default="scope">
+        <div style="display: flex; align-items: center">
+          <el-switch
+            :modelValue="scope.row.v10 == 1"
+            @change="changeCheck(scope.row, 10)"
+          />
+        </div>
+      </template>
+    </el-table-column>
+
     <el-table-column label="Операція">
       <template #default="scope">
         <el-button-group>

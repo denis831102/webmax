@@ -19,7 +19,7 @@
             <el-icon><Edit /></el-icon>
             Редагувати дані
           </el-dropdown-item>
-          <el-dropdown-item command="change">
+          <el-dropdown-item command="change" v-if="+getCurUser.listAccess[8]">
             <el-icon><Platform /></el-icon>
             Обрати менеджера
           </el-dropdown-item>
@@ -34,10 +34,11 @@
 </template>
 
 <script setup>
-import { defineProps, inject } from "vue";
+import { defineProps, inject, computed } from "vue";
 import eDialog_User from "@/components/EP/Users/eDialog_User";
 import eDialog_Maneger from "@/components/EP/Users/eDialog_Maneger";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
 
 const props = defineProps({
@@ -45,6 +46,9 @@ const props = defineProps({
 });
 const router = useRouter();
 const setting = inject("setting");
+
+const store = useStore();
+const getCurUser = computed(() => store.getters.getCurUser);
 
 const handleCommand = (command) => {
   switch (command) {

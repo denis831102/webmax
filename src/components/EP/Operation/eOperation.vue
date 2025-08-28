@@ -245,7 +245,7 @@
 
         <el-table-column type="index" v-if="setting.displaySize == 'large'" />
 
-        <el-table-column prop="date">
+        <el-table-column prop="date" min-width="30">
           <template #header>
             <el-icon><Calendar /></el-icon>
             <span style="margin-left: 10px">Дата</span>
@@ -276,7 +276,14 @@
 
         <el-table-column label="Дії">
           <template #default="scope">
-            <el-button-group class="ml-4">
+            <el-button-group
+              class="ml-4"
+              v-if="
+                setting.dialog['editManeger'].chooseUser == 'user' ||
+                (setting.dialog['editManeger'].chooseUser == 'maneger' &&
+                  +getCurUser.listAccess[9])
+              "
+            >
               <el-button
                 size="small"
                 @click="editTransaction(scope.$index, scope.row)"
