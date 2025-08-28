@@ -138,7 +138,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="прогляд операцій інших менеджерів">
+    <el-table-column label="перегляд операцій інших менеджерів">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-switch
