@@ -576,7 +576,14 @@ const filterTable = computed(() => {
   //     : row.comment.toLowerCase().includes(search.value.toLowerCase());
   // });
 
-  return _tabl.data;
+  //return _tabl.data;
+
+  return _tabl.data.map((el) => {
+    return {
+      ...el,
+      listOper: el.listOper.filter((oper) => +oper.isMoveKassa != -1),
+    };
+  });
 });
 
 const activeIdPunkt = computed(() => {
