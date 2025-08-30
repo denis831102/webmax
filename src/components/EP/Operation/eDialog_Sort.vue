@@ -300,6 +300,7 @@ const addTransactionPeresort = async () => {
       return;
     }
 
+    const token = generateToken(4);
     const groupOperation = [
       {
         id_V: 6,
@@ -313,6 +314,7 @@ const addTransactionPeresort = async () => {
         mode_otg: "",
         id_agent: 0,
         is_move_kassa: 0,
+        token,
       },
       {
         id_V: 7,
@@ -326,6 +328,7 @@ const addTransactionPeresort = async () => {
         mode_otg: "",
         id_agent: 0,
         is_move_kassa: 0,
+        token,
       },
     ];
 
@@ -390,6 +393,28 @@ const countPeresortNew = computed(() => {
   });
   return obj ? obj.count : 0;
 });
+
+const generateToken = (length = 12) => {
+  const lower = "abcdefghijklmnopqrstuvwxyz";
+  const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const digits = "0123456789";
+  //const special = "!@#$%^&*()-_=+[]{};:,.<>?";
+  const all = `${lower}${upper}${digits}`;
+
+  let password = "";
+
+  // добираем оставшиеся символы
+  for (let i = 0; i < length; i++) {
+    const idx = crypto.getRandomValues(new Uint32Array(1))[0] % all.length;
+    password += all[idx];
+  }
+
+  // перемешиваем символы
+  return password
+    .split("")
+    .sort(() => Math.random() - 0.5)
+    .join("");
+};
 
 onUpdated(async () => {
   startTimer();

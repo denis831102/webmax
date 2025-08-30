@@ -835,7 +835,7 @@ const generateToken = (length = 12) => {
   const lower = "abcdefghijklmnopqrstuvwxyz";
   const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const digits = "0123456789";
-  const special = "!@#$%^&*()-_=+[]{};:,.<>?";
+  //const special = "!@#$%^&*()-_=+[]{};:,.<>?";
   const all = `${lower}${upper}${digits}`;
 
   let password = "";
