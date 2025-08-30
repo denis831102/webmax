@@ -222,13 +222,16 @@ const form = reactive({
   propsCascader: { multiple: true, expandTrigger: "hover" },
   title: "",
   isSave: true,
-  delOperation: [],
-  addOperation: [],
-  chnOperation: [],
   modeOtg: "cm",
   visibleContrAgent: false,
   optionContragent: [],
   curContragent: "",
+  delOperation: [],
+  addOperation: [],
+  chnOperation: [],
+  delOperation_child: [],
+  addOperation_child: [],
+  chnOperation_child: [],
 });
 const selOperation = ref([]);
 
@@ -297,6 +300,7 @@ const loadOperation = (isRedactor = false) => {
 
       id_T: curTransaction.id_T,
       id_O: curOper.id_O,
+      id_O_child: curOper.id_O_child,
       id_V: curOper.id_V,
       id_K: curOper.id_K,
       id_M: curOper.id_M,
@@ -312,11 +316,19 @@ const loadOperation = (isRedactor = false) => {
     );
   }
 
-  form.comment = curTransaction.comment;
-
   form.visibleContrAgent =
     curTransaction.id_Bu != 0 || curTransaction.id_cm != 0;
   form.modeOtg = curTransaction.id_Bu != 0 ? "ca" : "cm";
+
+  if (form.visibleContrAgent) {
+    if (form.modeOtg == "cm") {
+      form.comment = curTransaction.comment.split(";")[1];
+    }
+    form.curContragent =
+      curTransaction.id_Bu != 0 ? curTransaction.id_Bu : curTransaction.id_cm;
+  } else {
+    form.comment = curTransaction.comment;
+  }
 
   getSklad(
     curTransaction.id_Bu > 0 ? curTransaction.id_Bu : curTransaction.id_cm
@@ -400,6 +412,21 @@ const delOperation = (row) => {
         new_price: el.price,
         is_move_kassa: el.isMoveKassa,
       });
+
+      if (oper.id_V == 2) {
+        form.delOperation_child.push({
+          id_O: el.id_O_child,
+          id_M: el.id_M,
+          id_V: 1,
+          d_count: el.count,
+          d_price: el.price,
+          old_count: 0,
+          old_price: 0,
+          new_count: el.count,
+          new_price: el.price,
+          is_move_kassa: 0,
+        });
+      }
     }
 
     return isAdd;
@@ -455,6 +482,7 @@ const addTransaction = async () => {
       nameContragent = "";
     const groupOperation = [];
     const groupOperationChild = [];
+    const token = generateToken(4);
 
     form.tableOperation.forEach((oper) => {
       groupOperation.push({
@@ -470,6 +498,7 @@ const addTransaction = async () => {
         id_agent:
           form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
         is_move_kassa: 1,
+        token,
       });
 
       if (oper.id_V == 2 && form.modeOtg == "cm") {
@@ -485,6 +514,7 @@ const addTransaction = async () => {
           mode_otg: "",
           id_agent: 0,
           is_move_kassa: 0,
+          token,
         });
       }
     });
@@ -521,7 +551,7 @@ const addTransaction = async () => {
         .join(" ")
         .trim(),
       _idTChild: idTChild,
-      _isEdit: form.visibleContrAgent && form.modeOtg == "cm" ? 0 : 1,
+      _isEdit: 1, // form.visibleContrAgent && form.modeOtg == "cm" ? 0 : 1,
       _isDel: 1,
       _opers: groupOperation,
     });
@@ -546,41 +576,27 @@ const addTransaction = async () => {
 const changeTransaction = async () => {
   try {
     form.addOperation = [];
+    form.addOperation_child = [];
     form.chnOperation = [];
+    form.chnOperation_child = [];
     let id_T = 0;
+    let id_T_child = 0;
+
+    const nameContragent = form.optionContragent.find(
+      (el) => el.id == form.curContragent
+    ).name;
+    const token = generateToken(4);
 
     form.tableOperation.forEach((oper) => {
-      if (oper.mode == "add") {
-        form.addOperation.push({
-          id_V: oper.id_V,
-          id_M: oper.id_M,
-          d_count: oper.count,
-          d_price: oper.price,
-          old_count: 0,
-          old_price: 0,
-          new_count: oper.count,
-          new_price: oper.price,
-          mode_otg:
-            form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
-          id_agent:
-            form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
-          is_move_kassa: 1,
-        });
-      } else {
-        let dCount = oper.count - oper.old.count,
-          dPrice = oper.price - oper.old.price;
-
-        id_T = oper.id_T;
-
-        if (dCount != 0 || dPrice != 0 || oper.id_V == 2) {
-          form.chnOperation.push({
-            id_O: oper.id_O,
+      switch (oper.mode) {
+        case "add": {
+          form.addOperation.push({
             id_V: oper.id_V,
             id_M: oper.id_M,
-            d_count: dCount,
-            d_price: dPrice,
-            old_count: oper.old.count,
-            old_price: oper.old.price,
+            d_count: oper.count,
+            d_price: oper.price,
+            old_count: 0,
+            old_price: 0,
             new_count: oper.count,
             new_price: oper.price,
             mode_otg:
@@ -588,10 +604,90 @@ const changeTransaction = async () => {
             id_agent:
               form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
             is_move_kassa: 1,
+            token,
           });
+
+          if (oper.id_V == 2) {
+            form.addOperation_child.push({
+              id_V: 1,
+              id_M: oper.id_M,
+              d_count: oper.count,
+              d_price: oper.price,
+              old_count: 0,
+              old_price: 0,
+              new_count: oper.count,
+              new_price: oper.price,
+              mode_otg: "",
+              id_agent: 0,
+              is_move_kassa: 0,
+              token,
+            });
+          }
+          break;
+        }
+        case "change": {
+          let dCount = oper.count - oper.old.count,
+            dPrice = oper.price - oper.old.price;
+
+          id_T = oper.id_T;
+          id_T_child = oper.id_T_child;
+
+          if (dCount != 0 || dPrice != 0) {
+            form.chnOperation.push({
+              id_O: oper.id_O,
+              id_V: oper.id_V,
+              id_M: oper.id_M,
+              d_count: dCount,
+              d_price: dPrice,
+              old_count: oper.old.count,
+              old_price: oper.old.price,
+              new_count: oper.count,
+              new_price: oper.price,
+              mode_otg:
+                form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
+              id_agent:
+                form.visibleContrAgent && oper.id_V == 2
+                  ? form.curContragent
+                  : 0,
+              is_move_kassa: 1,
+            });
+          }
+
+          if (oper.id_V == 2) {
+            form.chnOperation_child.push({
+              id_O: oper.id_O_child,
+              id_V: 1,
+              id_M: oper.id_M,
+              d_count: dCount,
+              d_price: dPrice,
+              old_count: oper.old.count,
+              old_price: oper.old.price,
+              new_count: oper.count,
+              new_price: oper.price,
+              mode_otg: "",
+              id_agent: 0,
+              is_move_kassa: 0,
+            });
+          }
+          break;
         }
       }
     });
+
+    if (form.visibleContrAgent) {
+      const responseChild = await HTTP.post("", {
+        _method: "changeTransaction",
+        // _idUser: getCurUser.value.id,
+        // _idPunkt: props.idPunkt,
+        _id_T: id_T_child,
+        _date: form.date,
+        _time: getTime.value,
+        _comment: `переміщення з ${form.namePunkt.trim()}; ${form.comment}`,
+        _opersDel: form.delOperation_child,
+        _opersAdd: form.addOperation_child,
+        _opersChn: form.chnOperation_child,
+      });
+    }
 
     const response = await HTTP.post("", {
       _method: "changeTransaction",
@@ -600,7 +696,14 @@ const changeTransaction = async () => {
       _id_T: id_T,
       _date: form.date,
       _time: getTime.value,
-      _comment: form.comment,
+      _comment: [
+        form.visibleContrAgent && form.modeOtg == "cm"
+          ? `відвантаження на ${nameContragent};`
+          : "",
+        form.comment,
+      ]
+        .join(" ")
+        .trim(),
       _opersDel: form.delOperation,
       _opersAdd: form.addOperation,
       _opersChn: form.chnOperation,
@@ -724,6 +827,46 @@ const getSklad = async (id_agent = 0) => {
     }
   }
   form.curContragent = id_agent == 0 ? form.optionContragent[0].id : id_agent;
+};
+
+const generateToken = (length = 12) => {
+  const lower = "abcdefghijklmnopqrstuvwxyz";
+  const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const digits = "0123456789";
+  const special = "!@#$%^&*()-_=+[]{};:,.<>?";
+  const all = `${lower}${upper}${digits}`;
+
+  let password = "";
+
+  // гарантируем по одному символу из каждой группы
+  // password +=
+  //   lower[
+  //     Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % lower.length)
+  //   ];
+  // password +=
+  //   upper[
+  //     Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % upper.length)
+  //   ];
+  // password +=
+  //   digits[
+  //     Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % digits.length)
+  //   ];
+  // password +=
+  //   special[
+  //     Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % special.length)
+  //   ];
+
+  // добираем оставшиеся символы
+  for (let i = 0; i < length; i++) {
+    const idx = crypto.getRandomValues(new Uint32Array(1))[0] % all.length;
+    password += all[idx];
+  }
+
+  // перемешиваем символы
+  return password
+    .split("")
+    .sort(() => Math.random() - 0.5)
+    .join("");
 };
 
 onUpdated(async () => {
