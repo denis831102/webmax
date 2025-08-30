@@ -70,6 +70,7 @@ import eTable_Buyers from "@/components/EP/Buyers/eTable_Buyers";
 import eOperation from "@/components/EP/Operation/eOperation";
 import eBits from "@/components/EP/Bits/eBits";
 import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
+import eAnalitikaM from "@/components/EP/Analitika/eAnalitikaM";
 import eEconomist from "@/components/EP/Monitoring/eEconomist";
 import eMoney from "@/components/EP/Monitoring/eMoney";
 
@@ -120,6 +121,7 @@ const setting = ref({
       eOperation,
       eBits,
       eAnalitika,
+      eAnalitikaM,
       eEconomist,
       eMoney,
       eSettingUser,
@@ -168,6 +170,11 @@ const setting = ref({
       data: [],
     },
     tabAnalitika: {
+      title: "АНАЛІТИКА ПО НОМЕНКЛАТУРІ НА ВЛАСНИХ ПУНКТАХ",
+      curRow: {},
+      data: [],
+    },
+    tabAnalitikaM: {
       title: "АНАЛІТИКА ПО НОМЕНКЛАТУРІ НА ВЛАСНИХ ПУНКТАХ",
       curRow: {},
       data: [],

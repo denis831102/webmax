@@ -81,9 +81,9 @@
             <el-icon><CircleCheck /></el-icon>
             Операції по ВП
           </el-menu-item>
-          <el-menu-item index="2-3" :disabled="true">
+          <el-menu-item index="2-3">
             <el-icon><EditPen /></el-icon>
-            Параметри ( в розробці)
+            Звіт по номенклатурі на ВП
           </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
@@ -96,7 +96,7 @@
         <el-menu-item-group>
           <el-menu-item index="3-1" :disabled="isDisabled_Analitika_1">
             <el-icon><TrendCharts /></el-icon>
-            Аналітика по номенклатурі на власних пунктах
+            Аналітика по номенклатурі на власних пунктах(загальна)
           </el-menu-item>
           <el-menu-item index="3-2" :disabled="!+getCurUser.listAccess[7]"
             ><el-icon><Money /></el-icon>
@@ -189,10 +189,15 @@ const handleSelect = (key, keyPath) => {
       setting.value.comps.curComp = "eOperation";
       setting.value.titleTable = setting.value.tables["tabTransaction"].title;
       break;
+    case "2-3":
+      setting.value.comps.curComp = "eAnalitikaM";
+      setting.value.titleTable = setting.value.tables["tabAnalitikaM"].title;
+      break;
     case "3-1":
       setting.value.comps.curComp = "eAnalitika";
       setting.value.titleTable = setting.value.tables["tabAnalitika"].title;
       break;
+
     case "3-2":
       setting.value.comps.curComp = "eMoney";
       setting.value.titleTable = setting.value.tables["tabMoney"].title;
