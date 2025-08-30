@@ -2,8 +2,9 @@ import axioc from "axios";
 
 //let base64 = btoa("username:password");
 //const ecp = "c3875d07f44c422f3b3bc019c23e16ae";
+
 const key = "denis";
-const MD5 = (e) => {
+const HACH = (e) => {
   function g(a, d) {
     let b = a & 2147483648,
       c = d & 2147483648,
@@ -158,29 +159,35 @@ const MD5 = (e) => {
   return (q(a) + q(d) + q(b) + q(c)).toLowerCase();
 };
 
-// const getTime = () => {
-//   const curDate = new Date();
-//   const time = {
-//     h: curDate.getHours(),
-//     m: curDate.getMinutes(),
-//     s: curDate.getSeconds(),
-//   };
-//   return [
-//     (time.h < 10 ? "0" : "") + time.h,
-//     (time.m < 10 ? "0" : "") + time.m,
-//     // (time.s < 10 ? "0" : "") + time.s,
-//   ].join(":");
-// };
-
 export const HTTP = axioc.create({
   baseURL: "https://webmax.lond.lg.ua/php/Server.php",
   headers: {
     // Ecp: btoa(`${ecp}:${curDate}`),
     // Ecp: ecp,
-    Ecp: MD5(key),
-    //Ecp: MD5(`${getTime()}-${key}`),
+    // Ecp: MD5(key),
     Token: "",
   },
+});
+
+HTTP.interceptors.request.use((config) => {
+  // config.params = {
+  //   ...config.params,
+  //   t: Date.now(), // динамический timestamp на каждый запрос
+  // };
+  //
+  // Получаем часы и минуты в формате "HH:MM"
+  const time = new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  config.headers = {
+    ...config.headers,
+    // Ecp: new Date().toISOString(), // динамический заголовок времени
+    // "X-Request-ID": Math.random().toString(36).substr(2, 9), // уникальный ID запроса
+    Ecp: HACH(`${time}-${key}`),
+  };
+  return config;
 });
 
 export const loadFile = (fileName, content, mime) => {

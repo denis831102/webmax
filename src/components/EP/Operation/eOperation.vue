@@ -192,12 +192,7 @@
           <template #default="props">
             <div style="padding: 20px; background: #c6e2ff69">
               <div style="margin: 0px 0 10px 0">
-                <el-tooltip placement="top">
-                  <template #content>
-                    id_T: {{ props.row.id_T }}<br />
-                  </template>
-                  Транзакція за операцією
-                </el-tooltip>
+                Транзакція за операцією
 
                 <el-check-tag type="primary">
                   {{ props.row.comment }}
@@ -251,10 +246,14 @@
             <span style="margin-left: 10px">Дата</span>
           </template>
           <template #default="scope">
-            <div style="display: flex; align-items: center">
-              <span style="margin-left: 10px"
-                >{{ scope.row.date }} - {{ scope.row.time }}</span
-              >
+            <div style="display: flex; align-items: center; margin-left: 10px">
+              <el-tooltip placement="top">
+                <template #content>
+                  id_T : {{ scope.row.id_T }}<br />
+                  manager : {{ scope.row.PIB }}
+                </template>
+                {{ scope.row.date }} - {{ scope.row.time }}
+              </el-tooltip>
             </div>
           </template>
         </el-table-column>
