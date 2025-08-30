@@ -299,6 +299,7 @@ const loadOperation = (isRedactor = false) => {
       },
 
       id_T: curTransaction.id_T,
+      id_T_child: curTransaction.id_T_child,
       id_O: curOper.id_O,
       id_O_child: curOper.id_O_child,
       id_V: curOper.id_V,
@@ -413,7 +414,7 @@ const delOperation = (row) => {
         is_move_kassa: el.isMoveKassa,
       });
 
-      if (oper.id_V == 2) {
+      if (el.id_V == 2) {
         form.delOperation_child.push({
           id_O: el.id_O_child,
           id_M: el.id_M,
@@ -677,8 +678,8 @@ const changeTransaction = async () => {
     if (form.visibleContrAgent) {
       const responseChild = await HTTP.post("", {
         _method: "changeTransaction",
-        // _idUser: getCurUser.value.id,
-        // _idPunkt: props.idPunkt,
+        _idUser: getCurUser.value.id,
+        _idPunkt: form.curContragent,
         _id_T: id_T_child,
         _date: form.date,
         _time: getTime.value,
