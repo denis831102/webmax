@@ -307,7 +307,7 @@ const loadOperation = (isRedactor = false) => {
       id_M: curOper.id_M,
       id: ind,
       isMoveKassa: curOper.isMoveKassa,
-      token: curOper.token,
+      token: isRedactor ? curOper.token : generateToken(4),
     };
   });
 
