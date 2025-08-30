@@ -483,9 +483,9 @@ const addTransaction = async () => {
       nameContragent = "";
     const groupOperation = [];
     const groupOperationChild = [];
-    const token = generateToken(4);
 
     form.tableOperation.forEach((oper) => {
+      const token = generateToken(4);
       groupOperation.push({
         id_V: oper.id_V,
         id_M: oper.id_M,
@@ -586,9 +586,10 @@ const changeTransaction = async () => {
     const nameContragent = form.optionContragent.find(
       (el) => el.id == form.curContragent
     ).name;
-    const token = generateToken(4);
 
     form.tableOperation.forEach((oper) => {
+      const token = generateToken(4);
+
       switch (oper.mode) {
         case "add": {
           form.addOperation.push({
