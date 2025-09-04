@@ -161,11 +161,13 @@ const HACH = (e) => {
 
 export const HTTP = axioc.create({
   baseURL: "https://webmax.lond.lg.ua/php/Server.php",
+  credentials: "include",
   headers: {
     // Ecp: btoa(`${ecp}:${curDate}`),
     // Ecp: ecp,
     // Ecp: MD5(key),
     Token: "",
+    // SESSID: "123",
   },
 });
 

@@ -62,6 +62,7 @@ const autoFoc = ref(false);
 const store = useStore();
 const checkAuthenticated = (val) => store.dispatch("checkAuthenticated", val);
 const getAuthenticated = computed(() => store.getters.getAuthenticated);
+const getAnswerServer = computed(() => store.getters.getAnswerServer);
 
 const router = useRouter();
 
@@ -72,7 +73,21 @@ const enter = async () => {
     emit("update:visible", false);
     router.push({ name: "crm" });
   } else {
-    ElMessage.error("Oops, логін чи пароль не вірний");
+    switch (getAnswerServer.value.status) {
+      case true: {
+        ElMessage({
+          type: "error",
+          dangerouslyUseHTMLString: true,
+          message: getAnswerServer.value.message,
+        });
+        break;
+      }
+      case false: {
+        router.push({ name: "block" });
+        break;
+      }
+    }
+
     close();
   }
 };

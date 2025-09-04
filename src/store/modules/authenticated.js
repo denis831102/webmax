@@ -11,6 +11,7 @@ export default {
       isShowMes: 1,
       nameTab: "",
     },
+    answerServer: {},
   },
   actions: {
     async checkAuthenticated({ commit }, form) {
@@ -22,14 +23,13 @@ export default {
             curDate.getSeconds(),
           ].join(":");
 
-        const response = await HTTP.get("", {
-          params: {
-            _method: "checkAuthenticated",
-            _login: form.login,
-            _password: form.password,
-            _date: curDate,
-            _time: curTime,
-          },
+        const response = await HTTP.post("", {
+          _method: "checkAuthenticated",
+          _isQuery: 1,
+          _login: form.login,
+          _password: form.password,
+          _date: curDate,
+          _time: curTime,
         });
 
         if (response.data.isSuccesfull) {
@@ -47,6 +47,7 @@ export default {
         } else {
           commit("changeAuthenticated", false);
           commit("setCurUser", { id: 0, PIB: "", login: "", password: "" });
+          commit("changeAnswerServer", response.data.answer);
         }
       } catch (e) {
         alert("Помилка авторизації користувача");
@@ -89,6 +90,9 @@ export default {
         window.localStorage.setItem(key, obj[key]);
       }
     },
+    changeAnswerServer(state, val) {
+      state.answerServer = val;
+    },
   },
   getters: {
     getAuthenticated(state) {
@@ -99,6 +103,9 @@ export default {
     },
     getSettingUser(state) {
       return state.settingUser;
+    },
+    getAnswerServer(state) {
+      return state.answerServer;
     },
   },
   //namespaced: true,
