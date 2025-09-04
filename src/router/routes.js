@@ -1,6 +1,6 @@
 export const routes = [
   {
-    path: "/",
+    path: "/crm",
     name: "crm",
     component: () => import("@/views/VWorkSpace.vue"),
     meta: {
@@ -11,9 +11,12 @@ export const routes = [
     path: "/authent",
     name: "authent",
     component: () => import("@/views/VAuthend.vue"),
+    // meta: {
+    //   requiresAuth: true,
+    // },
   },
   {
-    path: "/block",
+    path: "/",
     name: "block",
     component: () => import("@/views/VBlock.vue"),
   },
