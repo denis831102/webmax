@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h1 class="hMain" @click.prevent="$router.push({ name: 'crm' })">
+    <div class="hMain" @click.prevent="$router.push({ name: 'crm' })">
       <el-icon><ChromeFilled /></el-icon>
       Web MetAl'ans
-    </h1>
+    </div>
     <transition name="component-fade" mode="out-in">
       <RouterView class="sRout" />
     </transition>
@@ -27,6 +27,7 @@
   /* background: #ecf5ff; */
   box-shadow: 1px 0px 9px 3px #568989;
   text-align: center;
+  font-size: 20pt;
 }
 .sRout {
   display: flex;
