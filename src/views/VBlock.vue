@@ -14,7 +14,6 @@ const checkAccess = async () => {
   try {
     const response = await HTTP.post("", {
       _method: "checkAuthenticated",
-      _isQuery: 0,
     });
 
     if (response.data.answer.status) {

@@ -25,7 +25,6 @@ export default {
 
         const response = await HTTP.post("", {
           _method: "checkAuthenticated",
-          _isQuery: 1,
           _login: form.login,
           _password: form.password,
           _date: curDate,
