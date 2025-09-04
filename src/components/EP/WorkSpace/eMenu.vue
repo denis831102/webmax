@@ -110,10 +110,6 @@
             ><el-icon><Management /></el-icon>
             Аналітика ( в розробці)
           </el-menu-item>
-          <el-menu-item index="6"
-            ><el-icon><Management /></el-icon>
-            Перевірка блокування
-          </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
 
@@ -219,9 +215,7 @@ const handleSelect = (key, keyPath) => {
       changeAuthenticated(false);
       router.push({ name: "authent" });
       break;
-    case "6":
-      router.push({ name: "block" });
-      break;
+
     default: {
       setting.value.comps.curComp = "eAvatar";
       setting.value.titleTable = "";

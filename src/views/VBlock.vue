@@ -6,7 +6,7 @@
         <el-col :span="8" />
         <el-col :span="8">
           <img
-            style="text-align: center"
+            style="text-align: center; margin: 70px 0 20px 0"
             src="https://webmax.lond.lg.ua/php/img/block.jpg"
           />
         </el-col>
@@ -15,8 +15,8 @@
       <el-row
         ><el-col :span="24">
           <div style="text-align: center">
-            По причині багатьох не вірних вводів параметрів авторизації Вас
-            заблоковано
+            По причині багаторазового вводу не вірних параметрів авторизації Вас
+            заблоковано.
           </div>
         </el-col></el-row
       >
