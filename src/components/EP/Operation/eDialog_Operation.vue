@@ -141,14 +141,22 @@
         </el-col>
 
         <el-col :span="8" v-if="form.visibleContrAgent">
-          <el-radio-group v-model="form.modeOtg" v-on:change="getSklad()">
+          <el-radio-group
+            v-model="form.modeOtg"
+            v-on:change="getSklad()"
+            :disabled="form.disabledContrAgent"
+          >
             <el-radio-button label="склад ЦМ" value="cm" />
             <el-radio-button label="покупець" value="ca" />
           </el-radio-group>
         </el-col>
 
         <el-col :span="13" v-if="form.visibleContrAgent">
-          <el-select v-model="form.curContragent" style="width: 100%">
+          <el-select
+            v-model="form.curContragent"
+            style="width: 100%"
+            :disabled="form.disabledContrAgent"
+          >
             <el-option
               v-for="item in form.optionContragent"
               :key="item.id"
@@ -224,6 +232,7 @@ const form = reactive({
   isSave: true,
   modeOtg: "cm",
   visibleContrAgent: false,
+  disabledContrAgent: false,
   optionContragent: [],
   curContragent: "",
   delOperation: [],
@@ -886,6 +895,8 @@ onUpdated(async () => {
       form.comment = "";
       form.isSave = true;
       form.date = form.curDate;
+      form.disabledContrAgent = false;
+      form.visibleContrAgent = false;
       break;
     }
     case "copyOperation": {
@@ -896,6 +907,7 @@ onUpdated(async () => {
       form.isSave = true;
       form.date = form.curDate;
       // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
+      form.disabledContrAgent = false;
       loadOperation();
       break;
     }
@@ -908,6 +920,7 @@ onUpdated(async () => {
       form.delOperation = [];
       form.isSave = false;
       form.date = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
+      form.disabledContrAgent = true;
       // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       loadOperation(true);
       break;
