@@ -609,26 +609,9 @@ const changeTransaction = async () => {
 
       switch (oper.mode) {
         case "add": {
-          form.addOperation.push({
-            id_V: oper.id_V,
-            id_M: oper.id_M,
-            d_count: oper.count,
-            d_price: oper.price,
-            old_count: 0,
-            old_price: 0,
-            new_count: oper.count,
-            new_price: oper.price,
-            mode_otg:
-              form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
-            id_agent:
-              form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
-            is_move_kassa: 1,
-            token,
-          });
-
-          if (oper.id_V == 2) {
-            form.addOperation_child.push({
-              id_V: 1,
+          if (oper.count > 0 || oper.price > 0) {
+            form.addOperation.push({
+              id_V: oper.id_V,
               id_M: oper.id_M,
               d_count: oper.count,
               d_price: oper.price,
@@ -636,11 +619,32 @@ const changeTransaction = async () => {
               old_price: 0,
               new_count: oper.count,
               new_price: oper.price,
-              mode_otg: "",
-              id_agent: 0,
-              is_move_kassa: 0,
+              mode_otg:
+                form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
+              id_agent:
+                form.visibleContrAgent && oper.id_V == 2
+                  ? form.curContragent
+                  : 0,
+              is_move_kassa: 1,
               token,
             });
+
+            if (oper.id_V == 2) {
+              form.addOperation_child.push({
+                id_V: 1,
+                id_M: oper.id_M,
+                d_count: oper.count,
+                d_price: oper.price,
+                old_count: 0,
+                old_price: 0,
+                new_count: oper.count,
+                new_price: oper.price,
+                mode_otg: "",
+                id_agent: 0,
+                is_move_kassa: 0,
+                token,
+              });
+            }
           }
           break;
         }
@@ -670,24 +674,25 @@ const changeTransaction = async () => {
                   : 0,
               is_move_kassa: 1,
             });
+
+            if (oper.id_V == 2) {
+              form.chnOperation_child.push({
+                id_O: oper.id_O_child,
+                id_V: 1,
+                id_M: oper.id_M,
+                d_count: dCount,
+                d_price: dPrice,
+                old_count: oper.old.count,
+                old_price: oper.old.price,
+                new_count: oper.count,
+                new_price: oper.price,
+                mode_otg: "",
+                id_agent: 0,
+                is_move_kassa: 0,
+              });
+            }
           }
 
-          if (oper.id_V == 2) {
-            form.chnOperation_child.push({
-              id_O: oper.id_O_child,
-              id_V: 1,
-              id_M: oper.id_M,
-              d_count: dCount,
-              d_price: dPrice,
-              old_count: oper.old.count,
-              old_price: oper.old.price,
-              new_count: oper.count,
-              new_price: oper.price,
-              mode_otg: "",
-              id_agent: 0,
-              is_move_kassa: 0,
-            });
-          }
           break;
         }
       }
