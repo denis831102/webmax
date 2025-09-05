@@ -51,12 +51,14 @@
 
               <div class="statistic-footer">
                 <div class="footer-item">
-                  <span>з минулим днем </span>
+                  <span>з минулим днем: </span>
                   <span
                     :class="[kassa.percent > 0 ? 'green' : 'red']"
-                    :title="kassa.oldSumma"
+                    :title="`${kassa.oldSumma} грн.`"
                   >
-                    {{ kassa.percent }}%
+                    {{ kassa.summa - kassa.oldSumma }} грн. ({{
+                      kassa.percent
+                    }}%)
                     <el-icon>
                       <CaretTop v-if="kassa.percent > 0" />
                       <CaretBottom v-else />

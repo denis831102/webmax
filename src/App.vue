@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="hMain" @click.prevent="$router.push({ name: 'crm' })">
-      <el-icon><ChromeFilled /></el-icon>
+      <el-icon class="logo"><ChromeFilled /></el-icon>
       Web MetAl'ans
     </div>
     <transition name="component-fade" mode="out-in">
@@ -29,6 +29,12 @@
   text-align: center;
   font-size: 20pt;
 }
+
+.logo {
+  width: 20px;
+  height: 20px;
+}
+
 .sRout {
   display: flex;
   /* border: 1px solid teal; */
