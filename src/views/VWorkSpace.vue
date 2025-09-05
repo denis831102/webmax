@@ -232,7 +232,7 @@ const fullScreen = (mode = true) => {
 onMounted(() => {
   window.addEventListener("resize", onResize);
   onResize();
-  fullScreen();
+  // fullScreen();
 });
 </script>
 

@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="hMain" @click.prevent="$router.push({ name: 'crm' })">
-      <el-icon class="logo"><ChromeFilled /></el-icon>
       Web MetAl'ans
     </div>
     <transition name="component-fade" mode="out-in">
