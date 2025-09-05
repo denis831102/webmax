@@ -596,9 +596,10 @@ const changeTransaction = async () => {
     let id_T = 0;
     let id_T_child = 0;
 
-    const nameContragent = form.optionContragent.find(
+    const contragent = form.optionContragent.find(
       (el) => el.id == form.curContragent
-    ).name;
+    );
+    const nameContragent = contragent ? contragent.name : "";
 
     form.tableOperation.forEach((oper) => {
       const token = generateToken(4);
