@@ -56,9 +56,12 @@
                     :class="[kassa.percent > 0 ? 'green' : 'red']"
                     :title="`${kassa.oldSumma} грн.`"
                   >
-                    {{ kassa.summa - kassa.oldSumma }} грн. ({{
-                      kassa.percent
-                    }}%)
+                    {{
+                      parseFloat(
+                        (kassa.summa - kassa.oldSumma).toFixed(1)
+                      ).toLocaleString("rus")
+                    }}
+                    грн. ({{ kassa.percent }}%)
                     <el-icon>
                       <CaretTop v-if="kassa.percent > 0" />
                       <CaretBottom v-else />
