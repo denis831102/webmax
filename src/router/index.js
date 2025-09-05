@@ -11,27 +11,28 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
+  // router.beforeEach((to, from, next) => {
   const store = useStore();
   const getAuthenticated = computed(() => store.getters.getAuthenticated);
-  const getAnswerServer = computed(() => store.getters.getAnswerServer);
+  // const getAnswerServer = computed(() => store.getters.getAnswerServer);
   //const fetchUsers = () => store.dispatch("fetchUsers");
   //const changeAuthenticated = (val) => store.commit("changeAuthenticated", val);
   //const action = (val) => store.dispatch("action", val);
 
-  // if (to.meta.requiresAuth && !getAuthenticated.value) {
-  //   return {
-  //     name: "authent",
-  //   };
-  // }
+  if (to.meta.requiresAuth && !getAuthenticated.value) {
+    return {
+      name: "authent",
+    };
+  }
 
   // Если маршрут требует логина, а юзер не залогинен
-  if (to.meta.requiresAuth && !getAuthenticated.value) {
-    next(getAnswerServer.value.status ? "/authent" : "/block");
-  } else {
-    // Иначе разрешаем переход
-    next();
-  }
+  // if (to.meta.requiresAuth && !getAuthenticated.value) {
+  //   next(+getAnswerServer.value.status ? "/authent" : "/block");
+  // } else {
+  //   // Иначе разрешаем переход
+  //   next();
+  // }
 });
 
 export default router;
