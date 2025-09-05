@@ -226,42 +226,21 @@ watch(
 );
 
 const filterTable = computed(() => {
-  const _tabl = setting.value.tables["tabEconomist"];
+  const _tabl = setting.value.tables["tabEconomist"].data;
 
-  //   const _tabl = {
-  //     data: [
-  //       {
-  //         id_U: "30",
-  //         pib: "Ратова Євгенія",
-  //         idV: "1",
-  //         name: "Заготовка",
-  //         listPunkt: [
-  //           {
-  //             id: "11",
-  //             namePunkt: "ДМС_ЦМ",
-  //             listTransaction: [
-  //               { idT: 1, comment: "загот1", date: "18.08.2025", summa: 52 },
-  //             ],
-  //           },
-  //           {
-  //             id: "18",
-  //             namePunkt: "Киев_Отрадный ",
-  //             listTransaction: [
-  //               { idT: 1, comment: "загот2", date: "18.08.2025", summa: 546 },
-  //             ],
-  //           },
-  //           {
-  //             id: "29",
-  //             namePunkt: "Черноморск",
-  //             listTransaction: [
-  //               { idT: 1, comment: "загот3", date: "18.08.2025", summa: 986 },
-  //             ],
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   };
-  return _tabl.data;
+  return _tabl.map((user) => {
+    return {
+      ...user,
+      listPunkt: user.listPunkt.map((punkt) => {
+        return {
+          ...punkt,
+          listTransaction: punkt.listTransaction.filter(
+            (tran) => tran.id_M != 40
+          ),
+        };
+      }),
+    };
+  });
 });
 
 const getVidOperation = async () => {
