@@ -497,26 +497,10 @@ const addTransaction = async () => {
     const groupOperationChild = [];
 
     form.tableOperation.forEach((oper) => {
-      const token = generateToken(4);
-      groupOperation.push({
-        id_V: oper.id_V,
-        id_M: oper.id_M,
-        d_count: oper.count,
-        d_price: oper.price,
-        old_count: 0,
-        old_price: 0,
-        new_count: oper.count,
-        new_price: oper.price,
-        mode_otg: form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
-        id_agent:
-          form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
-        is_move_kassa: 1,
-        token,
-      });
-
-      if (oper.id_V == 2 && form.modeOtg == "cm") {
-        groupOperationChild.push({
-          id_V: 1,
+      if (oper.count > 0 || oper.price > 0) {
+        const token = generateToken(4);
+        groupOperation.push({
+          id_V: oper.id_V,
           id_M: oper.id_M,
           d_count: oper.count,
           d_price: oper.price,
@@ -524,11 +508,30 @@ const addTransaction = async () => {
           old_price: 0,
           new_count: oper.count,
           new_price: oper.price,
-          mode_otg: "",
-          id_agent: 0,
-          is_move_kassa: 0,
+          mode_otg:
+            form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
+          id_agent:
+            form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
+          is_move_kassa: 1,
           token,
         });
+
+        if (oper.id_V == 2 && form.modeOtg == "cm") {
+          groupOperationChild.push({
+            id_V: 1,
+            id_M: oper.id_M,
+            d_count: oper.count,
+            d_price: oper.price,
+            old_count: 0,
+            old_price: 0,
+            new_count: oper.count,
+            new_price: oper.price,
+            mode_otg: "",
+            id_agent: 0,
+            is_move_kassa: 0,
+            token,
+          });
+        }
       }
     });
 
