@@ -462,7 +462,10 @@ const saveTransaction = () => {
   // const limitDay = 3;
 
   // if (countDay > limitDay) {
-  if (!checkMonth(form.date, form.curDate)) {
+  if (
+    !checkMonth(form.date, form.curDate) &&
+    !+getCurUser.value.listAccess[10]
+  ) {
     ElMessage.error(
       `Транзакція не збережена. Правити дозволено в поточному місяці `
     );

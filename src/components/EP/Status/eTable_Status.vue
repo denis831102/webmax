@@ -160,7 +160,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="додатково (в розробці)">
+    <el-table-column label="редагування операцій без залежності від дати">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-switch
