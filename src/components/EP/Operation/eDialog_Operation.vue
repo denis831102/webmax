@@ -535,6 +535,15 @@ const addTransaction = async () => {
       }
     });
 
+    if (!groupOperation.length) {
+      ElMessageBox({
+        title: "Увага!",
+        type: "error",
+        message: "Відсутні операції для збереження",
+      });
+      return;
+    }
+
     if (groupOperationChild.length) {
       const responseChild = await HTTP.post("", {
         _method: "addTransaction",
