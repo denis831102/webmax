@@ -1,4 +1,7 @@
 const { defineConfig } = require("@vue/cli-service");
+// const webpack = require("webpack");
+// const { version } = require("./package.json");
+
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
@@ -18,4 +21,11 @@ module.exports = defineConfig({
       },
     },
   },
+  // configureWebpack: {
+  //   plugins: [
+  //     new webpack.DefinePlugin({
+  //       __APP_VERSION__: JSON.stringify(version),
+  //     }),
+  //   ],
+  // },
 });

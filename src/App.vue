@@ -1,13 +1,19 @@
 <template>
   <div>
     <div class="hMain" @click.prevent="$router.push({ name: 'crm' })">
-      Web MetAl'ans
+      Web MetAl'ans v.{{ version }}
     </div>
     <transition name="component-fade" mode="out-in">
       <RouterView class="sRout" />
     </transition>
   </div>
 </template>
+
+<script setup>
+// eslint-disable-next-line no-undef
+// const version = __APP_VERSION__;
+const version = process.env.VUE_APP_VERSION;
+</script>
 
 <style>
 #app {
