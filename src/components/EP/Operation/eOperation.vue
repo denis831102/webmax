@@ -193,7 +193,7 @@
 
       <!-- <el-scrollbar height="600px"> -->
       <el-table :data="filterTable" v-loading="loading" stripe>
-        <el-table-column type="expand">
+        <el-table-column type="expand" min-width="10">
           <template #default="props">
             <div style="padding: 20px; background: #c6e2ff69">
               <div style="margin: 0px 0 10px 0">
@@ -245,7 +245,7 @@
 
         <el-table-column type="index" v-if="setting.displaySize == 'large'" />
 
-        <el-table-column prop="date" min-width="30">
+        <el-table-column prop="date" min-width="45">
           <template #header>
             <el-icon><Calendar /></el-icon>
             <span style="margin-left: 10px">Дата</span>
@@ -265,7 +265,7 @@
 
         <el-table-column label="Коментар" prop="comment"> </el-table-column>
 
-        <el-table-column label="Сума" prop="suma" width="150">
+        <el-table-column label="Сума" prop="suma" min-width="40">
           <template #default="scope">
             <div style="display: flex; align-items: center">
               <span style="margin-left: 10px"
@@ -278,7 +278,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Дії">
+        <el-table-column label="Дії" min-width="60">
           <template #default="scope">
             <el-button-group
               class="ml-4"
