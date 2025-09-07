@@ -6,7 +6,10 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "prebuild": "node scripts/set-version.js"
+    "prebuild": "node scripts/set-version.js",
+    "build:patch": "node scripts/set-version.js patch && vue-cli-service build && vue-cli-service serve",
+    "build:minor": "node scripts/set-version.js minor && vue-cli-service build && vue-cli-service serve",
+    "build:major": "node scripts/set-version.js major && vue-cli-service build && vue-cli-service serve"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
