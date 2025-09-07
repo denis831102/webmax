@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div class="hMain" @click.prevent="$router.push({ name: 'crm' })">
-      Web MetAl'ans v.{{ version }}
+    <!-- @click.prevent="$router.push({ name: 'crm' }) -->
+    <div class="hMain" @click="fullScreen()">
+      Web MetAl'ans <span class="version"> v.{{ version }} </span>
     </div>
     <transition name="component-fade" mode="out-in">
       <RouterView class="sRout" />
@@ -10,9 +11,38 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
+
 // eslint-disable-next-line no-undef
 // const version = __APP_VERSION__;
 const version = process.env.VUE_APP_VERSION;
+const modeScreen = ref(false);
+
+const fullScreen = () => {
+  let elem = document.documentElement;
+  modeScreen.value = !modeScreen.value;
+  if (modeScreen.value) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      // для Safari
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      // для IE11
+      elem.msRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      // для Safari
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      // для IE11
+      document.msExitFullscreen();
+    }
+  }
+};
 </script>
 
 <style>
@@ -38,6 +68,11 @@ const version = process.env.VUE_APP_VERSION;
 .logo {
   width: 20px;
   height: 20px;
+}
+
+.version {
+  font-size: 14pt;
+  color: #7589d2;
 }
 
 .sRout {

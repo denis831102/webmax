@@ -204,31 +204,6 @@ const onResize = () => {
     document.documentElement.clientWidth >= 1242 ? "large" : "small";
 };
 
-const fullScreen = (mode = true) => {
-  let elem = document.documentElement;
-  if (mode) {
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-      // для Safari
-      elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-      // для IE11
-      elem.msRequestFullscreen();
-    }
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-      // для Safari
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      // для IE11
-      document.msExitFullscreen();
-    }
-  }
-};
-
 onMounted(() => {
   window.addEventListener("resize", onResize);
   onResize();
