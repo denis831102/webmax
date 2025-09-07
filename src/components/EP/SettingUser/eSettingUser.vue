@@ -53,12 +53,22 @@
       />
     </el-card>
 
-    <el-card style="min-width: 380px; min-height: 130px">
+    <el-card style="min-width: 355px; min-height: 150px">
       <template #header>
         <div class="card-header">
-          <span>Налаштування 4</span>
+          <span>Оберіть кольорову тему системи</span>
         </div>
       </template>
+      <el-radio-group
+        v-model="themaColor"
+        size="large"
+        fill="#6cf"
+        style="margin: 10px 0 10px 10%"
+        @change="changeThemaColor"
+      >
+        <el-radio-button label="світла тема" value="white" />
+        <el-radio-button label="темна тема" value="black" />
+      </el-radio-group>
     </el-card>
 
     <el-card style="min-width: 380px; min-height: 130px">
@@ -91,6 +101,7 @@ const changeSettingUser = (obj) => store.commit("changeSettingUser", obj);
 const colOper = ref("summa");
 const countTrans = ref(5);
 const isShowMes = ref(true);
+const themaColor = ref("white");
 
 watch(
   () => isShowMes.value,
@@ -109,8 +120,13 @@ const changeShowMes = () => {
   changeSettingUser({ isShowMes: isShowMes.value ? 1 : 0 });
 };
 
+const changeThemaColor = () => {
+  changeSettingUser({ themaColor: themaColor.value });
+};
+
 onMounted(() => {
   colOper.value = getSettingUser.value.colOper;
+  themaColor.value = getSettingUser.value.themaColor;
   countTrans.value = getSettingUser.value.countTrans;
   isShowMes.value = +getSettingUser.value.isShowMes == 1;
 });

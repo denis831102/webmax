@@ -11,17 +11,17 @@ export const routes = [
     path: "/authent",
     name: "authent",
     component: () => import("@/views/VAuthend.vue"),
-    // meta: {
-    //   requiresAuth: false,
-    // },
+    meta: {
+      requiresAuth: false,
+    },
   },
   {
     path: "/block",
     name: "block",
     component: () => import("@/views/VBlock.vue"),
-    // meta: {
-    //   requiresAuth: false,
-    // },
+    meta: {
+      requiresAuth: false,
+    },
   },
   // {
   //   name: "profile",

@@ -3,6 +3,7 @@ import { routes } from "./routes";
 
 import { useStore } from "vuex";
 import { computed } from "vue";
+import { HTTP } from "@/hooks/http";
 
 //const isAuthenticated = true;
 
@@ -11,7 +12,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   // router.beforeEach((to, from, next) => {
   const store = useStore();
   const getAuthenticated = computed(() => store.getters.getAuthenticated);
@@ -21,8 +22,13 @@ router.beforeEach((to) => {
   //const action = (val) => store.dispatch("action", val);
 
   if (to.meta.requiresAuth && !getAuthenticated.value) {
+    const response = await HTTP.post("", {
+      _method: "checkAuthenticated",
+    });
+
     return {
-      name: "authent",
+      // name: "authent",
+      name: !+response.data.answer.status ? "block" : "authent",
     };
   }
 

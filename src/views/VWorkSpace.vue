@@ -42,20 +42,11 @@
 </template>
 
 <script setup>
-/* eslint-disable */
-
-import "element-plus/dist/index.css";
-import {
-  ref,
-  computed,
-  provide,
-  onBeforeMount,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+// import "element-plus/dist/index.css";
+import { ref, computed, provide, onMounted } from "vue";
 import { useStore } from "vuex";
-import { ElNotification } from "element-plus";
-import { Search } from "@element-plus/icons-vue";
+// import { ElNotification } from "element-plus";
+// import { Search } from "@element-plus/icons-vue";
 
 import eMenu from "@/components/EP/WorkSpace/eMenu";
 import eDrop_User from "@/components/EP/WorkSpace/eDrop_User";
@@ -92,6 +83,7 @@ const setting = ref({
   name: "Денис і Євгенія Ратови",
   titleTable: "",
   displaySize: "large",
+  isDark: false,
   dialog: {
     user: { visible: false },
     editUser: { visible: false, initiator: "" },

@@ -10,6 +10,7 @@ export default {
       countTrans: 5,
       isShowMes: 1,
       nameTab: "",
+      themaColor: "white",
     },
     answerServer: {},
   },

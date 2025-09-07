@@ -33,6 +33,7 @@
 </template>
 
 <script setup>
+import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { HTTP } from "@/hooks/http";
@@ -62,6 +63,10 @@ const checkAccess = async () => {
     });
   }
 };
+
+onMounted(async () => {
+  await checkAccess();
+});
 </script>
 
 <style scoped>
