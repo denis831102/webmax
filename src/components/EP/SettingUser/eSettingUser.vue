@@ -63,11 +63,12 @@
         v-model="themaColor"
         size="large"
         fill="#6cf"
-        style="margin: 10px 0 10px 10%"
+        style="margin: 10px 0 10px 10px"
         @change="changeThemaColor"
       >
-        <el-radio-button label="світла тема" value="light" />
-        <el-radio-button label="темна тема" value="dark" />
+        <el-radio-button label="світла" value="light" />
+        <el-radio-button label="темна" value="dark" />
+        <el-radio-button label="корпоративна" value="corporate" />
       </el-radio-group>
     </el-card>
 
@@ -123,6 +124,7 @@ const changeShowMes = () => {
 const changeThemaColor = () => {
   changeSettingUser({ themaColor: themaColor.value });
   document.documentElement.classList.toggle("dark", themaColor.value == "dark");
+  document.documentElement.setAttribute("data-theme", themaColor.value);
 };
 
 onMounted(() => {

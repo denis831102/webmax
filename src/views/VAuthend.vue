@@ -7,7 +7,6 @@
 <script setup>
 /* eslint-disable */
 
-import "element-plus/dist/index.css";
 import { ref } from "vue";
 // import { ElNotification } from "element-plus";
 import eDialog_Authent from "@/components/EP/Load/eDialog_Authent";

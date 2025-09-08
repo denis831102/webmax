@@ -1,0 +1,65 @@
+/* 🌞 Светлая (по умолчанию) */
+:root {
+  --el-color-primary: #409eff; /* стандартный синий */
+  --app-bg: #ffffff;
+  --app-text: #000000;
+}
+
+/* 🌙 Тёмная */
+[data-theme="dark"] {
+  --el-color-primary: #ff9800; /* оранжевый */
+  --app-bg: #1e1e1e;
+  --app-text: #ffffff;
+}
+
+/* 🟢 Корпоративная (зелёная) */
+[data-theme="corporate"] {
+  /* Основные цвета */
+  --el-color-primary: #4caf50;
+  --el-color-success: #2e7d32;
+  --el-color-info: #2196f3;
+  --el-color-warning: #ff9800;
+  --el-color-danger: #f44336;
+
+  /* Фоны */
+  --el-bg-color: #eaffea; /* общий фон компонентов */
+  --el-bg-color-page: #f4fff7; /* фон всей страницы */
+  --el-bg-color-overlay: #d6f5d6; /* фон модалок/меню */
+
+  /* Текст */
+  --el-text-color-primary: #003300;
+  --el-text-color-regular: #1a4d1a;
+  --el-text-color-secondary: #4c8c4a;
+  --el-text-color-placeholder: #99cc99;
+
+  /* Бордеры */
+  --el-border-color: #66bb6a;
+  --el-border-color-light: #a5d6a7;
+  --el-border-color-extra-light: #c8e6c9;
+
+  /* Карточки */
+  --el-card-bg-color: #eaffea;
+  --el-card-border-color: #66bb6a;
+
+  /* Таблицы */
+  --el-table-header-bg-color: #c8e6c9;
+  --el-table-header-text-color: #003300;
+  --el-table-row-hover-bg-color: #a5d6a7;
+
+  /* Вкладки */
+  --el-tabs-header-bg-color: #f4fff7;
+  --el-tabs-active-color: #2e7d32;
+
+  /* Инпуты */
+  --el-input-bg-color: #ffffff;
+  --el-input-placeholder-color: #66bb6a;
+
+  /* Кнопки */
+  /* --el-button-bg-color: #4caf50;
+  --el-button-text-color: #ffffff;
+  --el-button-hover-bg-color: #388e3c; */
+
+  /* Диалоги */
+  --el-dialog-bg-color: #f4fff7;
+  --el-overlay-color: rgba(0, 77, 0, 0.6);
+}

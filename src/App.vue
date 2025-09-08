@@ -24,6 +24,7 @@ const modeScreen = ref(false);
 
 const store = useStore();
 const getSettingUser = computed(() => store.getters.getSettingUser);
+const setAllSettingUser = () => store.commit("setAllSettingUser");
 
 const fullScreen = () => {
   let elem = document.documentElement;
@@ -52,6 +53,11 @@ const fullScreen = () => {
 };
 
 onMounted(() => {
+  setAllSettingUser();
+  document.documentElement.setAttribute(
+    "data-theme",
+    getSettingUser.value.themaColor
+  );
   document.documentElement.classList.toggle(
     "dark",
     getSettingUser.value.themaColor == "dark"

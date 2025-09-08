@@ -43,7 +43,7 @@ export default {
             login: form.login,
             password: form.password,
           });
-          commit("setAllSettingUser");
+          //commit("setAllSettingUser");
         } else {
           commit("changeAuthenticated", false);
           commit("setCurUser", { id: 0, PIB: "", login: "", password: "" });
