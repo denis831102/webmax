@@ -16,10 +16,6 @@
     @tab-change="changeTab"
     type="border-card"
     class="demo-tabs"
-    :class="{
-      dark: getSettingUser.themaColor == 'black',
-      'app-container': getSettingUser.themaColor == 'black',
-    }"
   >
     <el-tab-pane v-for="punkt in punkts" :key="punkt.id" :name="punkt.name">
       <template #label>

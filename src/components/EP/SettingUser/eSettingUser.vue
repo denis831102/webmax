@@ -66,8 +66,8 @@
         style="margin: 10px 0 10px 10%"
         @change="changeThemaColor"
       >
-        <el-radio-button label="світла тема" value="white" />
-        <el-radio-button label="темна тема" value="black" />
+        <el-radio-button label="світла тема" value="light" />
+        <el-radio-button label="темна тема" value="dark" />
       </el-radio-group>
     </el-card>
 
@@ -101,7 +101,7 @@ const changeSettingUser = (obj) => store.commit("changeSettingUser", obj);
 const colOper = ref("summa");
 const countTrans = ref(5);
 const isShowMes = ref(true);
-const themaColor = ref("white");
+const themaColor = ref("light");
 
 watch(
   () => isShowMes.value,
@@ -122,6 +122,7 @@ const changeShowMes = () => {
 
 const changeThemaColor = () => {
   changeSettingUser({ themaColor: themaColor.value });
+  document.documentElement.classList.toggle("dark", themaColor.value == "dark");
 };
 
 onMounted(() => {

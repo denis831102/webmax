@@ -11,15 +11,7 @@
     type="border-card"
     class="demo-tabs"
   >
-    <el-tab-pane
-      v-for="punkt in punkts"
-      :key="punkt.id"
-      :name="punkt.name"
-      :class="{
-        dark: getSettingUser.themaColor == 'black',
-        'app-container': getSettingUser.themaColor == 'black',
-      }"
-    >
+    <el-tab-pane v-for="punkt in punkts" :key="punkt.id" :name="punkt.name">
       <template #label>
         <span class="custom-tabs-label">
           <el-icon><calendar /></el-icon>
