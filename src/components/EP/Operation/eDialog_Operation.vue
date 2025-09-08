@@ -834,7 +834,7 @@ const startTimer = () => {
 };
 
 const getSklad = async (id_agent = 0) => {
-  if (!form.visibleContrAgent) return;
+  if (!form.visibleContrAgent || form.disabledContrAgent) return;
 
   switch (form.modeOtg) {
     case "cm": {
