@@ -336,13 +336,11 @@ const loadOperation = (isRedactor = false) => {
     }
     form.curContragent =
       curTransaction.id_Bu != 0 ? curTransaction.id_Bu : curTransaction.id_cm;
+
+    getSklad(form.curContragent);
   } else {
     form.comment = curTransaction.comment;
   }
-
-  getSklad(
-    curTransaction.id_Bu > 0 ? curTransaction.id_Bu : curTransaction.id_cm
-  );
 };
 
 const addOperation = () => {
