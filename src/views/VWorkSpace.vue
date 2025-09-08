@@ -1,12 +1,12 @@
 <template>
   <!-- eslint-disable -->
-  <el-row :gutter="10">
+  <el-row>
     <el-col :span="24">
-      <eMenu mode="horizontal" style="margin-top: -20px" />
+      <!-- <eMenu mode="horizontal" style="margin-top: -20px" /> -->
 
       <el-card
         class="box-card common-layout"
-        style="min-height: 500px; width: 100%; margin-top: 0px"
+        style="min-height: 500px; width: 100%; margin-top: -25px"
       >
         <el-container class="layout-container-demo" style="min-height: 500px">
           <el-aside width="250" v-if="setting.displaySize == 'large'">
@@ -16,7 +16,12 @@
           <el-container>
             <el-header style="text-align: right; font-size: 12px">
               <el-row :gutter="20">
-                <el-col :span="19" style="text-align: center; margin-top: 10px">
+                <el-col :span="24">
+                  <eMenu mode="horizontal" style="margin: -15px 0 10px 0" />
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="19" style="text-align: center">
                   <el-text v-if="setting.titleTable.length" tag="b"
                     >{{ setting.titleTable }}
                   </el-text>
@@ -27,7 +32,7 @@
               </el-row>
             </el-header>
 
-            <el-main>
+            <el-main style="margin: 20px 0 50px 0">
               <keep-alive> <component :is="curComponent" /> </keep-alive>
             </el-main>
 

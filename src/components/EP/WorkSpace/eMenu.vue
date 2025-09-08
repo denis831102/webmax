@@ -258,6 +258,6 @@ onMounted(() => {
 }
 .el-menu-horizontal-demo {
   width: 100%;
-  height: 50px;
+  height: 40px;
 }
 </style>
