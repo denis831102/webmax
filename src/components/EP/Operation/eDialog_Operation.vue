@@ -352,6 +352,7 @@ const addOperation = () => {
     (res, el) => res | (el.id_V != 2),
     false
   );
+
   if (curOper[0].id == 2 && isNotOtg) {
     ElMessage.error(
       `Операцію "Відвантаження" треба створювати в окремій транзакції.`
@@ -395,7 +396,7 @@ const addOperation = () => {
     id_V: curOper[0].id,
     id_K: curOper[1].id,
     id_M: curOper[2].id,
-    token: Math.random(),
+    token: generateToken(4),
   };
   // form.tableOperation = [...form.tableOperation, ...newOperation];
   form.tableOperation.push(newOperation);

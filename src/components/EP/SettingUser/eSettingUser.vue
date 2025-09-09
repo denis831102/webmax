@@ -72,12 +72,22 @@
       </el-radio-group>
     </el-card>
 
-    <el-card style="min-width: 380px; min-height: 130px">
+    <el-card style="min-width: 355px; min-height: 150px">
       <template #header>
         <div class="card-header">
-          <span>Налаштування 5</span>
+          <span>Формувати автокоментар в транзакціях операцій</span>
         </div>
       </template>
+      <el-radio-group
+        v-model="isAutoComment"
+        size="large"
+        fill="#6cf"
+        style="margin: 10px 0 10px 30%"
+        @change="changeAutoComment"
+      >
+        <el-radio-button label="так" value="yes" />
+        <el-radio-button label="ні" value="no" />
+      </el-radio-group>
     </el-card>
 
     <el-card style="min-width: 380px; min-height: 130px">
@@ -102,6 +112,7 @@ const changeSettingUser = (obj) => store.commit("changeSettingUser", obj);
 const colOper = ref("summa");
 const countTrans = ref(5);
 const isShowMes = ref(true);
+const isAutoComment = ref("no");
 const themaColor = ref("light");
 
 watch(
@@ -127,10 +138,15 @@ const changeThemaColor = () => {
   document.documentElement.setAttribute("data-theme", themaColor.value);
 };
 
+const changeAutoComment = () => {
+  changeSettingUser({ isAutoComment: isAutoComment.value == "yes" ? 1 : 0 });
+};
+
 onMounted(() => {
   colOper.value = getSettingUser.value.colOper;
   themaColor.value = getSettingUser.value.themaColor;
   countTrans.value = getSettingUser.value.countTrans;
   isShowMes.value = +getSettingUser.value.isShowMes == 1;
+  isAutoComment.value = +getSettingUser.value.isAutoComment == 1 ? "yes" : "no";
 });
 </script>

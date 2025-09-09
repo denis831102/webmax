@@ -11,6 +11,7 @@ export default {
       isShowMes: 1,
       nameTab: "",
       themaColor: "light",
+      isAutoComment: 0,
     },
     answerServer: {},
   },
