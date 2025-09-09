@@ -317,6 +317,7 @@ const loadOperation = (isRedactor = false) => {
       id: ind,
       isMoveKassa: curOper.isMoveKassa,
       token: isRedactor ? curOper.token : generateToken(),
+      name_V: curOper.name_V,
     };
   });
 
@@ -397,13 +398,20 @@ const addOperation = () => {
     id_K: curOper[1].id,
     id_M: curOper[2].id,
     token: generateToken(),
+    name_V: form.options[curOper[0].num].label,
   };
   // form.tableOperation = [...form.tableOperation, ...newOperation];
   form.tableOperation.push(newOperation);
   checkVidOper();
+
+  if (getSettingUser.value.isAutoComment) {
+    autoComment("add", form.options[curOper[0].num].label);
+  }
 };
 
 const delOperation = (row) => {
+  let countCurOper = 0;
+
   form.tableOperation = form.tableOperation.filter((el) => {
     const isAdd =
       (el.id_V != row.id_V || el.id_M != row.id_M) && el.token != row.token;
@@ -437,12 +445,17 @@ const delOperation = (row) => {
         });
       }
     }
+    countCurOper += +(el.name_V == row.name_V);
 
     return isAdd;
   });
 
   selOperation.value = [];
   checkVidOper();
+
+  if (getSettingUser.value.isAutoComment && countCurOper == 1) {
+    autoComment("del", row.name_V);
+  }
 };
 
 const checkVidOper = () => {
@@ -550,7 +563,7 @@ const addTransaction = async () => {
         _idPunkt: form.curContragent,
         _date: form.date,
         _time: getTime.value,
-        _comment: `переміщення з ${form.namePunkt.trim()}; ${form.comment}`,
+        _comment: `Переміщення з ${form.namePunkt.trim()}; ${form.comment}`,
         _idTChild: 0,
         _isEdit: 0,
         _isDel: 0,
@@ -569,7 +582,7 @@ const addTransaction = async () => {
       _date: form.date,
       _time: getTime.value,
       _comment: [
-        groupOperationChild.length ? `відвантаження на ${nameContragent};` : "",
+        groupOperationChild.length ? `Відвантаження на ${nameContragent};` : "",
         form.comment,
       ]
         .join(" ")
@@ -714,7 +727,7 @@ const changeTransaction = async () => {
         _id_T: id_T_child,
         _date: form.date,
         _time: getTime.value,
-        _comment: `переміщення з ${form.namePunkt.trim()}; ${form.comment}`,
+        _comment: `Переміщення з ${form.namePunkt.trim()}; ${form.comment}`,
         _opersDel: form.delOperation_child,
         _opersAdd: form.addOperation_child,
         _opersChn: form.chnOperation_child,
@@ -730,7 +743,7 @@ const changeTransaction = async () => {
       _time: getTime.value,
       _comment: [
         form.visibleContrAgent && form.modeOtg == "cm"
-          ? `відвантаження на ${nameContragent};`
+          ? `Відвантаження на ${nameContragent};`
           : "",
         form.comment,
       ]
@@ -900,6 +913,21 @@ const generateToken = (length = 8) => {
     .split("")
     .sort(() => Math.random() - 0.5)
     .join("");
+};
+
+const autoComment = (mode, name_V) => {
+  switch (mode) {
+    case "add": {
+      if (!form.comment.toLowerCase().includes(name_V.toLowerCase())) {
+        form.comment = `${form.comment}${name_V} / `;
+      }
+      break;
+    }
+    case "del": {
+      form.comment = form.comment.replace(`${name_V} / `, "");
+      break;
+    }
+  }
 };
 
 onUpdated(async () => {

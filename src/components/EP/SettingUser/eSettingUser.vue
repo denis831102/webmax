@@ -147,6 +147,6 @@ onMounted(() => {
   themaColor.value = getSettingUser.value.themaColor;
   countTrans.value = getSettingUser.value.countTrans;
   isShowMes.value = +getSettingUser.value.isShowMes == 1;
-  isAutoComment.value = +getSettingUser.value.isAutoComment == 1 ? "yes" : "no";
+  isAutoComment.value = getSettingUser.value.isAutoComment ? "yes" : "no";
 });
 </script>
