@@ -316,7 +316,7 @@ const loadOperation = (isRedactor = false) => {
       id_M: curOper.id_M,
       id: ind,
       isMoveKassa: curOper.isMoveKassa,
-      token: isRedactor ? curOper.token : generateToken(4),
+      token: isRedactor ? curOper.token : generateToken(),
     };
   });
 
@@ -396,7 +396,7 @@ const addOperation = () => {
     id_V: curOper[0].id,
     id_K: curOper[1].id,
     id_M: curOper[2].id,
-    token: generateToken(4),
+    token: generateToken(),
   };
   // form.tableOperation = [...form.tableOperation, ...newOperation];
   form.tableOperation.push(newOperation);
@@ -497,7 +497,7 @@ const addTransaction = async () => {
 
     form.tableOperation.forEach((oper) => {
       if (oper.count > 0 || oper.price > 0) {
-        const token = generateToken(4);
+        const token = generateToken();
         groupOperation.push({
           id_V: oper.id_V,
           id_M: oper.id_M,
@@ -613,7 +613,7 @@ const changeTransaction = async () => {
     const nameContragent = contragent ? contragent.name : "";
 
     form.tableOperation.forEach((oper) => {
-      const token = generateToken(4);
+      const token = generateToken();
 
       switch (oper.mode) {
         case "add": {
@@ -862,7 +862,7 @@ const getSklad = async (id_agent = 0) => {
   form.curContragent = id_agent == 0 ? form.optionContragent[0].id : id_agent;
 };
 
-const generateToken = (length = 12) => {
+const generateToken = (length = 8) => {
   const lower = "abcdefghijklmnopqrstuvwxyz";
   const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const digits = "0123456789";
@@ -872,25 +872,25 @@ const generateToken = (length = 12) => {
   let password = "";
 
   // гарантируем по одному символу из каждой группы
-  // password +=
-  //   lower[
-  //     Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % lower.length)
-  //   ];
-  // password +=
-  //   upper[
-  //     Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % upper.length)
-  //   ];
-  // password +=
-  //   digits[
-  //     Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % digits.length)
-  //   ];
+  password +=
+    lower[
+      Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % lower.length)
+    ];
+  password +=
+    upper[
+      Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % upper.length)
+    ];
+  password +=
+    digits[
+      Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % digits.length)
+    ];
   // password +=
   //   special[
   //     Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % special.length)
   //   ];
 
   // добираем оставшиеся символы
-  for (let i = 0; i < length; i++) {
+  for (let i = 3; i < length; i++) {
     const idx = crypto.getRandomValues(new Uint32Array(1))[0] % all.length;
     password += all[idx];
   }
