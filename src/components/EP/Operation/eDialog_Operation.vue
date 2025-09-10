@@ -125,33 +125,36 @@
       </el-form-item>
 
       <el-form-item label="Додати операцію">
-        <el-col :span="3">
+        <el-col :span="7">
+          <!-- clearable -->
+
           <el-cascader
             v-model="selOperation"
             :options="form.options"
             :props="form.propsCascader"
             @change="addOperation"
-            clearable
+            :max-collapse-tags="0"
             collapse-tags
             collapse-tags-tooltip
-            :max-collapse-tags="0"
-            placeholder=" "
-            style="width: 50px"
+            clearable
+            placeholder="оберіть..."
+            style="width: 160px"
           />
         </el-col>
 
-        <el-col :span="8" v-if="form.visibleContrAgent">
+        <el-col :span="7" v-if="form.visibleContrAgent">
           <el-radio-group
             v-model="form.modeOtg"
             v-on:change="getSklad()"
             :disabled="form.disabledContrAgent"
+            style="font-size: 14pt"
           >
             <el-radio-button label="склад ЦМ" value="cm" />
             <el-radio-button label="покупець" value="ca" />
           </el-radio-group>
         </el-col>
 
-        <el-col :span="13" v-if="form.visibleContrAgent">
+        <el-col :span="10" v-if="form.visibleContrAgent">
           <el-select
             v-model="form.curContragent"
             style="width: 100%"
@@ -227,7 +230,9 @@ const form = reactive({
   timer: {},
   curDate: new Date(),
   tableOperation: [],
-  propsCascader: { multiple: true, expandTrigger: "hover" },
+  // propsCascader: { multiple: true, expandTrigger: "hover" },
+  propsCascader: { checkStrictly: true, expandTrigger: "hover" },
+  // propsCascader: { expandTrigger: "hover" },
   title: "",
   isSave: true,
   modeOtg: "cm",
@@ -347,7 +352,8 @@ const loadOperation = (isRedactor = false) => {
 const addOperation = () => {
   if (!selOperation.value.length) return;
 
-  const curOper = selOperation.value[selOperation.value.length - 1];
+  // const curOper = selOperation.value[selOperation.value.length - 1];
+  const curOper = selOperation.value;
 
   const isNotOtg = form.tableOperation.reduce(
     (res, el) => res | (el.id_V != 2),
@@ -358,6 +364,11 @@ const addOperation = () => {
     ElMessage.error(
       `Операцію "Відвантаження" треба створювати в окремій транзакції.`
     );
+    // ElMessageBox({
+    //   title: "Увага!",
+    //   type: "error",
+    //   message: `Операцію "Відвантаження" треба створювати в окремій транзакції.`,
+    // });
     return;
   }
   if (curOper[0].id != 2 && form.visibleContrAgent) {
@@ -391,7 +402,7 @@ const addOperation = () => {
     mode: "add",
 
     count: 0,
-    price: 1,
+    price: 0,
     summa: 0,
 
     id_V: curOper[0].id,
