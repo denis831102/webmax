@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { execSync } = require("child_process");
 
 // путь до package.json
 const pkgPath = path.resolve(__dirname, "../package.json");
@@ -47,5 +48,19 @@ fs.writeFileSync(
   "utf8"
 );
 
-console.log(`✅ Нова версія: ${pkg.version}`);
-console.log(`✅ Записано в .env.local: ${versionWithDate}`);
+console.log(`✅ Оновлений до версії: ${pkg.version}`);
+console.log(`✅ Build записаний в .env.local: ${versionWithDate}`);
+
+// --- Git-коммит + тег + пуш ---
+try {
+  execSync("git add package.json .env.local", { stdio: "inherit" });
+  execSync(`git commit -m "release v.${pkg.version} (${versionWithDate})"`, {
+    stdio: "inherit",
+  });
+  execSync(`git tag v.${pkg.version}`, { stdio: "inherit" });
+  execSync("git push", { stdio: "inherit" });
+  execSync("git push --tags", { stdio: "inherit" });
+  console.log(`✅ Commit створений, тег v.${pkg.version} й push в репозиторій`);
+} catch (err) {
+  console.error("⚠️ Помилка при виконанні git-команд:", err.message);
+}
