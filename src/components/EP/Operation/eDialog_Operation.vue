@@ -7,7 +7,7 @@
     :width="getWidth[0]"
   >
     <el-form :model="form" label-width="auto">
-      <el-form-item label="Пункт / прізвище">
+      <!-- <el-form-item label="Пункт / прізвище">
         <el-col :span="15">
           <el-tag type="primary" style="width: 100%">{{
             form.namePunkt
@@ -19,7 +19,7 @@
         <el-col :span="8">
           <el-tag type="primary">{{ form.nameUser }}</el-tag>
         </el-col>
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item label="Дата операції">
         <el-col :span="5">
@@ -949,7 +949,7 @@ onUpdated(async () => {
 
   switch (setting.value.dialog["editOperation"].initiator) {
     case "createOperation": {
-      form.title = "Створення транзакції операцій";
+      form.title = `Створення транзакції операцій / ${form.namePunkt} / ${form.nameUser}`;
       form.tableOperation = [];
       selOperation.value = [];
       form.comment = "";
@@ -960,7 +960,7 @@ onUpdated(async () => {
       break;
     }
     case "copyOperation": {
-      form.title = "Дублювання транзакції операцій";
+      form.title = `Дублювання транзакції операцій / ${form.namePunkt} / ${form.nameUser}`;
       const _tab = setting.value.tables["tabTransaction"];
 
       form.tableOperation = [];
@@ -972,7 +972,7 @@ onUpdated(async () => {
       break;
     }
     case "editOperation": {
-      form.title = "Редагування транзакції операцій";
+      form.title = `Редагування транзакції операцій / ${form.namePunkt} / ${form.nameUser}`;
       const _tab = setting.value.tables["tabTransaction"];
       const arDate = _tab.curRow.date.split(".");
 
