@@ -415,7 +415,7 @@ const addOperation = () => {
   form.tableOperation.push(newOperation);
   checkVidOper();
 
-  if (getSettingUser.value.isAutoComment) {
+  if (getSettingUser.value.isAutoComment && curOper[0].id != 2) {
     autoComment("add", form.options[curOper[0].num].label);
   }
 };
@@ -465,7 +465,11 @@ const delOperation = (row) => {
   selOperation.value = [];
   checkVidOper();
 
-  if (getSettingUser.value.isAutoComment && countCurOper == 1) {
+  if (
+    getSettingUser.value.isAutoComment &&
+    countCurOper == 1 &&
+    row.id_V != 2
+  ) {
     autoComment("del", row.name_V);
   }
 };
