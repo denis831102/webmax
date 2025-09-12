@@ -255,7 +255,8 @@
               <el-tooltip placement="top">
                 <template #content>
                   id_T : {{ scope.row.id_T }}<br />
-                  manager : {{ scope.row.PIB }}
+                  дата створення : {{ scope.row.dateCreate }}<br />
+                  автор : {{ scope.row.PIB }}
                 </template>
                 {{ scope.row.date }} - {{ scope.row.time }}
               </el-tooltip>
