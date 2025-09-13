@@ -971,7 +971,7 @@ onUpdated(async () => {
       form.isSave = true;
       form.date = form.curDate;
       // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
-      form.disabledContrAgent = true;
+      form.disabledContrAgent = false;
       loadOperation();
       break;
     }
