@@ -759,9 +759,7 @@ const changeTransaction = async () => {
       _date: form.date,
       _time: getTime.value,
       _comment: [
-        form.visibleContrAgent && form.modeOtg == "cm"
-          ? `Відвантаження на ${nameContragent};`
-          : "",
+        form.visibleContrAgent ? `Відвантаження на ${nameContragent};` : "",
         form.comment,
       ]
         .join(" ")
@@ -865,7 +863,7 @@ const startTimer = () => {
 };
 
 const getSklad = async (id_agent = 0) => {
-  if (!form.visibleContrAgent || form.disabledContrAgent) return;
+  if (!form.visibleContrAgent) return;
 
   switch (form.modeOtg) {
     case "cm": {
@@ -973,8 +971,8 @@ onUpdated(async () => {
       form.isSave = true;
       form.date = form.curDate;
       // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
-      loadOperation();
       form.disabledContrAgent = true;
+      loadOperation();
       break;
     }
     case "editOperation": {
@@ -987,8 +985,8 @@ onUpdated(async () => {
       form.isSave = false;
       form.date = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
       // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
-      loadOperation(true);
       form.disabledContrAgent = true;
+      loadOperation(true);
       break;
     }
   }
