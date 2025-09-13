@@ -337,9 +337,7 @@ const loadOperation = (isRedactor = false) => {
   form.modeOtg = curTransaction.id_Bu != 0 ? "ca" : "cm";
 
   if (form.visibleContrAgent) {
-    if (form.modeOtg == "cm") {
-      form.comment = curTransaction.comment.split(";")[1];
-    }
+    form.comment = curTransaction.comment.split(";")[1];
     form.curContragent =
       curTransaction.id_Bu != 0 ? curTransaction.id_Bu : curTransaction.id_cm;
 
@@ -586,6 +584,9 @@ const addTransaction = async () => {
         _opers: groupOperationChild,
       });
       idTChild = responseChild.data.idT;
+    }
+
+    if (form.optionContragent.length) {
       nameContragent = form.optionContragent.find(
         (el) => el.id == form.curContragent
       ).name;
@@ -598,7 +599,7 @@ const addTransaction = async () => {
       _date: form.date,
       _time: getTime.value,
       _comment: [
-        groupOperationChild.length ? `Відвантаження на ${nameContragent};` : "",
+        form.visibleContrAgent ? `Відвантаження на ${nameContragent};` : "",
         form.comment,
       ]
         .join(" ")
@@ -888,6 +889,7 @@ const getSklad = async (id_agent = 0) => {
       break;
     }
   }
+
   form.curContragent = id_agent == 0 ? form.optionContragent[0].id : id_agent;
 };
 
@@ -971,8 +973,8 @@ onUpdated(async () => {
       form.isSave = true;
       form.date = form.curDate;
       // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
-      form.disabledContrAgent = false;
       loadOperation();
+      form.disabledContrAgent = true;
       break;
     }
     case "editOperation": {
@@ -984,9 +986,9 @@ onUpdated(async () => {
       form.delOperation = [];
       form.isSave = false;
       form.date = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
-      form.disabledContrAgent = true;
       // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       loadOperation(true);
+      form.disabledContrAgent = true;
       break;
     }
   }
