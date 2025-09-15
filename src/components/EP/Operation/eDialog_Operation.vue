@@ -298,7 +298,7 @@ const loadOperation = (isRedactor = false) => {
       ),
       maxCount:
         +curOper.dir == -1 && curOper.id_V != 5
-          ? curOper.countBits + curOper.count
+          ? curOper.countBits + (isRedactor ? curOper.count : 0)
           : 999999999,
       curCount: curOper.countBits,
       unit: curOper.unit,
