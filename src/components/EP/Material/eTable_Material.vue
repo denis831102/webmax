@@ -70,7 +70,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Зменшення при пересорті" sortable prop="unit">
+      <el-table-column
+        label="Зменшення при пересорті"
+        sortable
+        prop="isLessening"
+      >
         <template #default="scope">
           <div style="display: flex; align-items: center">
             <el-icon><Sort /></el-icon>
