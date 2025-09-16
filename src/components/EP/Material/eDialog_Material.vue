@@ -16,11 +16,28 @@
           />
         </el-select>
       </el-form-item>
+
       <el-form-item label="Номенклатура" :label-width="formLabelWidth">
         <el-input v-model="form.name" autocomplete="off" />
       </el-form-item>
+
       <el-form-item label="Одиниця виміру" :label-width="formLabelWidth">
         <el-input v-model="form.unit" autocomplete="off" />
+      </el-form-item>
+
+      <el-form-item
+        label="Зменшення при пересорті"
+        :label-width="formLabelWidth"
+      >
+        <el-radio-group
+          v-model="form.isLessening"
+          size="large"
+          fill="#6cf"
+          style="margin: 10px 0 10px 10px"
+        >
+          <el-radio-button label="дозволено" value="1" />
+          <el-radio-button label="заборонено" value="0" />
+        </el-radio-group>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -55,6 +72,7 @@ const form = reactive({
   name: "",
   kat: "",
   unit: "",
+  isLessening: "",
 });
 // const store = useStore();
 // const setCurUser = (user) => store.commit("setCurUser", user);
@@ -92,6 +110,7 @@ const save = async () => {
           _name_M: form.name,
           _id_K: id_K,
           _unit: form.unit,
+          _isLessening: form.isLessening,
         },
       });
 
@@ -103,7 +122,15 @@ const save = async () => {
           material.id_M,
           material.id_K,
           material.unit,
-        ] = [form.name, form.kat, _tab.curRow.id_M, id_K, form.unit];
+          material.isLessening,
+        ] = [
+          form.name,
+          form.kat,
+          _tab.curRow.id_M,
+          id_K,
+          form.unit,
+          form.isLessening,
+        ];
         emit("update:visible", false);
       } else {
         ElMessage.error("Дані не змінені");
@@ -120,6 +147,7 @@ const save = async () => {
           _name_M: form.name,
           _id_K: id_K,
           _unit: form.unit,
+          _isLessening: form.isLessening,
         },
       });
 
@@ -131,6 +159,7 @@ const save = async () => {
           name_K: form.kat,
           name_M: form.name,
           unit: form.unit,
+          isLessening: form.isLessening,
         };
 
         _tab.data.push(material);
@@ -156,19 +185,21 @@ onUpdated(async () => {
     case "table_Material_edit": {
       form.title = "Редагування Номенклатури";
 
-      [form.name, form.kat, form.unit] = [
+      [form.name, form.kat, form.unit, form.isLessening] = [
         _tab.curRow.name_M,
         _tab.curRow.name_K,
         _tab.curRow.unit,
+        _tab.curRow.isLessening,
       ];
       break;
     }
     case "table_Material_copy_add": {
       form.title = "Створення нового за прикладом";
-      [form.name, form.kat, form.unit] = [
+      [form.name, form.kat, form.unit, form.isLessening] = [
         _tab.curRow.name_M,
         _tab.curRow.name_K,
         _tab.curRow.unit,
+        _tab.curRow.isLessening,
       ];
 
       break;
@@ -178,6 +209,7 @@ onUpdated(async () => {
       form.name = "";
       form.kat = setting.value.tables["tabKategories"].data[1].name_K;
       form.unit = "";
+      form.isLessening = "0";
       break;
     }
   }

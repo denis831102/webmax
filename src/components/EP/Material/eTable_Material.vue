@@ -70,6 +70,17 @@
         </template>
       </el-table-column>
 
+      <el-table-column label="Зменшення при пересорті" sortable prop="unit">
+        <template #default="scope">
+          <div style="display: flex; align-items: center">
+            <el-icon><Sort /></el-icon>
+            <span style="margin-left: 10px">{{
+              +scope.row.isLessening ? "дозволено" : "заборонено"
+            }}</span>
+          </div>
+        </template>
+      </el-table-column>
+
       <el-table-column label=" Редагування ">
         <template #default="scope">
           <el-button
