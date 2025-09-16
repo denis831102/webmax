@@ -20,15 +20,16 @@
       </template>
 
       <el-row :gutter="20" style="margin: 0 0 20px 10px">
-        <el-space :size="10" wrap class="card">
+        <el-space :size="10" class="card">
           <el-switch v-model="isFilter" @change="getBits" />
 
           <el-input
             v-model="search"
-            size="large"
+            size="normal"
             placeholder="Пошук матеріала"
             :prefix-icon="Search"
             :disabled="!isFilter"
+            v-if="setting.displaySize == 'large'"
           />
 
           <el-date-picker
@@ -39,8 +40,8 @@
             :end-placeholder="getDate"
             :disabled="!isFilter"
             @change="getBits"
-            style="margin-left: 10px"
-            size="large"
+            style="margin-left: 5px; min-width: 100px; width: 120px"
+            size="normal"
           />
         </el-space>
 
@@ -290,8 +291,9 @@ onUpdated(async () => {
   margin-left: 4px;
 }
 .marginTabl {
-  margin: 0 10% 20% 10%;
-  width: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
 }
 
 .card {

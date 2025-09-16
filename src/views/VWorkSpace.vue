@@ -32,11 +32,11 @@
               </el-row>
             </el-header>
 
-            <el-main style="margin: 20px 0 50px 0">
+            <el-main style="margin: 20px 0 10px 0">
               <keep-alive> <component :is="curComponent" /> </keep-alive>
             </el-main>
 
-            <el-footer height="30" style="margin-top: 20px; text-align: center"
+            <el-footer height="10px" style="text-align: center"
               >R@ED 2025</el-footer
             >
           </el-container>

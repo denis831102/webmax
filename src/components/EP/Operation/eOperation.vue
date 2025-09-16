@@ -25,9 +25,9 @@
         </span>
       </template>
 
-      <el-space :size="10" style="margin: -5px 0 10px 0">
+      <el-space :size="10" style="margin: -20px 0 10px 0">
         <el-card v-if="setting.displaySize == 'large'">
-          <el-space :size="10" style="padding: 10px 5px">
+          <el-space :size="0" style="padding: 0px 0px">
             <div class="statistic-card">
               <el-statistic
                 :value="kassa.summa"
@@ -73,7 +73,7 @@
           </el-space>
           <el-button
             :size="20"
-            style="width: 90px; height: 90px; margin: 10px 10px 10px 10px"
+            style="width: 90px; height: 90px; margin: -10px -10px -10px 10px"
             type="primary"
             plain
             @click="getBits"
@@ -95,14 +95,14 @@
           </el-button>
         </el-card>
 
-        <el-card v-if="setting.displaySize == 'large'" style="padding: 0px 5px">
-          <el-row :gutter="10">
+        <el-card v-if="setting.displaySize == 'large'" style="height: 115px">
+          <el-row :gutter="0">
             <el-col :span="3">
               <el-switch v-model="isPeriod" @change="getTransaction" />
             </el-col>
             <el-col :span="2"> </el-col>
 
-            <el-col :span="8">
+            <el-col :span="19">
               <el-date-picker
                 v-model="valueDate"
                 type="daterange"
@@ -112,17 +112,16 @@
                 :disabled="!isPeriod"
                 :shortcuts="shortCuts"
                 @change="getTransaction"
-                style="width: 210px; padding: 20px 10px; margin-left: -10px"
+                style="width: 210px; padding: 0px 10px; margin-left: -10px"
               />
             </el-col>
           </el-row>
           <el-row :gutter="10">
-            <el-col :span="4"> </el-col>
-            <el-col :span="11">
+            <el-col :span="24">
               <el-input
                 v-model="search"
-                size="large"
-                style="width: 210px"
+                size="normal"
+                style="width: 250px"
                 placeholder="Пошук за коментарем"
                 @input="debouncedChange"
                 :prefix-icon="Search"
@@ -256,9 +255,13 @@
                 <template #content>
                   id_T : {{ scope.row.id_T }}<br />
                   дата створення : {{ scope.row.dateCreate }}<br />
+                  час створення : {{ scope.row.time }}<br />
                   автор : {{ scope.row.PIB }}
                 </template>
-                {{ scope.row.date }} - {{ scope.row.time }}
+                {{ scope.row.date }}
+                {{
+                  setting.displaySize == "large" ? ` - ${scope.row.time}` : ""
+                }}
               </el-tooltip>
             </div>
           </template>
@@ -347,7 +350,7 @@
         v-model:page-size="setPagination.sizePage"
         v-model:current-page="setPagination.currentPage"
         v-if="setPagination.total > 0"
-        style="margin-top: 25px; float: right"
+        style="margin-top: 15px; float: right"
         @current-change="getTransaction"
       />
     </el-tab-pane>
@@ -788,7 +791,7 @@ onUnmounted(() => {
   flex-wrap: wrap;
   font-size: 12px;
   color: var(--el-text-color-regular);
-  margin-top: 5px;
+  margin-top: 0px;
 }
 
 .statistic-footer .footer-item {
