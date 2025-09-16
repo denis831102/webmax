@@ -1,13 +1,13 @@
 <template>
   <el-dialog
     :modelValue="props.visible"
-    title="Пересортування матеріалів"
+    :title="form.title"
     :before-close="closeForm"
     :close-on-click-modal="false"
     :width="getWidth[0]"
   >
     <el-form :model="form" label-width="auto">
-      <el-form-item label="Пункт / прізвище">
+      <!-- <el-form-item label="Пункт / прізвище">
         <el-col :span="15">
           <el-tag type="primary" style="width: 100%">{{
             form.namePunkt
@@ -21,9 +21,10 @@
         <el-col :span="8">
           <el-tag type="primary">{{ form.nameUser }}</el-tag>
         </el-col>
-      </el-form-item>
+      </el-form-item> -->
+
       <el-form-item label="Дата операції">
-        <el-col :span="11">
+        <el-col :span="5">
           <el-date-picker
             v-model="form.date"
             type="date"
@@ -38,14 +39,14 @@
           <span>-</span>
         </el-col>
 
-        <el-col :span="11">
+        <el-col :span="17">
           <el-tag type="info" size="large" style="font-size: 13pt">{{
             getTime
           }}</el-tag>
         </el-col>
       </el-form-item>
 
-      <el-form-item label="Категорія для сортування">
+      <el-form-item label="Категорія">
         <el-select v-model="form.name_K">
           <el-option
             v-for="item in sourceTable_K"
@@ -55,7 +56,9 @@
           >
           </el-option>
         </el-select>
+      </el-form-item>
 
+      <el-form-item label=" ">
         <el-card style="width: 100%">
           <el-row>
             <el-col :span="11">
@@ -109,12 +112,22 @@
           </el-row>
 
           <el-row>
-            <el-col :span="24">
+            <el-col :span="isLessening ? 12 : 24">
               <el-input-number
                 v-model="form.count_Sort"
                 :precision="3"
                 :step="1"
                 :max="countPeresortOld"
+                :min="0"
+                style="top: 50%; left: 50%; transform: translate(-50%, -50%)"
+              />
+            </el-col>
+            <el-col :span="12" v-if="isLessening">
+              <el-input-number
+                v-model="form.count_Sort_New"
+                :precision="3"
+                :step="1"
+                :max="form.count_Sort"
                 :min="0"
                 style="top: 50%; left: 50%; transform: translate(-50%, -50%)"
               />
@@ -169,12 +182,14 @@ const form = reactive({
   namePunkt: "",
   date: "",
   count_Sort: 0,
+  count_Sort_New: 0,
   comment: "",
   name_K: "",
   name_M_new: "",
   name_M_old: "",
   timer: {},
   curDate: new Date(),
+  title: "",
 });
 
 watch(
@@ -299,8 +314,12 @@ const addTransactionPeresort = async () => {
       ElMessage.error(`Введіть кількість матеріалу для пересорта!`);
       return;
     }
+    if (isLessening.value && form.count_Sort_New == 0) {
+      ElMessage.error(`Введіть кількість матеріалу при пересорта на виході!`);
+      return;
+    }
 
-    const token = generateToken(4);
+    const token = generateToken(8);
     const groupOperation = [
       {
         id_V: 6,
@@ -319,7 +338,7 @@ const addTransactionPeresort = async () => {
       {
         id_V: 7,
         id_M: M_new.id_M,
-        d_count: form.count_Sort,
+        d_count: !isLessening.value ? form.count_Sort : form.count_Sort_New,
         d_price: 0,
         old_count: 0,
         old_price: 0,
@@ -338,7 +357,7 @@ const addTransactionPeresort = async () => {
       _idPunkt: props.idPunkt,
       _date: form.date,
       _time: getTime.value,
-      _comment: `пересорт; ${form.comment}`,
+      _comment: `Пересорт; ${form.comment}`,
       _isEdit: 0,
       _isDel: 1,
       _opers: groupOperation,
@@ -394,6 +413,13 @@ const countPeresortNew = computed(() => {
   return obj ? obj.count : 0;
 });
 
+const isLessening = computed(() => {
+  const obj = setting.value.tables["tabMaterial"].data.find((el) => {
+    return el.name_M == form.name_M_old;
+  });
+  return obj ? +obj.isLessening : 0;
+});
+
 const generateToken = (length = 12) => {
   const lower = "abcdefghijklmnopqrstuvwxyz";
   const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -420,6 +446,7 @@ onUpdated(async () => {
   startTimer();
   form.namePunkt = props.namePunkt;
   form.date = form.curDate;
+  form.title = `Пересортування матеріалів / ${form.namePunkt} / ${form.nameUser}`;
 
   await getKategories();
   if (setting.value.tables["tabKategories"].data.length) {
