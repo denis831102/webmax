@@ -47,18 +47,49 @@
       </el-form-item>
 
       <el-form-item label="Категорія">
-        <el-select v-model="form.name_K">
-          <el-option
-            v-for="item in sourceTable_K"
-            :key="item.name_K"
-            :label="item.name_K"
-            :value="item.name_K"
+        <el-col :span="isLessening ? 11 : 24">
+          <el-select v-model="form.name_K">
+            <el-option
+              v-for="item in sourceTable_K"
+              :key="item.name_K"
+              :label="item.name_K"
+              :value="item.name_K"
+              style="top: 50%; left: 50%; transform: translate(-50%, -50%)"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
+
+        <el-col :span="2" v-if="isLessening">
+          <el-icon
+            style="
+              font-size: 20pt;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, 0%);
+            "
+            ><Switch
+          /></el-icon>
+        </el-col>
+
+        <el-col :span="11" v-if="isLessening">
+          <el-select
+            v-model="form.name_K_new"
+            placeholder="оберіть категорію..."
           >
-          </el-option>
-        </el-select>
+            <el-option
+              v-for="item in sourceTable_K"
+              :key="item.name_K"
+              :label="item.name_K"
+              :value="item.name_K"
+              style="top: 50%; left: 50%; transform: translate(-50%, -50%)"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
       </el-form-item>
 
-      <el-form-item label=" ">
+      <el-form-item label="Матеріал">
         <el-card style="width: 100%">
           <el-row>
             <el-col :span="11">
@@ -120,16 +151,18 @@
                 :max="countPeresortOld"
                 :min="0"
                 style="top: 50%; left: 50%; transform: translate(-50%, -50%)"
+                @focus="clearInp"
               />
             </el-col>
             <el-col :span="12" v-if="isLessening">
               <el-input-number
-                v-model="form.count_Sort_New"
+                v-model="form.count_Sort_new"
                 :precision="3"
                 :step="1"
                 :max="form.count_Sort"
                 :min="0"
                 style="top: 50%; left: 50%; transform: translate(-50%, -50%)"
+                @focus="clearInp"
               />
             </el-col>
           </el-row>
@@ -182,9 +215,10 @@ const form = reactive({
   namePunkt: "",
   date: "",
   count_Sort: 0,
-  count_Sort_New: 0,
+  count_Sort_new: 0,
   comment: "",
   name_K: "",
+  name_K_new: "",
   name_M_new: "",
   name_M_old: "",
   timer: {},
@@ -196,6 +230,9 @@ watch(
   () => form.name_M_old,
   () => {
     form.count_Sort = 0;
+    if (isLessening.value) {
+      form.name_K_new = form.name_K;
+    }
   }
 );
 
@@ -314,7 +351,7 @@ const addTransactionPeresort = async () => {
       ElMessage.error(`Введіть кількість матеріалу для пересорта!`);
       return;
     }
-    if (isLessening.value && form.count_Sort_New == 0) {
+    if (isLessening.value && form.count_Sort_new == 0) {
       ElMessage.error(`Введіть кількість матеріалу при пересорта на виході!`);
       return;
     }
@@ -338,7 +375,7 @@ const addTransactionPeresort = async () => {
       {
         id_V: 7,
         id_M: M_new.id_M,
-        d_count: !isLessening.value ? form.count_Sort : form.count_Sort_New,
+        d_count: !isLessening.value ? form.count_Sort : form.count_Sort_new,
         d_price: 0,
         old_count: 0,
         old_price: 0,
@@ -357,7 +394,9 @@ const addTransactionPeresort = async () => {
       _idPunkt: props.idPunkt,
       _date: form.date,
       _time: getTime.value,
-      _comment: `Пересорт; ${form.comment}`,
+      _comment: !isLessening.value
+        ? `Пересорт; ${form.comment}`
+        : `Переробка; ${form.comment}`,
       _isEdit: 0,
       _isDel: 1,
       _opers: groupOperation,
@@ -395,7 +434,9 @@ const sourceTable_M_new = computed(() => {
   const _tab = setting.value.tables["tabMaterial"].data;
 
   return _tab.filter(
-    (row) => row.name_K == form.name_K && row.name_M != form.name_M_old
+    (row) =>
+      row.name_K == (!isLessening.value ? form.name_K : form.name_K_new) &&
+      row.name_M != form.name_M_old
   );
 });
 
@@ -440,6 +481,10 @@ const generateToken = (length = 12) => {
     .split("")
     .sort(() => Math.random() - 0.5)
     .join("");
+};
+
+const clearInp = (event) => {
+  if (+event.target.value == 0) event.target.value = "";
 };
 
 onUpdated(async () => {
