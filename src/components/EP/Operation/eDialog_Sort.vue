@@ -420,7 +420,8 @@ const sourceTable_K = computed(() => {
   const _tabK = setting.value.tables["tabKategories"].data;
 
   return _tabK.filter((row) => {
-    return +row.id_K == 3 || +row.id_K == 4;
+    // return +row.id_K == 3 || +row.id_K == 4;
+    return [3, 4, 5].includes(+row.id_K);
   });
 });
 
