@@ -2,51 +2,55 @@
   <el-space :size="10" style="margin: 0 0 10px 0">
     <el-card>
       <el-space :size="10" wrap>
-        <el-select
-          v-model="checkManeger"
-          multiple
-          clearable
-          collapse-tags
-          placeholder="оберіть менеджера..."
-          popper-class="custom-header"
-          :max-collapse-tags="1"
-          style="width: 240px"
-          @change="getMonitoring"
-        >
-          <template #header>
-            <el-checkbox
-              v-model="checkAll"
-              :indeterminate="indeterminate"
-              @change="handleCheckAll"
-            >
-              Усі
-            </el-checkbox>
-          </template>
-          <el-option
-            v-for="item in listManeger"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+        <el-col :span="4">
+          <el-select
+            v-model="checkManeger"
+            multiple
+            clearable
+            collapse-tags
+            placeholder="оберіть менеджера..."
+            popper-class="custom-header"
+            :max-collapse-tags="1"
+            style="width: 240px"
+            @change="getMonitoring"
+          >
+            <template #header>
+              <el-checkbox
+                v-model="checkAll"
+                :indeterminate="indeterminate"
+                @change="handleCheckAll"
+              >
+                Усі
+              </el-checkbox>
+            </template>
+            <el-option
+              v-for="item in listManeger"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-col>
+
+        <el-col :span="4">
+          <el-cascader
+            v-model="checkMaterial"
+            :options="options"
+            :props="propsCascader"
+            clearable
+            collapse-tags
+            placeholder="оберіть матеріал..."
+            :max-collapse-tags="2"
+            style="width: 240px"
+            @change="getMonitoring"
           />
-        </el-select>
+        </el-col>
 
-        <el-cascader
-          v-model="checkMaterial"
-          :options="options"
-          :props="propsCascader"
-          clearable
-          collapse-tags
-          placeholder="оберіть матеріал..."
-          :max-collapse-tags="2"
-          style="width: 240px"
-          @change="getMonitoring"
-        />
-
-        <el-col :span="3">
+        <el-col :span="4">
           <el-switch v-model="isFilter" @change="getMonitoring" />
         </el-col>
 
-        <el-col :span="3">
+        <el-col :span="4">
           <el-date-picker
             v-model="curDate"
             type="date"
@@ -60,11 +64,20 @@
           />
         </el-col>
 
-        <el-button-group>
-          <el-button type="success" :icon="Tickets" @click="loadReport()">
+        <el-col :span="4">
+          <input
+            type="file"
+            ref="fileInput"
+            @change="onFileSelected"
+            style="display: none"
+          />
+
+          <el-button type="success" :icon="Tickets" @click="openFile">
             Завантажити аналітику
           </el-button>
+        </el-col>
 
+        <el-col :span="4">
           <el-button
             type="primary"
             plain
@@ -73,7 +86,7 @@
           >
             Оновити
           </el-button>
-        </el-button-group>
+        </el-col>
       </el-space>
     </el-card>
   </el-space>
@@ -317,6 +330,7 @@ const loading = ref(true);
 const propsCascader = { multiple: true, expandTrigger: "hover" };
 const isFilter = ref(false);
 const curDate = ref(new Date());
+const fileInput = ref(null);
 
 watch(checkManeger, (val) => {
   if (val.length === 0) {
@@ -435,16 +449,32 @@ const handleCheckAll = (val) => {
   getMonitoring();
 };
 
-const loadReport = async () => {
+const onFileSelected = (event) => {
+  const files = event.target.files;
+  if (!files || !files.length) return;
+  loadReport(files[0]);
+};
+
+const openFile = () => {
+  if (fileInput.value) fileInput.value.value = "";
+  fileInput.value && fileInput.value.click();
+};
+
+const loadReport = async (file) => {
   try {
-    const response = await HTTP.post("", {
-      _method: "loadReport",
-      _id_U: getCurUser.value.id,
-      _nameReport: "analitikaResurs",
-      _checkManeger: checkManeger.value,
-      _checkMaterial: checkMaterial.value,
-      _date: isFilter.value ? formatDate(curDate.value, "eng") : "",
-    });
+    const formData = new FormData();
+    formData.append("_file", file);
+    formData.append("_method", "loadReport");
+    formData.append("_nameReport", "analitikaResurs");
+    formData.append("_id_U", getCurUser.value.id);
+    formData.append("_checkManeger", checkManeger.value);
+    formData.append("_checkMaterial", checkMaterial.value);
+    formData.append(
+      "_date",
+      isFilter.value ? formatDate(curDate.value, "eng") : ""
+    );
+
+    const response = await HTTP.post("", formData);
 
     if (response.data.isSuccesfull) {
       loadFile(
@@ -457,6 +487,7 @@ const loadReport = async () => {
     } else {
       ElMessage.error("Звіт не сформовано");
     }
+    fileInput.value.value = "";
   } catch (e) {
     ElMessage("Помилка завантаження звіту...");
   }
