@@ -634,8 +634,8 @@ const changeTransaction = async () => {
     form.addOperation_child = [];
     form.chnOperation = [];
     form.chnOperation_child = [];
-    let id_T = 0;
-    let id_T_child = 0;
+    let id_T = setting.value.tables["tabTransaction"].curRow.id_T;
+    let id_T_child = setting.value.tables["tabTransaction"].curRow.id_T_child;
 
     const contragent = form.optionContragent.find(
       (el) => el.id == form.curContragent
@@ -690,8 +690,8 @@ const changeTransaction = async () => {
           let dCount = oper.count - oper.old.count,
             dPrice = oper.price - oper.old.price;
 
-          id_T = oper.id_T;
-          id_T_child = oper.id_T_child;
+          // id_T = oper.id_T;
+          // id_T_child = oper.id_T_child;
 
           if (dCount != 0 || dPrice != 0) {
             form.chnOperation.push({

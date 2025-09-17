@@ -62,7 +62,7 @@
 
         <el-button-group>
           <el-button type="success" :icon="Tickets" @click="loadReport()">
-            Формувати звіт
+            Завантажити аналітику
           </el-button>
 
           <el-button
