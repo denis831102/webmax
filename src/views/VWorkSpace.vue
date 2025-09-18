@@ -14,25 +14,28 @@
           </el-aside>
 
           <el-container>
-            <el-header style="text-align: right; font-size: 12px">
+            <el-header style="font-size: 12px">
               <el-row :gutter="20">
                 <el-col :span="24">
                   <eMenu mode="horizontal" style="margin: -15px 0 10px 0" />
                 </el-col>
               </el-row>
-              <el-row :gutter="20">
-                <el-col :span="19" style="text-align: center">
+              <el-row
+                :gutter="20"
+                style="text-align: center; margin: 8px 0 0 0"
+              >
+                <el-col :span="19">
                   <el-text v-if="setting.titleTable.length" tag="b"
                     >{{ setting.titleTable }}
                   </el-text>
                 </el-col>
-                <el-col :span="5">
+                <el-col :span="5" style="text-align: right">
                   <eDrop_User :user="getCurUser" />
                 </el-col>
               </el-row>
             </el-header>
 
-            <el-main style="margin: 20px 0 10px 0">
+            <el-main style="margin: 15px 0 10px 0">
               <keep-alive> <component :is="curComponent" /> </keep-alive>
             </el-main>
 
