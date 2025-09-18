@@ -492,7 +492,6 @@ const loadReport = async (file) => {
     } else {
       ElMessage.error("Звіт не сформовано");
     }
-    fileInput.value.value = "";
   } catch (e) {
     ElMessage("Помилка завантаження звіту...");
   }
