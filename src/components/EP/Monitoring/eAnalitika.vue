@@ -305,7 +305,7 @@
 import { inject, ref, computed, onActivated, watch } from "vue";
 import { useStore } from "vuex";
 import { User, Refresh, Tickets } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { HTTP, loadFile } from "@/hooks/http";
 
 const setting = inject("setting");
@@ -483,7 +483,12 @@ const loadReport = async (file) => {
         response.data.mime
       );
 
-      ElMessage.success("Звіт сформовано");
+      ElMessageBox({
+        title: "Увага!",
+        type: "success",
+        dangerouslyUseHTMLString: true,
+        message: response.data.message,
+      });
     } else {
       ElMessage.error("Звіт не сформовано");
     }
