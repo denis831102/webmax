@@ -67,18 +67,16 @@
           >
             <el-table-column type="expand">
               <template #default="props">
-                <div style="padding: 20px; background: #c6e2ff69">
-                  <h3 style="margin: 0px 0 10px 0">
-                    <el-icon><PieChart /></el-icon>
-                    <span style="margin-left: 5px">Залишки по категоріїї</span>
-                    <el-check-tag type="primary">
-                      {{ props.row.name_K }}
-                    </el-check-tag>
-                  </h3>
+                <div class="expand-content">
+                  <el-tag type="success" style="margin: -10px 0 10px 0px">
+                    <el-icon><PieChart /></el-icon> Залишки по категоріїї:
+                    {{ props.row.name_K }}
+                  </el-tag>
+
                   <el-table
                     :data="props.row.listMater"
                     border="true"
-                    style="margin-left: 2%; width: 98%"
+                    style="width: 98%"
                     show-summary
                   >
                     <el-table-column type="index" width="60" />
@@ -300,5 +298,11 @@ onUpdated(async () => {
   border: 1px solid var(--el-border-color);
   margin-left: 10px;
   padding: 20px;
+}
+.expand-content {
+  padding: 20px;
+  background: #4caf5045;
+  border-radius: 25px;
+  margin: 0px 10px;
 }
 </style>

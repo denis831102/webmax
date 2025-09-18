@@ -194,21 +194,15 @@
       <el-table :data="filterTable" v-loading="loading" stripe>
         <el-table-column type="expand" min-width="10">
           <template #default="props">
-            <div style="padding: 20px; background: #c6e2ff69">
-              <div style="margin: 0px 0 10px 0">
-                Транзакція за операцією
-
-                <el-check-tag type="primary">
-                  {{ props.row.comment }}
-                </el-check-tag>
-                <el-check-tag type="success" style="margin-left: 5px">
-                  {{ props.row.date }} - {{ props.row.time }}
-                </el-check-tag>
-              </div>
+            <div class="expand-content">
+              <el-tag type="success" style="margin: -10px 0 10px 0px">
+                Транзакція за операцією: <b>{{ props.row.comment }} </b> /
+                {{ props.row.date }} - {{ props.row.time }}
+              </el-tag>
 
               <el-table
                 :data="props.row.listOper"
-                border="true"
+                border
                 style="background: #c6e2ff"
                 show-summary
               >
@@ -397,6 +391,7 @@ const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 const getSettingUser = computed(() => store.getters.getSettingUser);
 const changeSettingUser = (obj) => store.commit("changeSettingUser", obj);
+
 const search = ref("");
 const valueDate = ref([new Date(), new Date()]);
 const punkts = ref([]);
@@ -758,7 +753,7 @@ onUnmounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 .demo-tabs > .el-tabs__content {
   padding: 32px;
   color: #6b778c;
@@ -824,5 +819,12 @@ onUnmounted(() => {
 .popconfirm-base-box .box-item {
   width: 110px;
   margin-top: 10px;
+}
+
+.expand-content {
+  padding: 20px;
+  background: #4caf5045;
+  border-radius: 25px;
+  margin: 0px 10px;
 }
 </style>

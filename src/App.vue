@@ -3,7 +3,7 @@
   <div>
     <!-- @click.prevent="$router.push({ name: 'crm' }) -->
     <div class="hMain" @click="fullScreen()" :title="versionDate">
-      Web MetAl'ans <span class="version"> v.{{ version }} </span>
+      WebMax MetAl'ans <span class="version"> v.{{ version }} </span>
     </div>
 
     <transition name="component-fade" mode="out-in">
