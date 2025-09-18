@@ -209,7 +209,7 @@ const getSettingUser = computed(() => store.getters.getSettingUser);
 const checkAll = ref(false);
 const indeterminate = ref(false);
 const checkManeger = ref([]);
-const checkOperation = ref(1);
+const checkOperation = ref(null);
 const listManeger = ref([]);
 const options = ref([]);
 const loading = ref(false);
@@ -270,7 +270,9 @@ const getVidOperation = async () => {
         }
       });
 
-    checkOperation.value = options.value[0].idV;
+    if (!checkOperation.value) {
+      checkOperation.value = options.value[0].idV;
+    }
 
     if (+getSettingUser.value.isShowMes) {
       ElMessage.success("Операції оновлені");
