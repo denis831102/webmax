@@ -94,6 +94,19 @@
         </el-col>
       </el-row>
     </el-card>
+
+    <el-card style="max-height: 75px">
+      <el-radio-group
+        v-model="isLoadReport"
+        size="large"
+        fill="#6cf"
+        @change="getETransaction"
+      >
+        <el-radio-button label="усі" value="all" />
+        <el-radio-button label="нові" value="new" />
+        <el-radio-button label="1 C" value="loaded" />
+      </el-radio-group>
+    </el-card>
   </el-space>
 
   <el-table
@@ -106,8 +119,8 @@
   >
     <el-table-column type="expand">
       <template #default="props">
-        <div style="padding: 20px; background: #c6e2ff69">
-          <div style="margin: 0 0 20px 40px">{{ nameColumnT }}</div>
+        <div style="padding: 5px; background: #c6e2ff69">
+          <div style="margin: 0 0 5px 10px"></div>
 
           <el-table
             :data="props.row.listPunkt"
@@ -120,58 +133,63 @@
           >
             <el-table-column style="width: 98%" type="expand">
               <template #default="scope">
-                <el-table
-                  :data="scope.row.listTransaction"
-                  :default-sort="{ prop: 'date', order: 'ascending' }"
-                  style="margin-left: 4%; background: #124578; width: 95%"
-                  stripe
-                  border
-                >
-                  <el-table-column
-                    type="index"
-                    v-if="setting.displaySize == 'large'"
-                  />
+                <div class="expand-content">
+                  <el-tooltip placement="top"> </el-tooltip>
 
-                  <el-table-column label="врахувати" min-width="15">
-                    <template #default="transaction">
-                      <el-switch
-                        :modelValue="transaction.row.isLoad == 1"
-                        @change="changeCheck(transaction.row)"
-                        inline-prompt
-                        style="
-                          --el-switch-on-color: #13ce66;
-                          --el-switch-off-color: #e48c18;
-                        "
-                        active-text="+"
-                        inactive-text="-"
-                      />
-                    </template>
-                  </el-table-column>
+                  <el-table
+                    :data="scope.row.listTransaction"
+                    :default-sort="{ prop: 'date', order: 'ascending' }"
+                    style="margin-left: 4%; background: #124578; width: 95%"
+                    stripe
+                    border
+                  >
+                    <el-table-column
+                      type="index"
+                      v-if="setting.displaySize == 'large'"
+                    />
 
-                  <el-table-column prop="date" sortable min-width="25">
-                    <template #header>
-                      <el-icon><Calendar /></el-icon>
-                      <span style="margin-left: 10px">Дата</span>
-                    </template>
+                    <el-table-column label="врахувати" min-width="15">
+                      <template #default="transaction">
+                        <el-switch
+                          :modelValue="transaction.row.isLoad == 1"
+                          @change="changeCheck(transaction.row)"
+                          inline-prompt
+                          style="
+                            --el-switch-on-color: #13ce66;
+                            --el-switch-off-color: #e48c18;
+                          "
+                          active-text="+"
+                          inactive-text="-"
+                        />
+                      </template>
+                    </el-table-column>
 
-                    <template #default="index">
-                      <div style="display: flex; align-items: center">
-                        <span style="margin-left: 10px">
-                          {{ index.row.date }}</span
-                        >
-                      </div>
-                    </template>
-                  </el-table-column>
+                    <el-table-column prop="date" sortable min-width="25">
+                      <template #header>
+                        <el-icon><Calendar /></el-icon>
+                        <span style="margin-left: 10px">Дата</span>
+                      </template>
 
-                  <el-table-column label="Коментар" prop="comment">
-                  </el-table-column>
+                      <template #default="index">
+                        <div style="display: flex; align-items: center">
+                          <span style="margin-left: 10px">
+                            {{ index.row.date }}</span
+                          >
+                        </div>
+                      </template>
+                    </el-table-column>
 
-                  <el-table-column label="Сума" prop="suma">
-                    <template #default="props">
-                      {{ parseFloat(props.row.suma).toLocaleString("ua") }} грн.
-                    </template>
-                  </el-table-column>
-                </el-table>
+                    <el-table-column label="Коментар" prop="comment">
+                    </el-table-column>
+
+                    <el-table-column label="Сума" prop="suma">
+                      <template #default="props">
+                        {{ parseFloat(props.row.suma).toLocaleString("ua") }}
+                        грн.
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
               </template>
             </el-table-column>
 
@@ -219,6 +237,7 @@ const isPeriod = ref(true);
 const userLayout = ref("false");
 const punktLayout = ref("false");
 const forceRenderUser = ref(0);
+const isLoadReport = ref("new");
 
 watch(
   () => [checkOperation.value],
@@ -282,6 +301,10 @@ const getVidOperation = async () => {
   }
 };
 
+const changeLoadReport = () => {
+  isLoadReport({ themaColor: themaColor.value });
+};
+
 const getETransaction = async () => {
   try {
     if (!checkManeger.value.length) {
@@ -300,6 +323,7 @@ const getETransaction = async () => {
       _date_l: formatDate(valueDate.value[0], "eng"),
       _date_r: formatDate(valueDate.value[1], "eng"),
       _isPeriod: isPeriod.value ? 1 : 0,
+      _isLoadReport: isLoadReport.value ? 1 : 0,
     });
 
     setting.value.tables["tabEconomist"].data = response.data.ar_data;
@@ -449,4 +473,11 @@ onActivated(async () => {
 });
 </script>
 
-<style></style>
+<style>
+.expand-content {
+  padding: 20px;
+  background: #4caf5045;
+  border-radius: 25px;
+  margin: 0px 10px;
+}
+</style>
