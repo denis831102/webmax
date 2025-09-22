@@ -1,7 +1,7 @@
 <template>
-  <el-space :size="10" style="margin: 0px 0 0px 0">
-    <el-card>
-      <el-space :size="10" wrap>
+  <div class="card">
+    <el-row>
+      <el-col :xs="10" :sm="10" :md="10" :lg="9" :xl="9">
         <el-select
           v-model="checkManeger"
           multiple
@@ -10,7 +10,7 @@
           placeholder="оберіть менеджера..."
           popper-class="custom-header"
           :max-collapse-tags="1"
-          style="width: 240px"
+          style="width: 45%; margin-right: 10px"
           @change="getETransaction()"
         >
           <template #header>
@@ -35,7 +35,7 @@
           placeholder="оберіть операцію..."
           popper-class="custom-header"
           :max-collapse-tags="1"
-          style="width: 240px"
+          style="width: 45%"
         >
           <el-option
             v-for="item in options"
@@ -44,42 +44,42 @@
             :value="item.idV"
           />
         </el-select>
-
-        <el-radio-group v-model="userLayout" @change="changeLayout()">
+      </el-col>
+      <el-col :xs="8" :sm="8" :md="8" :lg="5" :xl="5">
+        <el-radio-group
+          v-model="userLayout"
+          @change="changeLayout()"
+          style="width: 45%"
+        >
           <el-radio-button value="false" label="+м" />
           <el-radio-button value="true" label="-м" />
         </el-radio-group>
 
-        <el-radio-group v-model="punktLayout" @change="changeLayout()">
+        <el-radio-group
+          v-model="punktLayout"
+          @change="changeLayout()"
+          style="margin-left: 5px; width: 45%"
+        >
           <el-radio-button value="false" label="+п" />
           <el-radio-button value="true" label="-п" />
         </el-radio-group>
+      </el-col>
+      <el-col :xs="6" :sm="6" :md="6" :lg="3" :xl="3">
+        <el-button
+          type="success"
+          :icon="Tickets"
+          @click="loadReport()"
+          style="width: 90%"
+        >
+          Формувати звіт
+        </el-button>
+      </el-col>
+    </el-row>
 
-        <el-button-group>
-          <el-button type="success" :icon="Tickets" @click="loadReport()">
-            Формувати звіт
-          </el-button>
-
-          <el-button
-            type="primary"
-            plain
-            :icon="Refresh"
-            @click="getETransaction()"
-          >
-            Оновити
-          </el-button>
-        </el-button-group>
-      </el-space>
-    </el-card>
-
-    <el-card style="max-height: 75px">
-      <el-row :gutter="10">
-        <el-col :span="3">
+    <el-row>
+      <el-col :xs="10" :sm="10" :md="10" :lg="9" :xl="9">
+        <div style="text-align: center">
           <el-switch v-model="isPeriod" @change="getETransaction" />
-        </el-col>
-        <el-col :span="2"> </el-col>
-
-        <el-col :span="8">
           <el-date-picker
             v-model="valueDate"
             type="daterange"
@@ -88,26 +88,31 @@
             :end-placeholder="getDate"
             :disabled="!isPeriod"
             :shortcuts="shortCuts"
-            style="width: 210px; margin-left: -10px"
+            style="width: 210px; margin-left: 10px"
             @change="getETransaction"
           />
-        </el-col>
-      </el-row>
-    </el-card>
-
-    <el-card style="max-height: 75px">
-      <el-radio-group
-        v-model="isLoadReport"
-        size="large"
-        fill="#6cf"
-        @change="getETransaction"
-      >
-        <el-radio-button label="усі" value="all" />
-        <el-radio-button label="нові" value="new" />
-        <el-radio-button label="1 C" value="loaded" />
-      </el-radio-group>
-    </el-card>
-  </el-space>
+        </div>
+      </el-col>
+      <el-col :xs="8" :sm="8" :md="8" :lg="5" :xl="5">
+        <el-radio-group v-model="isLoadReport">
+          <el-radio-button label="усі" value="all" />
+          <el-radio-button label="нові" value="new" />
+          <el-radio-button label="в 1С" value="loaded" />
+        </el-radio-group>
+      </el-col>
+      <el-col :xs="6" :sm="6" :md="6" :lg="3" :xl="3">
+        <el-button
+          type="primary"
+          plain
+          :icon="Refresh"
+          @click="getETransaction()"
+          style="width: 90%"
+        >
+          Оновити
+        </el-button>
+      </el-col>
+    </el-row>
+  </div>
 
   <el-table
     :data="filterTable"
@@ -119,9 +124,7 @@
   >
     <el-table-column type="expand">
       <template #default="props">
-        <div style="padding: 5px; background: #c6e2ff69">
-          <div style="margin: 0 0 5px 10px"></div>
-
+        <div>
           <el-table
             :data="props.row.listPunkt"
             v-if="props.row.listPunkt.length"
@@ -139,7 +142,7 @@
                   <el-table
                     :data="scope.row.listTransaction"
                     :default-sort="{ prop: 'date', order: 'ascending' }"
-                    style="margin-left: 4%; background: #124578; width: 95%"
+                    style="margin-left: 2%; background: #124578; width: 95%"
                     stripe
                     border
                   >
@@ -148,7 +151,7 @@
                       v-if="setting.displaySize == 'large'"
                     />
 
-                    <el-table-column label="врахувати" min-width="15">
+                    <el-table-column label="врахувати" min-width="20">
                       <template #default="transaction">
                         <el-switch
                           :modelValue="transaction.row.isLoad == 1"
@@ -164,7 +167,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="date" sortable min-width="25">
+                    <el-table-column prop="date" sortable min-width="20">
                       <template #header>
                         <el-icon><Calendar /></el-icon>
                         <span style="margin-left: 10px">Дата</span>
@@ -254,7 +257,11 @@ const filterTable = computed(() => {
         return {
           ...punkt,
           listTransaction: punkt.listTransaction.filter(
-            (tran) => tran.id_M != 40
+            (tran) =>
+              tran.id_M != 40 &&
+              ((isLoadReport.value == "new" && tran.isLoadReport == 0) ||
+                isLoadReport.value == "all" ||
+                (isLoadReport.value == "loaded" && tran.isLoadReport == 1))
           ),
         };
       }),
@@ -323,7 +330,6 @@ const getETransaction = async () => {
       _date_l: formatDate(valueDate.value[0], "eng"),
       _date_r: formatDate(valueDate.value[1], "eng"),
       _isPeriod: isPeriod.value ? 1 : 0,
-      _isLoadReport: isLoadReport.value ? 1 : 0,
     });
 
     setting.value.tables["tabEconomist"].data = response.data.ar_data;
@@ -475,9 +481,22 @@ onActivated(async () => {
 
 <style>
 .expand-content {
-  padding: 20px;
+  padding: 10px;
   background: #4caf5045;
   border-radius: 25px;
-  margin: 0px 10px;
+  margin: 0px 5px;
+}
+
+.el-row {
+  margin-bottom: 10px;
+}
+
+.el-row:last-child {
+  margin-bottom: 0;
+}
+
+.card {
+  border: 1px solid var(--el-border-color);
+  padding: 20px;
 }
 </style>
