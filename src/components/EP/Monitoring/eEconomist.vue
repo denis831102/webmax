@@ -501,6 +501,6 @@ onActivated(async () => {
 
 .card {
   margin-left: 0px;
-  box-shadow: inset -1px 0px 17px 1px #76c876;
+  box-shadow: inset -1px 0px 17px 1px var(--el-border-color-light);
 }
 </style>

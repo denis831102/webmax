@@ -26,6 +26,8 @@
   --el-bg-color-page: #f4fff7; /* фон всей страницы */
   --el-bg-color-overlay: #d6f5d6; /* фон модалок/меню */
 
+  --el-switch-off-color: #a4bca5;
+
   /* Текст */
   --el-text-color-primary: #003300;
   --el-text-color-regular: #1a4d1a;

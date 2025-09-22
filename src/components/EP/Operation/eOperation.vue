@@ -166,7 +166,7 @@
             type="primary"
             :icon="DocumentAdd"
             @click="newTransaction()"
-            >Нова операція
+            >Нова {{ setting.displaySize == "large" ? "операція" : "" }}
           </el-button>
 
           <el-button
@@ -238,12 +238,15 @@
 
         <el-table-column type="index" v-if="setting.displaySize == 'large'" />
 
-        <el-table-column min-width="15" prop="isLoadReport">
+        <el-table-column min-width="23">
           <template #header>
             <span>в 1С</span>
           </template>
           <template #default="scope">
-            <el-icon size="20" v-if="scope.row.isLoadReport"
+            <el-icon
+              size="20"
+              v-if="scope.row.isLoadReport"
+              color="var(--el-border-color)"
               ><CircleCheckFilled
             /></el-icon>
             <div v-else></div>
