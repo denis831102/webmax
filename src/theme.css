@@ -12,6 +12,10 @@
   --app-text: #ffffff;
 }
 
+.el-switch {
+  --el-switch-off-color: #a1aea1;
+}
+
 /* 🟢 Корпоративная (зелёная) */
 [data-theme="corporate"] {
   /* Основные цвета */
@@ -25,8 +29,6 @@
   --el-bg-color: #eaffea; /* общий фон компонентов */
   --el-bg-color-page: #f4fff7; /* фон всей страницы */
   --el-bg-color-overlay: #d6f5d6; /* фон модалок/меню */
-
-  --el-switch-off-color: #a4bca5;
 
   /* Текст */
   --el-text-color-primary: #003300;
