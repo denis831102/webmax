@@ -238,6 +238,18 @@
 
         <el-table-column type="index" v-if="setting.displaySize == 'large'" />
 
+        <el-table-column min-width="15" prop="isLoadReport">
+          <template #header>
+            <span>в 1С</span>
+          </template>
+          <template #default="scope">
+            <el-icon size="20" v-if="scope.row.isLoadReport"
+              ><CircleCheckFilled
+            /></el-icon>
+            <div v-else></div>
+          </template>
+        </el-table-column>
+
         <el-table-column prop="date" min-width="45">
           <template #header>
             <el-icon><Calendar /></el-icon>
