@@ -250,23 +250,27 @@ watch(
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabEconomist"].data;
 
-  return _tabl.map((user) => {
-    return {
-      ...user,
-      listPunkt: user.listPunkt.map((punkt) => {
-        return {
-          ...punkt,
-          listTransaction: punkt.listTransaction.filter(
-            (tran) =>
-              tran.id_M != 40 &&
-              ((isLoadReport.value == "new" && tran.isLoadReport == 0) ||
-                isLoadReport.value == "all" ||
-                (isLoadReport.value == "loaded" && tran.isLoadReport == 1))
-          ),
-        };
-      }),
-    };
-  });
+  return _tabl
+    .map((user) => {
+      return {
+        ...user,
+        listPunkt: user.listPunkt
+          .map((punkt) => {
+            return {
+              ...punkt,
+              listTransaction: punkt.listTransaction.filter(
+                (tran) =>
+                  tran.id_M != 40 &&
+                  ((isLoadReport.value == "new" && tran.isLoadReport == 0) ||
+                    isLoadReport.value == "all" ||
+                    (isLoadReport.value == "loaded" && tran.isLoadReport == 1))
+              ),
+            };
+          })
+          .filter((el) => el.listTransaction.length),
+      };
+    })
+    .filter((el) => el.listPunkt.length);
 });
 
 const getVidOperation = async () => {
@@ -496,7 +500,7 @@ onActivated(async () => {
 }
 
 .card {
-  border: 1px solid var(--el-border-color);
-  padding: 20px;
+  margin-left: 0px;
+  box-shadow: inset -1px 0px 17px 1px #76c876;
 }
 </style>
