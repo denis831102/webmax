@@ -20,6 +20,7 @@
                   <eMenu mode="horizontal" style="margin: -15px 0 10px 0" />
                 </el-col>
               </el-row>
+
               <el-row
                 :gutter="20"
                 style="text-align: center; margin: 8px 0 0 0"
@@ -35,7 +36,7 @@
               </el-row>
             </el-header>
 
-            <el-main style="margin: 15px 0 10px 0">
+            <el-main style="margin: 25px 0 10px 0">
               <keep-alive> <component :is="curComponent" /> </keep-alive>
             </el-main>
 

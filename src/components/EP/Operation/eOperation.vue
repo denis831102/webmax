@@ -25,7 +25,7 @@
         </span>
       </template>
 
-      <el-space :size="10" style="margin: -20px 0 10px 0">
+      <el-space>
         <el-card v-if="setting.displaySize == 'large'">
           <el-space :size="0" style="padding: 0px 0px">
             <div class="statistic-card">
@@ -166,7 +166,7 @@
             type="primary"
             :icon="DocumentAdd"
             @click="newTransaction()"
-            >Нова {{ setting.displaySize == "large" ? "операція" : "" }}
+            >Нова операція
           </el-button>
 
           <el-button
@@ -191,8 +191,9 @@
       </el-space>
 
       <!-- <el-scrollbar height="600px"> -->
+
       <el-table :data="filterTable" v-loading="loading" stripe>
-        <el-table-column type="expand" min-width="10">
+        <el-table-column type="expand" min-width="15">
           <template #default="props">
             <div class="expand-content">
               <el-tag type="success" style="margin: -10px 0 10px 0px">
@@ -238,7 +239,7 @@
 
         <el-table-column type="index" v-if="setting.displaySize == 'large'" />
 
-        <el-table-column min-width="23">
+        <el-table-column min-width="15" v-if="setting.displaySize == 'large'">
           <template #header>
             <span>в 1С</span>
           </template>
@@ -249,17 +250,19 @@
               color="var(--el-border-color)"
               ><CircleCheckFilled
             /></el-icon>
-            <div v-else></div>
           </template>
         </el-table-column>
 
-        <el-table-column prop="date" min-width="45">
+        <el-table-column
+          prop="date"
+          :min-width="setting.displaySize == 'large' ? 45 : 60"
+          wrap
+        >
           <template #header>
-            <el-icon><Calendar /></el-icon>
             <span style="margin-left: 10px">Дата</span>
           </template>
           <template #default="scope">
-            <div style="display: flex; align-items: center; margin-left: 10px">
+            <div>
               <el-tooltip placement="top">
                 <template #content>
                   id_T : {{ scope.row.id_T }}<br />
@@ -267,10 +270,22 @@
                   час створення : {{ scope.row.time }}<br />
                   автор : {{ scope.row.PIB }}
                 </template>
-                {{ scope.row.date }}
-                {{
-                  setting.displaySize == "large" ? ` - ${scope.row.time}` : ""
-                }}
+                <div>
+                  <el-icon
+                    v-if="
+                      scope.row.isLoadReport && setting.displaySize == 'small'
+                    "
+                    size="20"
+                    color="var(--el-border-color)"
+                    ><CircleCheckFilled
+                  /></el-icon>
+                  {{ scope.row.date }}
+                  {{
+                    setting.displaySize == "large"
+                      ? ` - ${scope.row.time}`
+                      : `\n ${scope.row.time}`
+                  }}
+                </div>
               </el-tooltip>
             </div>
           </template>
@@ -280,8 +295,8 @@
 
         <el-table-column label="Сума" prop="suma" min-width="40">
           <template #default="scope">
-            <div style="display: flex; align-items: center">
-              <span style="margin-left: 10px"
+            <div style="text-align: center">
+              <span
                 >{{
                   parseFloat(scope.row.suma).toLocaleString("ua")
                 }}
@@ -291,7 +306,10 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Дії" min-width="60">
+        <el-table-column
+          label="Дії"
+          :min-width="setting.displaySize == 'large' ? 45 : 40"
+        >
           <template #default="scope">
             <el-button-group
               class="ml-4"
@@ -350,6 +368,7 @@
           </template>
         </el-table-column>
       </el-table>
+
       <!-- </el-scrollbar> -->
 
       <el-pagination
@@ -770,10 +789,10 @@ onUnmounted(() => {
 
 <style scoped>
 .demo-tabs > .el-tabs__content {
-  padding: 32px;
+  /* padding: 32px; */
   color: #6b778c;
   font-size: 32px;
-  font-weight: 600;
+  /* font-weight: 600; */
 }
 .demo-tabs .custom-tabs-label .el-icon {
   vertical-align: middle;
@@ -841,5 +860,36 @@ onUnmounted(() => {
   background: #4caf5045;
   border-radius: 25px;
   margin: 0px 10px;
+}
+
+.el-table {
+  margin: 10px 0px 0px 0px;
+}
+
+@media (max-width: 768px) {
+  .el-button {
+    width: 100% !important;
+    margin-bottom: 2px;
+  }
+  .el-input,
+  .el-date-picker {
+    width: 100% !important;
+  }
+
+  .el-space {
+    margin: -20px 40px 10px 40px;
+  }
+
+  .el-table {
+    font-size: 9pt;
+    /* font-weight: normal; */
+    text-align: left;
+    line-height: 1.2;
+    padding: 0;
+  }
+
+  .el-tab-pane {
+    margin: 0px -30px 0px -30px;
+  }
 }
 </style>

@@ -20,7 +20,7 @@
       </template>
 
       <el-row :gutter="20" style="margin: 0 0 20px 10px">
-        <el-space :size="10" class="card">
+        <el-space :size="10" :class="{ card: setting.displaySize == 'large' }">
           <el-switch v-model="isFilter" @change="getBits" />
 
           <el-input
@@ -43,18 +43,18 @@
             style="margin-left: 5px; min-width: 100px; width: 120px"
             size="normal"
           />
+
+          <el-button-group>
+            <el-button type="primary" :icon="HomeFilled" @click="getOperation">
+              <el-icon><Connection /></el-icon>
+              <span style="margin-left: 5px">Операції</span>
+            </el-button>
+
+            <el-button type="primary" plain :icon="Refresh" @click="getBits()">
+              Оновити
+            </el-button>
+          </el-button-group>
         </el-space>
-
-        <el-button-group class="card">
-          <el-button type="primary" :icon="HomeFilled" @click="getOperation">
-            <el-icon><Connection /></el-icon>
-            <span style="margin-left: 5px">Операції</span>
-          </el-button>
-
-          <el-button type="primary" plain :icon="Refresh" @click="getBits()">
-            Оновити
-          </el-button>
-        </el-button-group>
       </el-row>
 
       <el-row :gutter="20">
