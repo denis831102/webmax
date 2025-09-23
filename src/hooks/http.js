@@ -176,11 +176,13 @@ HTTP.interceptors.request.use((config) => {
   //   ...config.params,
   //   t: Date.now(), // динамический timestamp на каждый запрос
   // };
+
   //
   // Получаем часы и минуты в формате "HH:MM"
   const time = new Date().toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
+    hour12: false,
   });
 
   config.headers = {
