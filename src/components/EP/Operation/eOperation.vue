@@ -25,7 +25,7 @@
         </span>
       </template>
 
-      <el-space>
+      <el-space style="margin-top: -15px">
         <el-card v-if="setting.displaySize == 'large'">
           <el-space :size="0" style="padding: 0px 0px">
             <div class="statistic-card">
@@ -130,7 +130,13 @@
           </el-row>
         </el-card>
 
-        <el-button-group>
+        <!-- <el-space direction="vertical">
+             <el-button-group> 
+        -->
+        <component
+          :is="setting.displaySize == 'large' ? ElSpace : ElButtonGroup"
+          v-bind="{ direction: 'vertical' }"
+        >
           <el-button
             v-if="setting.displaySize == 'small'"
             style="width: 110px"
@@ -165,6 +171,7 @@
           <el-button
             type="primary"
             :icon="DocumentAdd"
+            :style="{ width: setting.displaySize == 'large' ? '150px' : '' }"
             @click="newTransaction()"
             >Нова операція
           </el-button>
@@ -172,7 +179,7 @@
           <el-button
             type="info"
             :icon="Sort"
-            style="width: 110px"
+            :style="{ width: setting.displaySize == 'large' ? '150px' : '' }"
             @click="createPeresort()"
           >
             Пересорт
@@ -182,12 +189,12 @@
             type="primary"
             plain
             :icon="Refresh"
-            style="width: 110px"
+            :style="{ width: setting.displaySize == 'large' ? '150px' : '' }"
             @click="getTransaction()"
           >
             Оновити
           </el-button>
-        </el-button-group>
+        </component>
       </el-space>
 
       <!-- <el-scrollbar height="600px"> -->
@@ -414,6 +421,8 @@ import {
   ElSwitch,
   ElDatePicker,
   ElInput,
+  ElSpace,
+  ElButtonGroup,
 } from "element-plus";
 import eDialog_Operation from "@/components/EP/Operation/eDialog_Operation";
 import eDialog_Sort from "@/components/EP/Operation/eDialog_Sort";
@@ -863,12 +872,12 @@ onUnmounted(() => {
 }
 
 .el-table {
-  margin: 10px 0px 0px 0px;
+  margin: 5px 0px 0px 0px;
 }
 
 @media (max-width: 768px) {
   .el-button {
-    width: 100% !important;
+    width: 50% !important;
     margin-bottom: 2px;
   }
   .el-input,
@@ -877,7 +886,7 @@ onUnmounted(() => {
   }
 
   .el-space {
-    margin: -20px 40px 10px 40px;
+    margin: -20px 10px 10px 10px;
   }
 
   .el-table {
@@ -886,6 +895,7 @@ onUnmounted(() => {
     text-align: left;
     line-height: 1.2;
     padding: 0;
+    margin-top: 0px;
   }
 
   .el-tab-pane {
