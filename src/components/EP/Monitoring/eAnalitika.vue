@@ -73,15 +73,15 @@
         </el-col>
 
         <!-- Виводити/невиводити "0" номенклатури -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="4">
-          <el-radio-group>
-            <el-radio-button value="allMat" label="+0 Матеріал " />
-            <el-radio-button value="withoutZero" label="-0" />
+        <el-col :xs="24" :sm="12" :md="8" :lg="5">
+          <el-radio-group v-model="withoutZeroMat">
+            <el-radio-button value="allMat" label="Всі позиції " />
+            <el-radio-button value="withoutZero" label="Наявні" />
           </el-radio-group>
         </el-col>
 
         <!-- Завантажити -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="5">
+        <el-col :xs="24" :sm="12" :md="8" :lg="4">
           <input
             type="file"
             ref="fileInput"
@@ -360,6 +360,7 @@ const propsCascader = { multiple: true, expandTrigger: "hover" };
 const isFilter = ref(false);
 const curDate = ref(new Date());
 const fileInput = ref(null);
+const withoutZeroMat = ref("withoutZero");
 
 watch(checkManeger, (val) => {
   if (val.length === 0) {
@@ -375,17 +376,25 @@ watch(checkManeger, (val) => {
 
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabAnalitika"].data;
-  return _tabl.map((user) => {
-    return {
-      ...user,
-      listKateg: user.listKateg.map((kateg) => {
-        return {
-          ...kateg,
-          listMaterial: kateg.listMaterial.filter((mater) => mater.count != 0),
-        };
-      }),
-    };
-  });
+  return _tabl
+    .map((user) => {
+      return {
+        ...user,
+        listKateg: user.listKateg
+          .map((kateg) => {
+            return {
+              ...kateg,
+              listMaterial: kateg.listMaterial.filter(
+                (mater) =>
+                  (withoutZeroMat.value == "withoutZero" && mater.count != 0) ||
+                  withoutZeroMat.value == "allMat"
+              ),
+            };
+          })
+          .filter((el) => el.listMaterial.length),
+      };
+    })
+    .filter((el) => el.listKateg.length);
 });
 
 const formatDate = (valDate, mode = "ukr") => {
