@@ -207,7 +207,6 @@
                 :data="props.row.listMaterial"
                 border="true"
                 style="width: 100%"
-                show-summary
               >
                 <el-table-column
                   type="index"
@@ -223,7 +222,7 @@
                 />
 
                 <!-- частина -->
-                <el-table-column
+                <!-- <el-table-column
                   label="частина"
                   width="150"
                   prop="percent"
@@ -245,13 +244,14 @@
                       {{ props.row.unit }}
                     </div>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
 
                 <!-- кількість -->
                 <el-table-column
                   label="кількість"
                   prop="count"
                   sortable
+                  min-width="20"
                   v-if="setting.displaySize == 'large'"
                 >
                   <template #default="props">
@@ -284,7 +284,11 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column label="відсоток" prop="percent">
+                      <el-table-column
+                        label="відсоток"
+                        prop="percent"
+                        min-width="40"
+                      >
                         <template #default="props">
                           <el-progress
                             :text-inside="true"
@@ -329,14 +333,14 @@ const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 const getSettingUser = computed(() => store.getters.getSettingUser);
-const colors = [
-  { color: "#ff55ff", percentage: 10 },
-  { color: "#f56c6c", percentage: 20 },
-  { color: "#e6a23c", percentage: 40 },
-  { color: "#5cb87a", percentage: 60 },
-  { color: "#1989fa", percentage: 80 },
-  { color: "#6f7ad3", percentage: 100 },
-];
+// const colors = [
+//   { color: "#ff55ff", percentage: 10 },
+//   { color: "#f56c6c", percentage: 20 },
+//   { color: "#e6a23c", percentage: 40 },
+//   { color: "#5cb87a", percentage: 60 },
+//   { color: "#1989fa", percentage: 80 },
+//   { color: "#6f7ad3", percentage: 100 },
+// ];
 const checkAll = ref(false);
 const indeterminate = ref(false);
 const checkManeger = ref([]);
