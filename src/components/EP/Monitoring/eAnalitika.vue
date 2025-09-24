@@ -207,31 +207,52 @@
             <template #default="props">
               <h3 style="margin: 0px 0 10px 10px">
                 <el-icon><PieChart /></el-icon>
-                <span style="margin-left: 5px">Залишки по категоріїї</span>
+                <span
+                  style="margin-left: 5px"
+                  v-if="setting.displaySize == 'large'"
+                  >Залишки по категоріїї</span
+                >
                 <el-check-tag type="primary" style="margin-left: 10px">
                   {{ props.row.name_K }}
                 </el-check-tag>
               </h3>
-              <el-table
-                :data="props.row.listMaterial"
-                border="true"
-                style="width: 100%"
-              >
-                <el-table-column
-                  type="index"
-                  width="60"
-                  v-if="setting.displaySize == 'large'"
-                />
+              <div class="expand-content">
+                <el-table
+                  :data="props.row.listMaterial"
+                  border="true"
+                  id="listKateg"
+                >
+                  <el-table-column
+                    type="index"
+                    width="60"
+                    v-if="setting.displaySize == 'large'"
+                  />
 
-                <!-- номенклатура -->
-                <el-table-column
-                  label="номенклатура"
-                  prop="name_M"
-                  min-width="20"
-                />
+                  <!-- номенклатура -->
+                  <el-table-column label="номенклатура" min-width="20">
+                    <template #default="elements">
+                      <div
+                        style="padding: 5px 0 5px 10px; background: #c6e2ff69"
+                      >
+                        {{ elements.row.name_M }}<BR />
+                        <B>
+                          {{
+                            setting.displaySize == "small"
+                              ? [
+                                  parseFloat(elements.row.count).toLocaleString(
+                                    "ru"
+                                  ),
+                                  elements.row.unit,
+                                ].join(" ")
+                              : ""
+                          }}
+                        </B>
+                      </div>
+                    </template>
+                  </el-table-column>
 
-                <!-- частина -->
-                <!-- <el-table-column
+                  <!-- частина -->
+                  <!-- <el-table-column
                   label="частина"
                   width="150"
                   prop="percent"
@@ -255,61 +276,67 @@
                   </template>
                 </el-table-column> -->
 
-                <!-- кількість -->
-                <el-table-column
-                  label="кількість"
-                  prop="count"
-                  sortable
-                  min-width="20"
-                  v-if="setting.displaySize == 'large'"
-                >
-                  <template #default="props">
-                    <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
-                      {{ parseFloat(props.row.count).toLocaleString("ru") }}
-                      {{ props.row.unit }}
-                    </div>
-                  </template>
-                </el-table-column>
-
-                <!-- детальніше -->
-                <el-table-column label="детальніше">
-                  <template #default="props">
-                    <el-table :data="props.row.listPunkt">
-                      <el-table-column label="пункт" prop="name_P" sortable />
-
-                      <el-table-column label="кількість" prop="count" sortable>
-                        <template #default="props">
-                          <div
-                            style="
-                              padding: 2px 5px 2px 10px;
-                              background: #c6e2ff69;
-                            "
-                          >
-                            {{
-                              parseFloat(props.row.count).toLocaleString("ru")
-                            }}
-                            {{ props.row.unit }}
-                          </div>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column
-                        label="відсоток"
-                        prop="percent"
-                        min-width="40"
+                  <!-- кількість -->
+                  <el-table-column
+                    label="кількість"
+                    prop="count"
+                    sortable
+                    min-width="20"
+                    v-if="setting.displaySize == 'large'"
+                  >
+                    <template #default="props">
+                      <div
+                        style="padding: 5px 0 5px 10px; background: #c6e2ff69"
                       >
-                        <template #default="props">
-                          <el-progress
-                            :text-inside="true"
-                            :stroke-width="26"
-                            :percentage="props.row.percent"
-                          />
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </template>
-                </el-table-column>
-              </el-table>
+                        {{ parseFloat(props.row.count).toLocaleString("ru") }}
+                        {{ props.row.unit }}
+                      </div>
+                    </template>
+                  </el-table-column>
+
+                  <!-- детальніше -->
+                  <el-table-column label="детальніше">
+                    <template #default="props">
+                      <el-table :data="props.row.listPunkt">
+                        <el-table-column>
+                          <template #header> </template>
+                          <template #default="props">
+                            {{ props.row.name_P }}
+                          </template>
+                        </el-table-column>
+
+                        <el-table-column>
+                          <template #header> </template>
+                          <template #default="props">
+                            <div
+                              style="
+                                padding: 2px 5px 2px 10px;
+                                background: #c6e2ff69;
+                              "
+                            >
+                              {{
+                                parseFloat(props.row.count).toLocaleString("ru")
+                              }}
+                              {{ props.row.unit }}
+                            </div>
+                          </template>
+                        </el-table-column>
+
+                        <el-table-column min-width="50">
+                          <template #header> </template>
+                          <template #default="props">
+                            <el-progress
+                              :text-inside="true"
+                              :stroke-width="26"
+                              :percentage="props.row.percent"
+                            />
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
             </template>
           </el-table-column>
 
@@ -553,7 +580,7 @@ onActivated(async () => {
 });
 </script>
 
-<style>
+<style scoped>
 .demo-progress .el-progress--line {
   margin-bottom: 15px;
   max-width: 600px;
@@ -573,21 +600,18 @@ onActivated(async () => {
   .el-button {
     margin: 2px 0 !important;
   }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
   .el-table {
     font-size: 10pt;
   }
+  #listKateg {
+    padding: 5px 20px 5px -20px;
+  }
 }
 
-@media (max-width: 768px) {
-  .el-table {
-    font-size: 10pt;
-  }
-  /* .el-radio-group {
-    margin: 2px 0 2px 50%;
-    transform: translateX(-50%);
-  } */
+.expand-content {
+  padding: 5px;
+  background: #4caf5045;
+  border-radius: 25px;
+  margin: 0px;
 }
 </style>
