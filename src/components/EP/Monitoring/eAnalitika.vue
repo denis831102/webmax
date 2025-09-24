@@ -3,7 +3,7 @@
     <div class="card">
       <el-row :gutter="10" wrap>
         <!-- Менеджер -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="5">
+        <el-col :xs="24" :sm="12" :md="8" :lg="4">
           <el-select
             v-model="checkManeger"
             multiple
@@ -34,7 +34,7 @@
         </el-col>
 
         <!-- Матеріал -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="5">
+        <el-col :xs="24" :sm="12" :md="8" :lg="4">
           <el-cascader
             v-model="checkMaterial"
             :options="options"
@@ -49,7 +49,7 @@
         </el-col>
 
         <!-- Фільтр (перемикач) -->
-        <el-col :xs="4" :sm="12" :md="6" :lg="2">
+        <el-col :xs="4" :sm="12" :md="5" :lg="1">
           <el-switch
             v-model="isFilter"
             @change="getMonitoring"
@@ -58,7 +58,7 @@
         </el-col>
 
         <!-- Дата -->
-        <el-col :xs="20" :sm="12" :md="8" :lg="4">
+        <el-col :xs="20" :sm="12" :md="8" :lg="3">
           <el-date-picker
             v-model="curDate"
             type="date"
@@ -70,6 +70,14 @@
             size="normal"
             style="width: 100%"
           />
+        </el-col>
+
+        <!-- Виводити/невиводити "0" номенклатури -->
+        <el-col :xs="24" :sm="12" :md="8" :lg="4">
+          <el-radio-group>
+            <el-radio-button value="allMat" label="+0 Матеріал " />
+            <el-radio-button value="withoutZero" label="-0" />
+          </el-radio-group>
         </el-col>
 
         <!-- Завантажити -->
@@ -92,7 +100,7 @@
         </el-col>
 
         <!-- Оновити -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="3">
+        <el-col :xs="24" :sm="24" :md="8" :lg="3">
           <el-button
             type="primary"
             plain
@@ -366,8 +374,18 @@ watch(checkManeger, (val) => {
 });
 
 const filterTable = computed(() => {
-  const _tabl = setting.value.tables["tabAnalitika"];
-  return _tabl.data;
+  const _tabl = setting.value.tables["tabAnalitika"].data;
+  return _tabl.map((user) => {
+    return {
+      ...user,
+      listKateg: user.listKateg.map((kateg) => {
+        return {
+          ...kateg,
+          listMaterial: kateg.listMaterial.filter((mater) => mater.count != 0),
+        };
+      }),
+    };
+  });
 });
 
 const formatDate = (valDate, mode = "ukr") => {
@@ -542,8 +560,15 @@ onActivated(async () => {
   .el-select,
   .el-cascader,
   .el-date-picker,
+  .el-radio-group,
   .el-button {
-    margin: 5px 0 !important;
+    margin: 2px 0 !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .el-table {
+    font-size: 10pt;
   }
 }
 
