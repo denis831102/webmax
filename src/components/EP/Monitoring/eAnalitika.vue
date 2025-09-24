@@ -217,11 +217,7 @@
                 </el-check-tag>
               </h3>
               <div class="expand-content">
-                <el-table
-                  :data="props.row.listMaterial"
-                  border="true"
-                  id="listKateg"
-                >
+                <el-table :data="props.row.listMaterial" border="true">
                   <el-table-column
                     type="index"
                     width="60"
@@ -602,9 +598,6 @@ onActivated(async () => {
   }
   .el-table {
     font-size: 10pt;
-  }
-  #listKateg {
-    padding: 5px 20px 5px -20px;
   }
 }
 
