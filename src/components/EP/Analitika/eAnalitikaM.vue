@@ -1,7 +1,8 @@
 <template>
   <el-space :size="10" style="margin: 0 0 10px 0">
-    <el-card>
-      <el-space :size="10" wrap>
+    <el-row :gutter="10" wrap>
+      <!-- Матеріал -->
+      <el-col :span="3">
         <el-cascader
           v-model="checkMaterial"
           :options="options"
@@ -13,41 +14,40 @@
           style="width: 240px"
           @change="getMonitoring"
         />
+      </el-col>
 
-        <el-col :span="3">
-          <el-switch v-model="isFilter" @change="getMonitoring" />
-        </el-col>
+      <!-- Фільтр (перемикач) -->
+      <el-col :span="3">
+        <el-switch v-model="isFilter" @change="getMonitoring" />
+      </el-col>
 
-        <el-col :span="3">
-          <el-date-picker
-            v-model="curDate"
-            type="date"
-            format="DD.MM.YYYY"
-            :start-placeholder="getDate"
-            :end-placeholder="getDate"
-            :disabled="!isFilter"
-            @change="getMonitoring"
-            size="normal"
-            style="margin-left: -10px"
-          />
-        </el-col>
+      <!-- Дата -->
+      <el-col :span="3">
+        <el-date-picker
+          v-model="curDate"
+          type="date"
+          format="DD.MM.YYYY"
+          :start-placeholder="getDate"
+          :end-placeholder="getDate"
+          :disabled="!isFilter"
+          @change="getMonitoring"
+          size="normal"
+          style="margin-left: -10px"
+        />
+      </el-col>
 
-        <el-button-group>
-          <el-button type="success" :icon="Tickets" @click="loadReport()">
-            Формувати звіт
-          </el-button>
-
-          <el-button
-            type="primary"
-            plain
-            :icon="Refresh"
-            @click="getMonitoring()"
-          >
-            Оновити
-          </el-button>
-        </el-button-group>
-      </el-space>
-    </el-card>
+      <!-- Оновити -->
+      <el-col :span="3">
+        <el-button
+          type="primary"
+          plain
+          :icon="Refresh"
+          @click="getMonitoring()"
+        >
+          Оновити
+        </el-button>
+      </el-col>
+    </el-row>
   </el-space>
 
   <el-table
@@ -79,7 +79,6 @@
                 :data="props.row.listMaterial"
                 border="true"
                 style="margin-left: 2%; width: 98%"
-                show-summary
               >
                 <el-table-column
                   type="index"
@@ -92,29 +91,6 @@
                   prop="name_M"
                   width="150"
                 />
-
-                <el-table-column
-                  label="частина"
-                  width="150"
-                  prop="percent"
-                  sortable
-                >
-                  <template #default="props">
-                    <el-progress
-                      type="dashboard"
-                      :percentage="props.row.percent"
-                      :color="colors"
-                      :stroke-width="15"
-                    />
-                    <div
-                      v-if="setting.displaySize == 'small'"
-                      style="padding: 5px 0 5px 10px; background: #c6e2ff69"
-                    >
-                      {{ parseFloat(props.row.count).toLocaleString("ru") }}
-                      {{ props.row.unit }}
-                    </div>
-                  </template>
-                </el-table-column>
 
                 <el-table-column
                   label="кількість"
@@ -192,24 +168,14 @@
 <script setup>
 import { inject, ref, computed, onActivated } from "vue";
 import { useStore } from "vuex";
-import { Refresh, Tickets } from "@element-plus/icons-vue";
+import { Refresh } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import { HTTP, loadFile } from "@/hooks/http";
+import { HTTP } from "@/hooks/http";
 
 const setting = inject("setting");
 const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 const getSettingUser = computed(() => store.getters.getSettingUser);
-const colors = [
-  { color: "#ff55ff", percentage: 10 },
-  { color: "#f56c6c", percentage: 20 },
-  { color: "#e6a23c", percentage: 40 },
-  { color: "#5cb87a", percentage: 60 },
-  { color: "#1989fa", percentage: 80 },
-  { color: "#6f7ad3", percentage: 100 },
-];
-
-const checkManeger = ref([]);
 const checkMaterial = ref([]);
 const options = ref([]);
 const loading = ref(true);
@@ -218,8 +184,24 @@ const isFilter = ref(false);
 const curDate = ref(new Date());
 
 const filterTable = computed(() => {
-  const _tabl = setting.value.tables["tabAnalitikaM"];
-  return _tabl.data;
+  const _tabl = setting.value.tables["tabAnalitikaM"].data;
+  return _tabl
+    .map((user) => {
+      return {
+        ...user,
+        listKateg: user.listKateg
+          .map((kateg) => {
+            return {
+              ...kateg,
+              listMaterial: kateg.listMaterial.filter(
+                (mater) => mater.count != 0
+              ),
+            };
+          })
+          .filter((el) => el.listMaterial.length),
+      };
+    })
+    .filter((el) => el.listKateg.length);
 });
 
 const formatDate = (valDate, mode = "ukr") => {
@@ -293,32 +275,32 @@ const getKategories = async () => {
   }
 };
 
-const loadReport = async () => {
-  try {
-    const response = await HTTP.post("", {
-      _method: "loadReport",
-      _id_U: getCurUser.value.id,
-      _nameReport: "analitikaResurs",
-      _checkManeger: checkManeger.value,
-      _checkMaterial: checkMaterial.value,
-      _date: isFilter.value ? formatDate(curDate.value, "eng") : "",
-    });
+// const loadReport = async () => {
+//   try {
+//     const response = await HTTP.post("", {
+//       _method: "loadReport",
+//       _id_U: getCurUser.value.id,
+//       _nameReport: "analitikaResurs",
+//       _checkManeger: checkManeger.value,
+//       _checkMaterial: checkMaterial.value,
+//       _date: isFilter.value ? formatDate(curDate.value, "eng") : "",
+//     });
 
-    if (response.data.isSuccesfull) {
-      loadFile(
-        response.data.fileName,
-        response.data.content,
-        response.data.mime
-      );
+//     if (response.data.isSuccesfull) {
+//       loadFile(
+//         response.data.fileName,
+//         response.data.content,
+//         response.data.mime
+//       );
 
-      ElMessage.success("Звіт сформовано");
-    } else {
-      ElMessage.error("Звіт не сформовано");
-    }
-  } catch (e) {
-    ElMessage("Помилка завантаження звіту...");
-  }
-};
+//       ElMessage.success("Звіт сформовано");
+//     } else {
+//       ElMessage.error("Звіт не сформовано");
+//     }
+//   } catch (e) {
+//     ElMessage("Помилка завантаження звіту...");
+//   }
+// };
 
 onActivated(async () => {
   await getKategories();
