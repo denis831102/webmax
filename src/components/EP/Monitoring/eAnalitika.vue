@@ -94,6 +94,7 @@
             :icon="Tickets"
             @click="openFile"
             style="width: 100%"
+            :disabled="!+getCurUser.listAccess[11]"
           >
             Завантажити аналітику
           </el-button>
