@@ -83,7 +83,7 @@
           </el-menu-item>
           <el-menu-item index="2-3">
             <el-icon><EditPen /></el-icon>
-            Звіт по номенклатурі на ВП
+            Загальні залишки на ВП
           </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
