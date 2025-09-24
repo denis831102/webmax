@@ -1,8 +1,9 @@
 <template>
-  <el-space :size="10" style="margin: 0 0 10px 0">
-    <el-card>
-      <el-space :size="10" wrap>
-        <el-col :span="4">
+  <el-space style="margin: 0 0 10px 0">
+    <div class="card">
+      <el-row :gutter="10" wrap>
+        <!-- Менеджер -->
+        <el-col :xs="24" :sm="12" :md="8" :lg="5">
           <el-select
             v-model="checkManeger"
             multiple
@@ -11,7 +12,7 @@
             placeholder="оберіть менеджера..."
             popper-class="custom-header"
             :max-collapse-tags="1"
-            style="width: 240px"
+            style="width: 100%"
             @change="getMonitoring"
           >
             <template #header>
@@ -32,7 +33,8 @@
           </el-select>
         </el-col>
 
-        <el-col :span="4">
+        <!-- Матеріал -->
+        <el-col :xs="24" :sm="12" :md="8" :lg="5">
           <el-cascader
             v-model="checkMaterial"
             :options="options"
@@ -41,16 +43,22 @@
             collapse-tags
             placeholder="оберіть матеріал..."
             :max-collapse-tags="2"
-            style="width: 240px"
+            style="width: 100%"
             @change="getMonitoring"
           />
         </el-col>
 
-        <el-col :span="4">
-          <el-switch v-model="isFilter" @change="getMonitoring" />
+        <!-- Фільтр (перемикач) -->
+        <el-col :xs="4" :sm="12" :md="6" :lg="2">
+          <el-switch
+            v-model="isFilter"
+            @change="getMonitoring"
+            style="float: right"
+          />
         </el-col>
 
-        <el-col :span="4">
+        <!-- Дата -->
+        <el-col :xs="20" :sm="12" :md="8" :lg="4">
           <el-date-picker
             v-model="curDate"
             type="date"
@@ -60,35 +68,43 @@
             :disabled="!isFilter"
             @change="getMonitoring"
             size="normal"
-            style="margin-left: -10px"
+            style="width: 100%"
           />
         </el-col>
 
-        <el-col :span="4">
+        <!-- Завантажити -->
+        <el-col :xs="24" :sm="12" :md="8" :lg="5">
           <input
             type="file"
             ref="fileInput"
-            @change="onFileSelected"
             style="display: none"
+            @change="onFileSelected"
           />
 
-          <el-button type="success" :icon="Tickets" @click="openFile">
+          <el-button
+            type="success"
+            :icon="Tickets"
+            @click="openFile"
+            style="width: 100%"
+          >
             Завантажити аналітику
           </el-button>
         </el-col>
 
-        <el-col :span="4">
+        <!-- Оновити -->
+        <el-col :xs="24" :sm="12" :md="8" :lg="3">
           <el-button
             type="primary"
             plain
             :icon="Refresh"
+            style="width: 100%"
             @click="getMonitoring()"
           >
             Оновити
           </el-button>
         </el-col>
-      </el-space>
-    </el-card>
+      </el-row>
+    </div>
   </el-space>
 
   <el-card v-if="false">
@@ -190,7 +206,7 @@
               <el-table
                 :data="props.row.listMaterial"
                 border="true"
-                style="margin-left: 2%; width: 98%"
+                style="width: 100%"
                 show-summary
               >
                 <el-table-column
@@ -199,17 +215,20 @@
                   v-if="setting.displaySize == 'large'"
                 />
 
+                <!-- номенклатура -->
                 <el-table-column
                   label="номенклатура"
                   prop="name_M"
-                  width="150"
+                  min-width="20"
                 />
 
+                <!-- частина -->
                 <el-table-column
                   label="частина"
                   width="150"
                   prop="percent"
                   sortable
+                  v-if="setting.displaySize == 'large'"
                 >
                   <template #default="props">
                     <el-progress
@@ -228,9 +247,9 @@
                   </template>
                 </el-table-column>
 
+                <!-- кількість -->
                 <el-table-column
                   label="кількість"
-                  width="150"
                   prop="count"
                   sortable
                   v-if="setting.displaySize == 'large'"
@@ -243,10 +262,8 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column
-                  label="детальніше"
-                  :width="setting.displaySize == 'small' ? 300 : 0"
-                >
+                <!-- детальніше -->
+                <el-table-column label="детальніше">
                   <template #default="props">
                     <el-table :data="props.row.listPunkt">
                       <el-table-column label="пункт" prop="name_P" sortable />
@@ -255,7 +272,7 @@
                         <template #default="props">
                           <div
                             style="
-                              padding: 5px 0 5px 10px;
+                              padding: 2px 5px 2px 10px;
                               background: #c6e2ff69;
                             "
                           >
@@ -515,5 +532,20 @@ onActivated(async () => {
 .custom-header {
   display: flex;
   height: unset;
+}
+
+@media (max-width: 1200px) {
+  .el-select,
+  .el-cascader,
+  .el-date-picker,
+  .el-button {
+    margin: 5px 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .el-table {
+    font-size: 10pt;
+  }
 }
 </style>
