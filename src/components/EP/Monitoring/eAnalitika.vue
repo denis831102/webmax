@@ -3,7 +3,7 @@
     <div class="card">
       <el-row :gutter="10" wrap>
         <!-- Менеджер -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="4">
+        <el-col :xs="12" :sm="12" :md="8" :lg="4">
           <el-select
             v-model="checkManeger"
             multiple
@@ -34,7 +34,7 @@
         </el-col>
 
         <!-- Матеріал -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="4">
+        <el-col :xs="12" :sm="12" :md="8" :lg="4">
           <el-cascader
             v-model="checkMaterial"
             :options="options"
@@ -58,7 +58,7 @@
         </el-col>
 
         <!-- Дата -->
-        <el-col :xs="20" :sm="12" :md="8" :lg="3">
+        <el-col :xs="8" :sm="12" :md="8" :lg="3">
           <el-date-picker
             v-model="curDate"
             type="date"
@@ -73,15 +73,15 @@
         </el-col>
 
         <!-- Виводити/невиводити "0" номенклатури -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="5">
-          <el-radio-group v-model="withoutZeroMat">
-            <el-radio-button value="allMat" label="Всі позиції " />
+        <el-col :xs="12" :sm="12" :md="8" :lg="4">
+          <el-radio-group v-model="withoutZeroMat" style="width: auto">
+            <el-radio-button value="allMat" label="Всі" />
             <el-radio-button value="withoutZero" label="Наявні" />
           </el-radio-group>
         </el-col>
 
         <!-- Завантажити -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="4">
+        <el-col :xs="24" :sm="12" :md="8" :lg="5">
           <input
             type="file"
             ref="fileInput"
@@ -570,7 +570,6 @@ onActivated(async () => {
   .el-select,
   .el-cascader,
   .el-date-picker,
-  .el-radio-group,
   .el-button {
     margin: 2px 0 !important;
   }
@@ -586,5 +585,9 @@ onActivated(async () => {
   .el-table {
     font-size: 10pt;
   }
+  /* .el-radio-group {
+    margin: 2px 0 2px 50%;
+    transform: translateX(-50%);
+  } */
 }
 </style>
