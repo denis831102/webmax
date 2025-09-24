@@ -50,122 +50,26 @@
       </template>
     </el-table-column>
 
-    <el-table-column type="index" />
+    <!-- <el-table-column type="index" /> -->
 
     <el-table-column label="Статус" sortable prop="nameStatus">
       <template #default="scope">
         <div style="display: flex; align-items: center">
-          <el-icon><SetUp /></el-icon>
           <span style="margin-left: 10px">{{ scope.row.nameStatus }}</span>
         </div>
       </template>
     </el-table-column>
 
-    <el-table-column label="доступ до користувачів">
+    <el-table-column
+      v-for="item in nameAccess"
+      :key="item.key"
+      :label="item.label"
+    >
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-switch
-            :modelValue="scope.row.v1 == 1"
-            @change="changeCheck(scope.row, 1)"
-          />
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="доступ до статусів">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-switch
-            :modelValue="scope.row.v2 == 1"
-            @change="changeCheck(scope.row, 2)"
-          />
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="аналітики по ВП">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-switch
-            :modelValue="scope.row.v3 == 1"
-            @change="changeCheck(scope.row, 3)"
-          />
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="щодений звіт">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-switch
-            :modelValue="scope.row.v4 == 1"
-            @change="changeCheck(scope.row, 4)"
-          />
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="зміна транзакцій">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-switch
-            :modelValue="scope.row.v5 == 1"
-            @change="changeCheck(scope.row, 5)"
-          />
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="видалення транзакцій">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-switch
-            :modelValue="scope.row.v6 == 1"
-            @change="changeCheck(scope.row, 6)"
-          />
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="аналітика по коштам">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-switch
-            :modelValue="scope.row.v7 == 1"
-            @change="changeCheck(scope.row, 7)"
-          />
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="перегляд операцій інших менеджерів">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-switch
-            :modelValue="scope.row.v8 == 1"
-            @change="changeCheck(scope.row, 8)"
-          />
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="редагування операцій інших менеджерів">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-switch
-            :modelValue="scope.row.v9 == 1"
-            @change="changeCheck(scope.row, 9)"
-          />
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="редагування операцій без залежності від дати">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-switch
-            :modelValue="scope.row.v10 == 1"
-            @change="changeCheck(scope.row, 10)"
+            :modelValue="scope.row.listAccess[item.key] == 1"
+            @change="changeCheck(scope.row, item.key)"
           />
         </div>
       </template>
@@ -202,6 +106,7 @@ import eDialog_Status from "@/components/EP/Status/eDialog_Status";
 
 const setting = inject("setting");
 const search = ref("");
+const nameAccess = ref([]);
 
 const editStatus = (index, row) => {
   setting.value.tables["tabStatus"].curRow = row;
@@ -233,7 +138,8 @@ const getStatuses = async () => {
       },
     });
 
-    setting.value.tables["tabStatus"].data = response.data;
+    setting.value.tables["tabStatus"].data = response.data.arStatus;
+    nameAccess.value = response.data.nameAccess;
     ElMessage.success("Статуси оновлені");
   } catch (e) {
     ElMessage("Помилка завантаження...");
@@ -262,19 +168,19 @@ const filterTable = computed(() => {
 const changeCheck = async (row, atr) => {
   const _tabl = setting.value.tables["tabStatus"];
   const curObj = _tabl.data.find((el) => el.id == row.id);
-  const curVal = +curObj[`v${atr}`];
+  const curVal = +curObj.listAccess[atr];
 
   const response = await HTTP.get("", {
     params: {
       _method: "setStatus",
       _id: row.id,
-      _atr: `v${atr}`,
+      _atr: atr,
       _val: !curVal,
     },
   });
 
   if (response.data.isSuccesfull) {
-    curObj[`v${atr}`] = !curVal;
+    curObj.listAccess[atr] = !curVal;
   } else {
     ElMessage("Помилка зміни");
   }
