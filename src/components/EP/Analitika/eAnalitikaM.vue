@@ -82,79 +82,87 @@
                   {{ props.row.name_K }}
                 </el-check-tag>
               </h3>
-              <el-table
-                :data="props.row.listMaterial"
-                border="true"
-                style="width: 100%"
-              >
-                <el-table-column
-                  type="index"
-                  width="60"
-                  v-if="setting.displaySize == 'large'"
-                />
-
-                <!-- номенклатура -->
-                <el-table-column
-                  label="номенклатура"
-                  prop="name_M"
-                  min-width="20"
-                />
-
-                <!-- кількість -->
-                <el-table-column
-                  label="кількість"
-                  min-width="20"
-                  prop="count"
-                  sortable
-                  v-if="setting.displaySize == 'large'"
+              <div class="expand-content">
+                <el-table
+                  :data="props.row.listMaterial"
+                  border="true"
+                  style="width: 100%"
                 >
-                  <template #default="props">
-                    <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
-                      {{ parseFloat(props.row.count).toLocaleString("ru") }}
-                      {{ props.row.unit }}
-                    </div>
-                  </template>
-                </el-table-column>
+                  <el-table-column
+                    type="index"
+                    width="60"
+                    v-if="setting.displaySize == 'large'"
+                  />
 
-                <!-- детальніше -->
-                <el-table-column label="детальніше">
-                  <template #default="props">
-                    <el-table :data="props.row.listPunkt">
-                      <el-table-column label="пункт" prop="name_P" sortable />
+                  <!-- номенклатура -->
+                  <el-table-column
+                    label="номенклатура"
+                    prop="name_M"
+                    min-width="20"
+                  />
 
-                      <el-table-column label="кількість" prop="count" sortable>
-                        <template #default="props">
-                          <div
-                            style="
-                              padding: 2px 5px 2px 10px;
-                              background: #c6e2ff69;
-                            "
-                          >
-                            {{
-                              parseFloat(props.row.count).toLocaleString("ru")
-                            }}
-                            {{ props.row.unit }}
-                          </div>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column
-                        label="відсоток"
-                        prop="percent"
-                        min-width="40"
+                  <!-- кількість -->
+                  <el-table-column
+                    label="кількість"
+                    min-width="20"
+                    prop="count"
+                    sortable
+                    v-if="setting.displaySize == 'large'"
+                  >
+                    <template #default="props">
+                      <div
+                        style="padding: 5px 0 5px 10px; background: #c6e2ff69"
                       >
-                        <template #default="props">
-                          <el-progress
-                            :text-inside="true"
-                            :stroke-width="26"
-                            :percentage="props.row.percent"
-                          />
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </template>
-                </el-table-column>
-              </el-table>
+                        {{ parseFloat(props.row.count).toLocaleString("ru") }}
+                        {{ props.row.unit }}
+                      </div>
+                    </template>
+                  </el-table-column>
+
+                  <!-- детальніше -->
+                  <el-table-column label="детальніше">
+                    <template #default="props">
+                      <el-table :data="props.row.listPunkt">
+                        <el-table-column label="пункт" prop="name_P" sortable />
+
+                        <el-table-column
+                          label="кількість"
+                          prop="count"
+                          sortable
+                        >
+                          <template #default="props">
+                            <div
+                              style="
+                                padding: 2px 5px 2px 10px;
+                                background: #c6e2ff69;
+                              "
+                            >
+                              {{
+                                parseFloat(props.row.count).toLocaleString("ru")
+                              }}
+                              {{ props.row.unit }}
+                            </div>
+                          </template>
+                        </el-table-column>
+
+                        <el-table-column
+                          label="відсоток"
+                          prop="percent"
+                          min-width="40"
+                        >
+                          <template #default="props">
+                            <el-progress
+                              :text-inside="true"
+                              :stroke-width="26"
+                              :percentage="props.row.percent"
+                            />
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
             </template>
           </el-table-column>
 
@@ -339,6 +347,13 @@ onActivated(async () => {
   .el-button {
     margin: 2px 0 !important;
   }
+
+  .expand-content {
+    padding: 5px;
+    background: #4caf5045;
+    border-radius: 25px;
+    margin: 0px;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
@@ -349,7 +364,7 @@ onActivated(async () => {
 
 @media (max-width: 768px) {
   .el-table {
-    font-size: 8pt;
+    font-size: 10pt;
   }
 }
 </style>
