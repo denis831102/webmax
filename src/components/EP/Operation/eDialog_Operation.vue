@@ -259,7 +259,7 @@ watchEffect(() => {
     if (getSettingUser.value.colOper == "price") {
       el.summa = (el.count * el.price).toFixed(2);
     } else {
-      el.price = el.count != 0 ? (el.summa / el.count).toFixed(2) : "";
+      el.price = el.count != 0 ? (el.summa / el.count).toFixed(3) : "";
     }
 
     const kasaEl = form.tableOperation.find(
