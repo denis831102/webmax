@@ -1,17 +1,23 @@
 <template>
-  <el-image class="demo-image block" :src="circleUrl" fit="contain" />
+  <div>
+    <transition name="fade-zoom">
+      <el-image v-if="showImage" class="demo-image block" :src="circleUrl" />
+    </transition>
+  </div>
 </template>
 
 <script setup>
-/* eslint-disable */
-import { reactive, toRefs } from "vue";
+import { ref, onMounted } from "vue";
 
-const state = reactive({
-  circleUrl: "https://webmax.lond.lg.ua/php/img/caption_2.jpg",
-  sizeList: ["small", "", "large"],
+const circleUrl = ref("https://webmax.lond.lg.ua/php/img/caption_2.jpg");
+const showImage = ref(false);
+
+onMounted(() => {
+  // задержка для плавного появления
+  setTimeout(() => {
+    showImage.value = true;
+  }, 100);
 });
-
-const { circleUrl, sizeList } = toRefs(state);
 </script>
 
 <style scoped>
@@ -20,20 +26,40 @@ const { circleUrl, sizeList } = toRefs(state);
   text-align: center;
   border-right: solid 1px var(--el-border-color);
   display: inline-block;
-  box-sizing: border-box;
   vertical-align: top;
   align-items: center;
   opacity: 0.8;
-  margin-left: 15%;
+  width: 100%;
+  margin-top: -55px;
 }
-.demo-image.block:last-child {
-  border-right: none;
+
+/* спецэффект */
+.fade-zoom-enter-active {
+  animation: fadeZoomIn 1s ease forwards;
 }
-.demo-image.demonstration {
-  display: block;
-  color: var(--el-text-color-secondary);
-  font-size: 14px;
-  margin-bottom: 20px;
-  align-items: center;
+.fade-zoom-leave-active {
+  animation: fadeZoomOut 0.5s ease forwards;
+}
+
+@keyframes fadeZoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeZoomOut {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
 }
 </style>
