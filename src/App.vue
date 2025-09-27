@@ -66,6 +66,9 @@ onMounted(() => {
 </script>
 
 <style>
+body {
+  overflow: hidden;
+}
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   color: #2c3e50;
@@ -77,12 +80,14 @@ onMounted(() => {
   box-sizing: border-box;
 }
 .hMain {
-  padding: 10px;
+  padding: 3px;
   background: linear-gradient(rgba(0, 0, 255, 0.4), rgba(255, 255, 0, 0.4));
   /* background: #ecf5ff; */
-  box-shadow: 1px 0px 9px 3px #568989;
+  box-shadow: 1px 0px 9px 3px #4c38b6;
   text-align: center;
   font-size: 20pt;
+  text-shadow: 1px -2px 0px #ffeb3b;
+  font-weight: 900;
 }
 
 .version {

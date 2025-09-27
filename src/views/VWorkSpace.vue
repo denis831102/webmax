@@ -4,27 +4,21 @@
     <el-col :span="24">
       <!-- <eMenu mode="horizontal" style="margin-top: -20px" /> -->
 
-      <el-card
-        class="box-card common-layout"
-        style="min-height: 500px; width: 100%; margin-top: -25px"
-      >
-        <el-container class="layout-container-demo" style="min-height: 500px">
+      <el-card style="margin-top: -25px">
+        <el-container>
           <el-aside width="250" v-if="setting.displaySize == 'large'">
             <eMenu mode="vertical" />
           </el-aside>
 
           <el-container>
-            <el-header style="font-size: 12px">
+            <el-header style="margin-top: -15px">
               <el-row :gutter="20">
                 <el-col :span="24">
-                  <eMenu mode="horizontal" style="margin: -15px 0 10px 0" />
+                  <eMenu mode="horizontal" />
                 </el-col>
               </el-row>
 
-              <el-row
-                :gutter="20"
-                style="text-align: center; margin: 8px 0 0 0"
-              >
+              <el-row :gutter="20" style="text-align: center">
                 <el-col :span="19">
                   <el-text v-if="setting.titleTable.length" tag="b"
                     >{{ setting.titleTable }}
@@ -36,13 +30,11 @@
               </el-row>
             </el-header>
 
-            <el-main style="margin: 25px 0 10px 0">
+            <el-main class="box-main">
               <keep-alive> <component :is="curComponent" /> </keep-alive>
             </el-main>
 
-            <el-footer height="10px" style="text-align: center"
-              >R@ED 2025</el-footer
-            >
+            <el-footer class="box-footer">R@ED 2025</el-footer>
           </el-container>
         </el-container>
       </el-card>
@@ -213,29 +205,17 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.layout-container-demo .el-header {
-  position: relative;
-  /* background-color: var(--el-color-primary-light-9); */
-  color: var(--el-text-color-primary);
+.box-main {
+  height: calc(100vh - 198px);
+  overflow: auto;
+  width: 100%;
+  margin-top: calc(2vh + 15px);
+  padding: 0px;
 }
-.layout-container-demo .el-aside {
-  color: var(--el-text-color-primary);
-  /* background: var(--el-color-primary-light-8); */
-}
-.layout-container-demo .el-menu {
-  border-right: none;
-}
-.layout-container-demo .el-main {
-  padding: 0;
-}
-.layout-container-demo .toolbar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  right: 20px;
-}
-.box-card {
-  /* background: #f4f5f700; */
+
+.box-footer {
+  text-align: center;
+  margin-top: 10px;
+  height: 5px;
 }
 </style>
