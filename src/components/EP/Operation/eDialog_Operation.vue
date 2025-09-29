@@ -181,7 +181,12 @@
           >Очистити</el-button
         >
         <el-button @click="closeForm">Вийти</el-button>
-        <el-button type="primary" @click="saveTransaction">Зберегти</el-button>
+        <el-button
+          type="primary"
+          @click="saveTransaction"
+          :disabled="form.isDisableSave"
+          >Зберегти</el-button
+        >
       </div>
     </template>
   </el-dialog>
@@ -246,6 +251,7 @@ const form = reactive({
   delOperation_child: [],
   addOperation_child: [],
   chnOperation_child: [],
+  isDisableSave: false,
 });
 const selOperation = ref([]);
 
@@ -496,6 +502,7 @@ const saveTransaction = () => {
       `Транзакція не збережена. Правити дозволено в поточному місяці `
     );
   } else {
+    form.isDisableSave = true;
     form.isSave ? addTransaction() : changeTransaction();
   }
 };
@@ -617,6 +624,7 @@ const addTransaction = async () => {
         ElMessage.success(response.data.message);
       }
     } else {
+      form.isDisableSave = false;
       ElMessageBox({
         title: "Увага!",
         type: "error",
@@ -776,6 +784,7 @@ const changeTransaction = async () => {
         ElMessage.success(response.data.message);
       }
     } else {
+      form.isDisableSave = false;
       ElMessage.error(response.data.message);
     }
   } catch (e) {
@@ -789,6 +798,7 @@ const closeForm = () => {
   form.chnOperation = [];
   form.tableOperation = [];
   form.visibleContrAgent = false;
+  form.isDisableSave = false;
   emit("update:visible", false);
 };
 
@@ -800,6 +810,7 @@ const clearForm = () => {
   form.tableOperation = [];
   selOperation.value = [];
   form.comment = "";
+  form.isDisableSave = false;
   form.visibleContrAgent = false;
 };
 
