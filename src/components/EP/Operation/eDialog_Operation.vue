@@ -972,6 +972,7 @@ onUpdated(async () => {
       form.date = form.curDate;
       form.disabledContrAgent = false;
       form.visibleContrAgent = false;
+      form.isDisableSave = false;
       break;
     }
     case "copyOperation": {
@@ -983,6 +984,7 @@ onUpdated(async () => {
       form.date = form.curDate;
       // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       form.disabledContrAgent = false;
+      form.isDisableSave = false;
       loadOperation();
       break;
     }
@@ -997,6 +999,7 @@ onUpdated(async () => {
       form.date = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
       // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
       form.disabledContrAgent = true;
+      form.isDisableSave = false;
       loadOperation(true);
       break;
     }
