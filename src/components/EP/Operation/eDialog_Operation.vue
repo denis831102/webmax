@@ -51,7 +51,7 @@
           height="300"
           style="width: 100%; margin: 5px; font-size: 9pt"
         >
-          <el-table-column label="Операція" :width="getWidth[1]" sortable>
+          <el-table-column label="Операція" :width="getWidth[1]">
             <template #default="props">
               <div>
                 {{ props.row.nameOperation }}
@@ -71,7 +71,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="Кількість" prop="count" sortable>
+          <el-table-column label="Кількість" prop="count">
             <template #default="props">
               <el-input-number
                 v-model="props.row.count"
@@ -86,7 +86,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="Ціна одиниці" prop="price" sortable>
+          <el-table-column label="Ціна одиниці" prop="price">
             <template #default="props">
               <el-input-number
                 v-if="getSettingUser.colOper == 'price'"
@@ -104,7 +104,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="Сума" prop="summa" sortable>
+          <el-table-column label="Сума" prop="summa">
             <template #default="props">
               <el-input-number
                 v-if="getSettingUser.colOper == 'summa'"
