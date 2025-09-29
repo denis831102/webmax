@@ -256,7 +256,7 @@ const form = reactive({
 const selOperation = ref([]);
 
 watch(
-  () => form.visibleContrAgent,
+  () => form.visibleContrAgent && !form.disabledContrAgent,
   () => getSklad()
 );
 
