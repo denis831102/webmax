@@ -9,7 +9,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 
-const circleUrl = ref("https://webmax.lond.lg.ua/php/img/caption_2.jpg");
+const circleUrl = ref("https://webmax.lond.lg.ua/php/img/caption_2.3.jpg");
 const showImage = ref(false);
 
 onMounted(() => {
@@ -59,7 +59,7 @@ onMounted(() => {
   }
   100% {
     opacity: 0;
-    transform: scale(0.2);
+    transform: scale(3);
   }
 }
 </style>
