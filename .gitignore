@@ -1,9 +1,7 @@
 .DS_Store
 node_modules
 /dist
-/php
 /resurs
-
 
 # local env files
 # .env.local
