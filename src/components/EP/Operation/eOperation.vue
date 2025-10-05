@@ -757,8 +757,6 @@ const loadFiltrAddit = async () => {
     const response = await HTTP.get("", {
       params: { _method: "getOperation", _id_P: 30 },
     });
-    listOperation.value = [];
-    listMaterial.value = [];
 
     response.data.forEach((oper) => {
       listOperation.value.push({
@@ -770,11 +768,14 @@ const loadFiltrAddit = async () => {
         const listMat = kat.children.map((mat) => {
           return { value: mat.value.id, label: mat.label };
         });
-        listMaterial.value.push({
-          value: kat.value.id,
-          label: kat.label,
-          children: listMat,
-        });
+
+        if (!listMaterial.value.some((el) => el.value == kat.value.id)) {
+          listMaterial.value.push({
+            value: kat.value.id,
+            label: kat.label,
+            children: listMat,
+          });
+        }
       });
     });
   }
