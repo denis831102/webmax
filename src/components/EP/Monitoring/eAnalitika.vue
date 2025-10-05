@@ -504,7 +504,7 @@ const getKategories = async () => {
       });
 
     if (+getSettingUser.value.isShowMes) {
-      ElMessage.success("Категоріїї оновлені");
+      ElMessage.success("Категорії оновлені");
     }
   } catch (e) {
     ElMessage("Помилка завантаження...");

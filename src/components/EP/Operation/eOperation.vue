@@ -95,7 +95,11 @@
           </el-button>
         </el-card>
 
-        <el-card v-if="setting.displaySize == 'large'" style="height: 115px">
+        <el-card
+          v-if="setting.displaySize == 'large'"
+          style="height: 115px"
+          :body-style="{ padding: '12px 20px 15px 20px' }"
+        >
           <el-row :gutter="0">
             <el-col :span="3">
               <el-switch v-model="isPeriod" @change="getTransaction" />
@@ -117,7 +121,7 @@
             </el-col>
           </el-row>
           <el-row :gutter="10">
-            <el-col :span="24">
+            <el-col :span="20">
               <el-input
                 v-model="search"
                 size="normal"
@@ -125,6 +129,13 @@
                 placeholder="Пошук за коментарем"
                 @input="debouncedChange"
                 :prefix-icon="Search"
+              />
+            </el-col>
+            <el-col :span="4">
+              <el-button
+                :type="isFilterOper || isFilterMat ? 'warning' : 'info'"
+                :icon="Filter"
+                @click="loadFiltrAddit"
               />
             </el-col>
           </el-row>
@@ -199,7 +210,12 @@
 
       <!-- <el-scrollbar height="600px"> -->
 
-      <el-table :data="filterTable" v-loading="loading" stripe>
+      <el-table
+        :data="filterTable"
+        v-loading="loading"
+        :default-expand-all="+viewOperation"
+        stripe
+      >
         <el-table-column type="expand" min-width="15">
           <template #default="props">
             <div class="expand-content">
@@ -413,8 +429,10 @@ import {
   Refresh,
   Sort,
   DocumentAdd,
+  Filter,
 } from "@element-plus/icons-vue";
 import {
+  ElCascader,
   ElMessage,
   ElMessageBox,
   ElNotification,
@@ -423,6 +441,8 @@ import {
   ElInput,
   ElSpace,
   ElButtonGroup,
+  ElRadioGroup,
+  ElRadioButton,
 } from "element-plus";
 import eDialog_Operation from "@/components/EP/Operation/eDialog_Operation";
 import eDialog_Sort from "@/components/EP/Operation/eDialog_Sort";
@@ -436,10 +456,17 @@ const getSettingUser = computed(() => store.getters.getSettingUser);
 const changeSettingUser = (obj) => store.commit("changeSettingUser", obj);
 
 const search = ref("");
+const listMaterial = ref([]);
+const listOperation = ref([]);
+const checkMaterial = ref([]);
+const checkOperation = ref([]);
+
 const valueDate = ref([new Date(), new Date()]);
 const punkts = ref([]);
 const activeName = ref("");
 const isPeriod = ref(false);
+const isFilterOper = ref(false);
+const isFilterMat = ref(false);
 const curDate = ref(new Date());
 const setPagination = reactive({
   currentPage: 1,
@@ -448,6 +475,7 @@ const setPagination = reactive({
 });
 const debouncedChange = ref();
 const loading = ref(true);
+const viewOperation = ref("0");
 const kassa = reactive({
   summa: 0,
   oldSumma: 0,
@@ -607,6 +635,7 @@ const copyTransaction = (ind, row) => {
 
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabTransaction"];
+
   // const arDateL = formatDate(valueDate.value[0]).split(".");
   // const arDateR = formatDate(valueDate.value[1]).split(".");
   // const leftDate = new Date(`${arDateL[2]}-${arDateL[1]}-${arDateL[0]}`);
@@ -625,12 +654,28 @@ const filterTable = computed(() => {
 
   //return _tabl.data;
 
-  return _tabl.data.map((el) => {
-    return {
-      ...el,
-      listOper: el.listOper.filter((oper) => +oper.isMoveKassa != -1),
-    };
-  });
+  return isFilterOper.value || isFilterMat.value
+    ? _tabl.data
+        .map((el) => {
+          return {
+            ...el,
+            listOper: el.listOper.filter(
+              (oper) =>
+                +oper.isMoveKassa != -1 &&
+                ((isFilterOper.value && oper.id_V == checkOperation.value[0]) ||
+                  !isFilterOper.value) &&
+                ((isFilterMat.value && oper.id_M == checkMaterial.value[1]) ||
+                  !isFilterMat.value)
+            ),
+          };
+        })
+        .filter((trans) => trans.listOper.length)
+    : _tabl.data.map((el) => {
+        return {
+          ...el,
+          listOper: el.listOper.filter((oper) => +oper.isMoveKassa != -1),
+        };
+      });
 });
 
 const activeIdPunkt = computed(() => {
@@ -698,12 +743,112 @@ const loadFiltr = () => {
         size: "large",
         placeholder: "Пошук за коментарем",
         "prefix-icon": Search,
-        style: "width: 100%; margin-top:15px;",
+        style: "width: 100%; margin-top:10px;",
         onInput: () => {
           debouncedChange.value();
         },
       }),
     ],
+  });
+};
+
+const loadFiltrAddit = async () => {
+  if (!listOperation.value.length) {
+    const response = await HTTP.get("", {
+      params: { _method: "getOperation", _id_P: 30 },
+    });
+
+    response.data.forEach((oper) => {
+      listOperation.value.push({
+        value: oper.value.id,
+        label: oper.label,
+      });
+
+      oper.children.forEach((kat) => {
+        const listMat = kat.children.map((mat) => {
+          return { value: mat.value.id, label: mat.label };
+        });
+        listMaterial.value.push({
+          value: kat.value.id,
+          label: kat.label,
+          children: listMat,
+        });
+      });
+    });
+  }
+
+  ElMessageBox({
+    title: "Додатковий фільтр",
+    confirmButtonText: "Закрити",
+    message: () => [
+      h(ElSwitch, {
+        style: "margin: 10px 5px 10px 20px;",
+        modelValue: isFilterOper.value,
+        "onUpdate:modelValue": (val) => {
+          isFilterOper.value = val;
+        },
+      }),
+      h(ElCascader, {
+        modelValue: checkOperation.value,
+        "onUpdate:modelValue": (val) => {
+          checkOperation.value = val;
+        },
+        size: "normal",
+        // disabled: !isFilterOper.value,
+        options: listOperation.value,
+        placeholder: "оберіть операцію...",
+        "prefix-icon": Search,
+        style: "width: 73%; margin: 10px 20px 10px 20px;",
+      }),
+      h(ElSwitch, {
+        style: "margin: 10px 5px 10px 20px;",
+        modelValue: isFilterMat.value,
+        "onUpdate:modelValue": (val) => {
+          isFilterMat.value = val;
+        },
+      }),
+      h(ElCascader, {
+        modelValue: checkMaterial.value,
+        "onUpdate:modelValue": (val) => {
+          checkMaterial.value = val;
+        },
+        size: "normal",
+        // disabled: !isFilterMat.value,
+        options: listMaterial.value,
+        placeholder: "оберіть матеріал...",
+        "prefix-icon": Search,
+        style: "width: 73%; margin: 10px 20px 10px 20px;",
+      }),
+      h(
+        ElRadioGroup,
+        {
+          modelValue: viewOperation.value,
+          "onUpdate:modelValue": (val) => (viewOperation.value = val),
+          style: "margin: 10px 5px 10px 80px;",
+          onChange: () => {
+            getTransaction();
+          },
+        },
+        [
+          h(ElRadioButton, { label: "1" }, () => "Розкрити транзакції "),
+          h(ElRadioButton, { label: "0" }, () => "Закрити транзакції"),
+        ]
+      ),
+    ],
+    beforeClose: (action, instance, done) => {
+      // if (action === "confirm") {
+      //   ElMessage.success(checkOperation.value[0]);
+      //   ElMessage.success(checkMaterial.value[0]);
+      //   ElMessage.success(checkMaterial.value[1]);
+      // }
+
+      done(); // закрываем окно вручную
+      ElMessage.success(
+        isFilterOper.value || isFilterMat.value
+          ? "Додатковий фільтр включений"
+          : "Додатковий фільтр вимкнений"
+      );
+    },
   });
 };
 
