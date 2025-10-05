@@ -757,6 +757,8 @@ const loadFiltrAddit = async () => {
     const response = await HTTP.get("", {
       params: { _method: "getOperation", _id_P: 30 },
     });
+    listOperation.value = [];
+    listMaterial.value = [];
 
     response.data.forEach((oper) => {
       listOperation.value.push({
