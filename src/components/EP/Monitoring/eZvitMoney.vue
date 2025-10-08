@@ -105,6 +105,12 @@
           <el-icon><User /></el-icon>
           <span style="margin-left: 10px">{{ scope.row.pib }}</span>
         </div>
+        <div style="margin: 10px 0 10px 15px">
+          <el-tag type="success" size="large" style="font-size: large">
+            <el-icon><Money /></el-icon>
+            {{ parseFloat(scope.row.summa_U).toLocaleString("rus") }}</el-tag
+          >
+        </div>
       </template>
     </el-table-column>
 
@@ -116,24 +122,25 @@
         >
           <el-icon><User /></el-icon>
           <span style="margin-left: 10px">{{ scope.row.pib }}</span>
+
+          <el-tag
+            type="success"
+            size="large"
+            style="margin-left: 50px; font-size: large"
+          >
+            <el-icon><Money /></el-icon>
+            {{ parseFloat(scope.row.summa_U).toLocaleString("rus") }}</el-tag
+          >
         </div>
 
         <el-table :data="scope.row.listPunkt" style="width: 95%">
-          <el-table-column label="Назва пункта" prop="namePunkt" />
+          <el-table-column prop="namePunkt" />
           <el-table-column min-width="100">
-            <template #header>
-              <el-icon><Money /></el-icon>
-              <span style="margin-left: 10px"
-                >{{ parseFloat(scope.row.summa_U).toLocaleString("rus") }}
-                {{ scope.row.unit }}</span
-              >
-            </template>
             <template #default="props">
               <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
                 <span style="margin-left: 10px"
                   >{{ parseFloat(props.row.summa_K).toLocaleString("ua") }}
-                  {{ props.row.unit }}</span
-                >
+                </span>
               </div>
             </template>
           </el-table-column>
