@@ -22,22 +22,24 @@
       </el-form-item> -->
 
       <el-form-item label="Дата операції">
-        <el-col :span="5">
-          <el-date-picker
-            v-model="form.date"
-            type="date"
-            format="DD.MM.YYYY"
-            value-format="YYYY-MM-DD"
-            :placeholder="getDate"
-            style="width: 100%"
-          />
-        </el-col>
+        <el-row :gutter="5">
+          <el-col :span="12">
+            <el-date-picker
+              v-model="form.date"
+              type="date"
+              format="DD.MM.YYYY"
+              value-format="YYYY-MM-DD"
+              :placeholder="getDate"
+              style="width: 100%"
+            />
+          </el-col>
 
-        <el-col :span="5">
-          <el-tag type="info" size="large" style="font-size: 12pt">{{
-            getTime
-          }}</el-tag>
-        </el-col>
+          <el-col :span="12">
+            <el-tag type="info" size="large" style="font-size: 12pt">{{
+              getTime
+            }}</el-tag>
+          </el-col>
+        </el-row>
       </el-form-item>
 
       <!-- :data="form.tableOperation.filter((el) => +el.isMoveKassa != -1)" -->
@@ -48,7 +50,8 @@
           :default-sort="{ prop: 'id', order: 'ascending' }"
           show-summary
           border="true"
-          height="300"
+          v-loading="form.loading"
+          :height="getHeight"
           style="width: 100%; margin: 5px; font-size: 9pt"
         >
           <el-table-column label="Операція" :width="getWidth[1]">
@@ -78,7 +81,6 @@
                 :precision="3"
                 :step="1"
                 :max="props.row.maxCount"
-                :min="0"
                 size="small"
                 @focus="clearInp"
                 style="width: 95%; height: 40px"
@@ -127,19 +129,22 @@
       <el-form-item label="Додати операцію">
         <el-col :span="7">
           <!-- clearable -->
-
-          <el-cascader
-            v-model="selOperation"
-            :options="form.options"
-            :props="form.propsCascader"
-            @change="addOperation"
-            :max-collapse-tags="0"
-            collapse-tags
-            collapse-tags-tooltip
-            clearable
-            placeholder="оберіть..."
-            style="width: 160px"
-          />
+          <div class="responsive-cascader">
+            <el-cascader
+              v-model="selOperation"
+              :options="form.options"
+              :props="form.propsCascader"
+              @change="addOperation"
+              :max-collapse-tags="0"
+              collapse-tags
+              collapse-tags-tooltip
+              clearable
+              placeholder="оберіть..."
+              teleported="setting.value.displaySize == 'large'"
+              popper-class="mobile-cascader"
+              style="width: 100%; max-width: 400px"
+            />
+          </div>
         </el-col>
 
         <el-col :span="7" v-if="form.visibleContrAgent">
@@ -193,8 +198,6 @@
 </template>
 
 <script setup>
-/* eslint-disable */
-
 import {
   inject,
   reactive,
@@ -205,11 +208,7 @@ import {
   watchEffect,
   computed,
   onUnmounted,
-  onActivated,
   onUpdated,
-  onBeforeUpdate,
-  onMounted,
-  onBeforeMount,
 } from "vue";
 import { HTTP } from "@/hooks/http";
 import { useStore } from "vuex";
@@ -252,6 +251,7 @@ const form = reactive({
   addOperation_child: [],
   chnOperation_child: [],
   isDisableSave: false,
+  loading: true,
 });
 const selOperation = ref([]);
 
@@ -260,20 +260,20 @@ watch(
   () => getSklad()
 );
 
-watchEffect(() => {
-  form.tableOperation.forEach((el) => {
-    if (getSettingUser.value.colOper == "price") {
-      el.summa = (el.count * el.price).toFixed(2);
-    } else {
-      el.price = el.count != 0 ? (el.summa / el.count).toFixed(3) : "";
-    }
+// watchEffect(() => {
+//   form.tableOperation.forEach((el) => {
+//     if (getSettingUser.value.colOper == "price") {
+//       el.summa = (el.count * el.price).toFixed(2);
+//     } else {
+//       el.price = el.count != 0 ? (el.summa / el.count).toFixed(3) : "";
+//     }
 
-    const kasaEl = form.tableOperation.find(
-      (fEl) => fEl.token == el.token && fEl.isMoveKassa == -1
-    );
-    if (kasaEl) kasaEl.count = el.summa;
-  });
-});
+//     const kasaEl = form.tableOperation.find(
+//       (fEl) => fEl.token == el.token && fEl.isMoveKassa == -1
+//     );
+//     if (kasaEl) kasaEl.count = el.summa;
+//   });
+// });
 
 const getOperation = async () => {
   if (!setting.value.dialog["editOperation"].visible) return;
@@ -296,6 +296,8 @@ const getOperation = async () => {
 
 const loadOperation = (isRedactor = false) => {
   const curTransaction = setting.value.tables["tabTransaction"].curRow;
+
+  form.loading = true;
 
   form.tableOperation = curTransaction.listOper.map((curOper, ind) => {
     return {
@@ -351,6 +353,7 @@ const loadOperation = (isRedactor = false) => {
   } else {
     form.comment = curTransaction.comment;
   }
+  form.loading = false;
 };
 
 const addOperation = () => {
@@ -745,7 +748,7 @@ const changeTransaction = async () => {
     });
 
     if (form.visibleContrAgent) {
-      const responseChild = await HTTP.post("", {
+      await HTTP.post("", {
         _method: "changeTransaction",
         _idUser: getCurUser.value.id,
         _idPunkt: form.curContragent,
@@ -815,10 +818,18 @@ const clearForm = () => {
 };
 
 const getWidth = computed(() => {
+  let formWidth = setting.value.displayWidth * 0.95;
+
   return [
-    setting.value.displaySize == "large" ? "800px" : "600px",
+    setting.value.displaySize == "large" ? "800px" : `${formWidth}px`,
     setting.value.displaySize == "large" ? "200px" : "180px",
   ];
+});
+
+const getHeight = computed(() => {
+  let formHeight = setting.value.displayHeight * 0.45;
+
+  return setting.value.displaySize == "large" ? "400" : `${formHeight}px`;
 });
 
 const getDate = computed(() => {
@@ -848,17 +859,17 @@ const getTime = computed(() => {
   ].join(":");
 });
 
-const daysBetween = (date1, date2) => {
-  // Преобразуем в объекты Date
-  const d1 = new Date(date1);
-  const d2 = new Date(date2);
+// const daysBetween = (date1, date2) => {
+//   // Преобразуем в объекты Date
+//   const d1 = new Date(date1);
+//   const d2 = new Date(date2);
 
-  // Разница в миллисекундах
-  const diffTime = Math.abs(d2 - d1);
+//   // Разница в миллисекундах
+//   const diffTime = Math.abs(d2 - d1);
 
-  // Переводим в дни (1000 мс * 60 сек * 60 мин * 24 ч)
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-};
+//   // Переводим в дни (1000 мс * 60 сек * 60 мин * 24 ч)
+//   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+// };
 
 const checkMonth = (date1, date2) => {
   // Преобразуем в объекты Date
@@ -977,7 +988,7 @@ onUpdated(async () => {
     }
     case "copyOperation": {
       form.title = `Дублювання транзакції операцій / ${form.namePunkt} / ${form.nameUser}`;
-      const _tab = setting.value.tables["tabTransaction"];
+      // const _tab = setting.value.tables["tabTransaction"];
 
       form.tableOperation = [];
       form.isSave = true;
@@ -1004,13 +1015,48 @@ onUpdated(async () => {
       break;
     }
   }
-});
 
-onActivated(async () => {});
+  form.tableOperation.forEach((el) => {
+    if (+el.isMoveKassa != -1) {
+      watchEffect(() => {
+        if (getSettingUser.value.colOper == "price") {
+          el.summa = (el.count * el.price).toFixed(2);
+        } else {
+          el.price = el.count != 0 ? (el.summa / el.count).toFixed(3) : "";
+        }
+
+        const kasaEl = form.tableOperation.find(
+          (fEl) => fEl.token == el.token && fEl.isMoveKassa == -1
+        );
+        if (kasaEl) kasaEl.count = el.summa * (el.id_V == 1 ? -1 : 1);
+      });
+    }
+  });
+});
 
 onUnmounted(() => {
   clearInterval(form.timer);
 });
 </script>
 
-<style></style>
+<style scoped>
+@media (max-width: 600px) {
+  .mobile-cascader {
+    width: 100vw !important;
+    left: 0 !important;
+    right: 0 !important;
+    position: fixed !important;
+    bottom: 0;
+    top: auto;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.responsive-cascader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px;
+}
+</style>

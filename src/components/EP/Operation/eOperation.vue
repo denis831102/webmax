@@ -225,7 +225,7 @@
               </el-tag>
 
               <el-table
-                :data="props.row.listOper"
+                :data="props.row.listOperMain"
                 border
                 style="background: #c6e2ff"
                 show-summary
@@ -634,7 +634,12 @@ const copyTransaction = (ind, row) => {
 };
 
 const filterTable = computed(() => {
-  const _tabl = setting.value.tables["tabTransaction"];
+  const _tabl = setting.value.tables["tabTransaction"].data.map((el) => {
+    return {
+      ...el,
+      listOperMain: el.listOper.filter((oper) => +oper.isMoveKassa != -1),
+    };
+  });
 
   // const arDateL = formatDate(valueDate.value[0]).split(".");
   // const arDateR = formatDate(valueDate.value[1]).split(".");
@@ -655,13 +660,12 @@ const filterTable = computed(() => {
   //return _tabl.data;
 
   return isFilterOper.value || isFilterMat.value
-    ? _tabl.data
+    ? _tabl
         .map((el) => {
           return {
             ...el,
-            listOper: el.listOper.filter(
+            listOperMain: el.listOperMain.filter(
               (oper) =>
-                +oper.isMoveKassa != -1 &&
                 ((isFilterOper.value && oper.id_V == checkOperation.value[0]) ||
                   !isFilterOper.value) &&
                 ((isFilterMat.value && oper.id_M == checkMaterial.value[1]) ||
@@ -669,13 +673,8 @@ const filterTable = computed(() => {
             ),
           };
         })
-        .filter((trans) => trans.listOper.length)
-    : _tabl.data.map((el) => {
-        return {
-          ...el,
-          listOper: el.listOper.filter((oper) => +oper.isMoveKassa != -1),
-        };
-      });
+        .filter((trans) => trans.listOperMain.length)
+    : _tabl;
 });
 
 const activeIdPunkt = computed(() => {

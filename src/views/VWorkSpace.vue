@@ -85,6 +85,8 @@ const setting = ref({
   name: "Денис і Євгенія Ратови",
   titleTable: "",
   displaySize: "large",
+  displayWidth: 0,
+  displayHeight: 0,
   isDark: false,
   dialog: {
     user: { visible: false },
@@ -200,8 +202,14 @@ const curComponent = computed(() => {
 });
 
 const onResize = () => {
-  setting.value.displaySize =
-    document.documentElement.clientWidth >= 1242 ? "large" : "small";
+  // setting.value.displaySize =
+  //   document.documentElement.clientWidth >= 1242 ? "large" : "small";
+  // setting.value.displayWidth = document.documentElement.clientWidth;
+  // setting.value.displayHeight = document.documentElement.clientHeight;
+
+  setting.value.displaySize = window.innerWidth >= 1242 ? "large" : "small";
+  setting.value.displayWidth = window.innerWidth;
+  setting.value.displayHeight = window.innerHeight;
 };
 
 onMounted(() => {
