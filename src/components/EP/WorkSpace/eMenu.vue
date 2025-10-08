@@ -98,19 +98,17 @@
             <el-icon><TrendCharts /></el-icon>
             Залишки по номенклатурі на власних пунктах
           </el-menu-item>
-          <el-menu-item index="3-2" :disabled="!+getCurUser.listAccess[7]"
-            ><el-icon><Guide /></el-icon>
+          <el-menu-item index="3-2" :disabled="!+getCurUser.listAccess[7]">
             <el-icon><Money /></el-icon>
+            Залишки по коштам на власних пунктах
+          </el-menu-item>
+          <el-menu-item index="3-3" :disabled="isDisabled_Analitika_2">
+            <el-icon><Guide /></el-icon>
             Рух коштів на власних пунктах
           </el-menu-item>
-          <el-menu-item index="3-3" :disabled="isDisabled_Analitika_2"
-            ><el-icon><Document /></el-icon>
-            Щоденний звіт економіста
-          </el-menu-item>
           <el-menu-item index="3-4" :disabled="isDisabled_Analitika_1">
-            <el-icon><Money /></el-icon>
-
-            Залишки по коштам на власних пунктах
+            <el-icon><Document /></el-icon>
+            Щоденний звіт економіста
           </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
@@ -199,16 +197,15 @@ const handleSelect = (key, keyPath) => {
       setting.value.comps.curComp = "eAnalitika";
       setting.value.titleTable = setting.value.tables["tabAnalitika"].title;
       break;
-
-    case "3-2":
+    case "3-3":
       setting.value.comps.curComp = "eMoney";
       setting.value.titleTable = setting.value.tables["tabMoney"].title;
       break;
-    case "3-3":
+    case "3-4":
       setting.value.comps.curComp = "eEconomist";
       setting.value.titleTable = setting.value.tables["tabEconomist"].title;
       break;
-    case "3-4":
+    case "3-2":
       setting.value.comps.curComp = "eZvitMoney";
       setting.value.titleTable = setting.value.tables["tabZvitMoney"].title;
       break;
