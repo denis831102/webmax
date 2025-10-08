@@ -118,7 +118,7 @@
           <span style="margin-left: 10px">{{ scope.row.pib }}</span>
         </div>
 
-        <el-table :data="scope.row.listPunkt" border="true" style="width: 95%">
+        <el-table :data="scope.row.listPunkt" style="width: 95%">
           <el-table-column label="Назва пункта" prop="namePunkt" />
           <el-table-column min-width="100">
             <template #header>
@@ -129,9 +129,7 @@
               >
             </template>
             <template #default="props">
-              <div
-                style="padding: 5px 0 5px 10px; background: #c6e2ff69 align-items: center"
-              >
+              <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
                 <span style="margin-left: 10px"
                   >{{ parseFloat(props.row.summa_K).toLocaleString("ua") }}
                   {{ props.row.unit }}</span
@@ -146,8 +144,6 @@
 </template>
 
 <script setup>
-/* eslint-disable */
-
 import { inject, ref, computed, onActivated, watch } from "vue";
 import { useStore } from "vuex";
 import { User, Refresh, Tickets } from "@element-plus/icons-vue";
@@ -354,7 +350,6 @@ onActivated(async () => {
   padding: 10px;
   background: #4caf5045;
   border-radius: 25px;
-  margin: 0px 5px;
 }
 
 .demo-progress .el-progress--line {
