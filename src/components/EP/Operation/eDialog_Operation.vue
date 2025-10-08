@@ -251,7 +251,7 @@ const form = reactive({
   addOperation_child: [],
   chnOperation_child: [],
   isDisableSave: false,
-  loading: true,
+  loading: false,
 });
 const selOperation = ref([]);
 
@@ -984,6 +984,7 @@ onUpdated(async () => {
       form.disabledContrAgent = false;
       form.visibleContrAgent = false;
       form.isDisableSave = false;
+      form.loading = false;
       break;
     }
     case "copyOperation": {
