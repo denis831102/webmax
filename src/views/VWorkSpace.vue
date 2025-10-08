@@ -64,6 +64,7 @@ import eBits from "@/components/EP/Bits/eBits";
 import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
 import eAnalitikaM from "@/components/EP/Analitika/eAnalitikaM";
 import eEconomist from "@/components/EP/Monitoring/eEconomist";
+import eZvitMoney from "@/components/EP/Monitoring/eZvitMoney";
 import eMoney from "@/components/EP/Monitoring/eMoney";
 
 import eSettingUser from "@/components/EP/SettingUser/eSettingUser";
@@ -116,6 +117,7 @@ const setting = ref({
       eAnalitika,
       eAnalitikaM,
       eEconomist,
+      eZvitMoney,
       eMoney,
       eSettingUser,
     },
@@ -163,7 +165,12 @@ const setting = ref({
       data: [],
     },
     tabAnalitika: {
-      title: "АНАЛІТИКА ПО НОМЕНКЛАТУРІ НА ВЛАСНИХ ПУНКТАХ",
+      title: "ЗАЛИШКИ ПО НОМЕНКЛАТУРІ НА ВЛАСНИХ ПУНКТАХ",
+      curRow: {},
+      data: [],
+    },
+    tabZvitMoney: {
+      title: "ЗАЛИШКИ ПО КОШТАМ НА ВЛАСНИХ ПУНКТАХ",
       curRow: {},
       data: [],
     },
