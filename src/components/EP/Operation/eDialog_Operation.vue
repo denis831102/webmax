@@ -81,6 +81,7 @@
                 :precision="3"
                 :step="1"
                 :max="props.row.maxCount"
+                :min="props.row.minCount"
                 size="small"
                 @focus="clearInp"
                 style="width: 95%; height: 40px"
@@ -308,6 +309,7 @@ const loadOperation = (isRedactor = false) => {
         +curOper.dir == -1 && curOper.id_V != 5
           ? curOper.countBits + (isRedactor ? curOper.count : 0)
           : 999999999,
+      minCount: +curOper.id_M == 40 ? -999999999 : 0,
       curCount: curOper.countBits,
       unit: curOper.unit,
       mode: "change",
@@ -368,22 +370,24 @@ const addOperation = () => {
   );
 
   if (curOper[0].id == 2 && isNotOtg) {
-    ElMessage.error(
-      `Операцію "Відвантаження" треба створювати в окремій транзакції.`
-    );
-    // ElMessageBox({
-    //   title: "Увага!",
-    //   type: "error",
-    //   message: `Операцію "Відвантаження" треба створювати в окремій транзакції.`,
-    // });
+    // ElMessage.error(
+    //   `Операцію "Відвантаження" треба створювати в окремій транзакції.`
+    // );
+    ElMessageBox({
+      title: "Увага!",
+      type: "warning",
+      message: `Операцію "Відвантаження" треба створювати в окремій транзакції.`,
+    });
     return;
   }
   if (curOper[0].id != 2 && form.visibleContrAgent) {
-    ElMessage.error(
-      `В транзакцію з відвантаженням заборонено додавати інші операції. Операцію "${
+    ElMessageBox({
+      title: "Увага!",
+      type: "warning",
+      message: `В транзакцію з відвантаженням заборонено додавати інші операції. Операцію "${
         form.options[curOper[0].num].label
-      }" треба створювати в окремій транзакції.`
-    );
+      }" треба створювати в окремій транзакції.`,
+    });
     return;
   }
 
@@ -401,6 +405,7 @@ const addOperation = () => {
             [curOper[2].num]
           ].value.count
         : 999999999,
+    minCount: 0,
     curCount:
       form.options[curOper[0].num].children[[curOper[1].num]].children[
         [curOper[2].num]
@@ -430,44 +435,57 @@ const addOperation = () => {
 const delOperation = (row) => {
   let countCurOper = 0;
 
-  form.tableOperation = form.tableOperation.filter((el) => {
-    // const isAdd =
-    //   (el.id_V != row.id_V || el.id_M != row.id_M) && el.token != row.token;
-    const isAdd = el.token != row.token;
+  if (
+    form.tableOperation.length == 1 ||
+    (form.tableOperation.length == 2 &&
+      form.tableOperation.find((el) => [40, 80].includes(+el.id_M)))
+  ) {
+    ElMessageBox({
+      title: "Увага!",
+      type: "warning",
+      message:
+        "Транзакцію без операцій залишати заборонено. Тому ця операція не видалена. При необхідності видаліть всю транзакцію.",
+    });
+  } else {
+    form.tableOperation = form.tableOperation.filter((el) => {
+      // const isAdd =
+      //   (el.id_V != row.id_V || el.id_M != row.id_M) && el.token != row.token;
+      const isAdd = el.token != row.token;
 
-    if (!isAdd && el.mode == "change") {
-      form.delOperation.push({
-        id_O: el.id_O,
-        id_M: el.id_M,
-        id_V: el.id_V,
-        d_count: el.count,
-        d_price: el.price,
-        old_count: 0,
-        old_price: 0,
-        new_count: el.count,
-        new_price: el.price,
-        is_move_kassa: el.isMoveKassa,
-      });
-
-      if (el.id_V == 2) {
-        form.delOperation_child.push({
-          id_O: el.id_O_child,
+      if (!isAdd && el.mode == "change") {
+        form.delOperation.push({
+          id_O: el.id_O,
           id_M: el.id_M,
-          id_V: 1,
+          id_V: el.id_V,
           d_count: el.count,
           d_price: el.price,
           old_count: 0,
           old_price: 0,
           new_count: el.count,
           new_price: el.price,
-          is_move_kassa: 0,
+          is_move_kassa: el.isMoveKassa,
         });
-      }
-    }
-    countCurOper += +(el.name_V == row.name_V);
 
-    return isAdd;
-  });
+        if (el.id_V == 2) {
+          form.delOperation_child.push({
+            id_O: el.id_O_child,
+            id_M: el.id_M,
+            id_V: 1,
+            d_count: el.count,
+            d_price: el.price,
+            old_count: 0,
+            old_price: 0,
+            new_count: el.count,
+            new_price: el.price,
+            is_move_kassa: 0,
+          });
+        }
+      }
+      countCurOper += +(el.name_V == row.name_V);
+
+      return isAdd;
+    });
+  }
 
   selOperation.value = [];
   checkVidOper();
@@ -701,9 +719,6 @@ const changeTransaction = async () => {
           let dCount = oper.count - oper.old.count,
             dPrice = oper.price - oper.old.price;
 
-          // id_T = oper.id_T;
-          // id_T_child = oper.id_T_child;
-
           if (dCount != 0 || dPrice != 0) {
             form.chnOperation.push({
               id_O: oper.id_O,
@@ -797,6 +812,7 @@ const changeTransaction = async () => {
 
 const closeForm = () => {
   form.delOperation = [];
+  form.delOperation_child = [];
   form.addOperation = [];
   form.chnOperation = [];
   form.tableOperation = [];
@@ -968,6 +984,44 @@ const autoComment = (mode, name_V) => {
   }
 };
 
+const watchTable = (mode) => {
+  switch (mode) {
+    case "createOperation": {
+      watchEffect(() => {
+        form.tableOperation.forEach((el) => {
+          if (getSettingUser.value.colOper == "price") {
+            el.summa = (el.count * el.price).toFixed(2);
+          } else {
+            el.price = el.count != 0 ? (el.summa / el.count).toFixed(3) : "";
+          }
+        });
+      });
+      break;
+    }
+    case "copyOperation":
+    case "editOperation": {
+      form.tableOperation.forEach((el) => {
+        if (+el.isMoveKassa != -1) {
+          watchEffect(() => {
+            if (getSettingUser.value.colOper == "price") {
+              el.summa = (el.count * el.price).toFixed(2);
+            } else {
+              el.price = el.count != 0 ? (el.summa / el.count).toFixed(3) : "";
+            }
+
+            const kasaEl = form.tableOperation.find(
+              (fEl) => fEl.token == el.token && fEl.isMoveKassa == -1
+            );
+            if (kasaEl) kasaEl.count = el.summa * (el.id_V == 1 ? -1 : 1);
+          });
+        }
+      });
+
+      break;
+    }
+  }
+};
+
 onUpdated(async () => {
   form.namePunkt = props.namePunkt;
   await getOperation();
@@ -1007,6 +1061,7 @@ onUpdated(async () => {
 
       form.tableOperation = [];
       form.delOperation = [];
+      form.delOperation_child = [];
       form.isSave = false;
       form.date = new Date(`${arDate[2]}-${arDate[1]}-${arDate[0]}`);
       // selOperation.value = JSON.parse(_tab.curRow.groupOperation);
@@ -1016,23 +1071,7 @@ onUpdated(async () => {
       break;
     }
   }
-
-  form.tableOperation.forEach((el) => {
-    if (+el.isMoveKassa != -1) {
-      watchEffect(() => {
-        if (getSettingUser.value.colOper == "price") {
-          el.summa = (el.count * el.price).toFixed(2);
-        } else {
-          el.price = el.count != 0 ? (el.summa / el.count).toFixed(3) : "";
-        }
-
-        const kasaEl = form.tableOperation.find(
-          (fEl) => fEl.token == el.token && fEl.isMoveKassa == -1
-        );
-        if (kasaEl) kasaEl.count = el.summa * (el.id_V == 1 ? -1 : 1);
-      });
-    }
-  });
+  watchTable(setting.value.dialog["editOperation"].initiator);
 });
 
 onUnmounted(() => {
