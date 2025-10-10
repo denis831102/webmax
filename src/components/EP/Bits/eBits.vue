@@ -54,6 +54,13 @@
               Оновити
             </el-button>
           </el-button-group>
+
+          <!-- Виводити/невиводити "0" номенклатури -->
+
+          <el-radio-group v-model="withoutZeroMat" style="width: auto">
+            <el-radio-button value="allMat" label="Всі" />
+            <el-radio-button value="withoutZero" label="Наявні" />
+          </el-radio-group>
         </el-space>
       </el-row>
 
@@ -62,6 +69,7 @@
           <el-table
             :data="filterTable"
             :class="{ marginTabl: setting.displaySize == 'large' }"
+            :default-expand-all="+viewMaterial"
             v-loading="loading"
             stripe
           >
@@ -138,6 +146,8 @@ const activeName = ref("");
 const isFilter = ref(false);
 const curDate = ref(new Date());
 const loading = ref(true);
+const viewMaterial = ref(false);
+const withoutZeroMat = ref("withoutZero");
 
 watch(
   () => [
@@ -147,20 +157,44 @@ watch(
   () => getPunktCur()
 );
 
+watch(
+  () => [isFilter.value, search.value],
+  () => {
+    viewMaterial.value = +isFilter.value && search.value.length;
+  }
+);
+
 const filterTable = computed(() => {
-  // const _tabl = [...setting.value.tables["tabBits"].data];
-  return !search.value.length || !isFilter.value
-    ? setting.value.tables["tabBits"].data
-    : JSON.parse(JSON.stringify(setting.value.tables["tabBits"].data)).filter(
-        (row) => {
-          row.listMater = row.listMater.filter((mater) =>
-            mater.name_M.toLowerCase().includes(search.value.toLowerCase())
-          );
-          return row.listMater.find((mater) =>
-            mater.name_M.toLowerCase().includes(search.value.toLowerCase())
-          );
-        }
-      );
+  const _tabl = [...setting.value.tables["tabBits"].data];
+  return _tabl
+    .map((kateg) => {
+      return {
+        ...kateg,
+        listMater: kateg.listMater.filter(
+          (mater) =>
+            ((withoutZeroMat.value == "withoutZero" && mater.count != 0) ||
+              withoutZeroMat.value == "allMat") &&
+            ((isFilter.value &&
+              mater.name_M
+                .toLowerCase()
+                .includes(search.value.toLowerCase())) ||
+              !isFilter.value)
+        ),
+      };
+    })
+    .filter((kateg) => kateg.listMater.length);
+  // return !search.value.length || !isFilter.value
+  //   ? setting.value.tables["tabBits"].data
+  //   : JSON.parse(JSON.stringify(setting.value.tables["tabBits"].data)).filter(
+  //       (row) => {
+  //         row.listMater = row.listMater.filter((mater) =>
+  //           mater.name_M.toLowerCase().includes(search.value.toLowerCase())
+  //         );
+  //         return row.listMater.find((mater) =>
+  //           mater.name_M.toLowerCase().includes(search.value.toLowerCase())
+  //         );
+  //       }
+  //     );
 });
 
 const activeIdPunkt = computed(() => {
