@@ -20,80 +20,78 @@
       </template>
       <!-- :class="{ card: setting.displaySize == 'large' }" -->
 
-      <el-space style="margin: 0 0 10px 0">
-        <div class="card">
-          <el-row :gutter="20" wrap>
-            <!-- свич та пошук матеріалів -->
-            <el-col :xs="4" :sm="12" :md="12" :lg="6">
-              <el-switch v-model="isFilter" @change="getBits" />
+      <div class="card" style="margin: 0 0 10px 0">
+        <el-row :gutter="20" wrap>
+          <!-- свич та пошук матеріалів -->
+          <el-col :xs="4" :sm="12" :md="12" :lg="7">
+            <el-switch v-model="isFilter" @change="getBits" />
 
-              <el-input
-                v-model="search"
-                size="normall"
-                style="min-width: 100px; width: 120px"
-                placeholder="Пошук матеріала"
-                :prefix-icon="Search"
-                :disabled="!isFilter"
-                v-if="setting.displaySize == 'large'"
-              />
-            </el-col>
-            <!-- Дата -->
-            <el-col :xs="20" :sm="12" :md="12" :lg="4">
-              <el-date-picker
-                v-model="curDate"
-                type="date"
-                format="DD.MM.YYYY"
-                :start-placeholder="getDate"
-                :end-placeholder="getDate"
-                :disabled="!isFilter"
-                @change="getBits"
-                style="width: 100%"
-                size="normal"
-              />
-            </el-col>
-            <!-- Операціі -->
-            <el-col :xs="24" :sm="12" :md="12" :lg="4">
-              <el-button
-                type="primary"
-                :icon="HomeFilled"
-                @click="getOperation"
-                style="width: 100%"
-              >
-                <el-icon><Connection /></el-icon>
-                <span>Операції</span>
-              </el-button>
-            </el-col>
-
-            <!-- Оновити -->
-            <el-col :xs="24" :sm="12" :md="12" :lg="4">
-              <el-button
-                type="primary"
-                plain
-                :icon="Refresh"
-                style="width: 100%"
-                @click="getBits()"
-              >
-                Оновити
-              </el-button>
-            </el-col>
-
-            <!-- Виводити/невиводити "0" номенклатури -->
-            <el-col
-              :xs="24"
-              :sm="12"
-              :md="5"
-              :lg="6"
-              style="width: auto"
+            <el-input
+              v-model="search"
+              size="normall"
+              style="min-width: 100px; width: 80%; margin-left: 15px"
+              placeholder="Пошук матеріала"
+              :prefix-icon="Search"
+              :disabled="!isFilter"
               v-if="setting.displaySize == 'large'"
+            />
+          </el-col>
+          <!-- Дата -->
+          <el-col :xs="20" :sm="12" :md="12" :lg="3">
+            <el-date-picker
+              v-model="curDate"
+              type="date"
+              format="DD.MM.YYYY"
+              :start-placeholder="getDate"
+              :end-placeholder="getDate"
+              :disabled="!isFilter"
+              @change="getBits"
+              style="width: 100%"
+              size="normal"
+            />
+          </el-col>
+          <!-- Операціі -->
+          <el-col :xs="24" :sm="12" :md="12" :lg="3">
+            <el-button
+              type="primary"
+              :icon="HomeFilled"
+              @click="getOperation"
+              style="width: 100%"
             >
-              <el-radio-group style="width: 100%" v-model="withoutZeroMat">
-                <el-radio-button value="allMat" label="Всі" />
-                <el-radio-button value="withoutZero" label="Наявні" />
-              </el-radio-group>
-            </el-col>
-          </el-row>
-        </div>
-      </el-space>
+              <el-icon><Connection /></el-icon>
+              <span>Операції</span>
+            </el-button>
+          </el-col>
+
+          <!-- Оновити -->
+          <el-col :xs="24" :sm="12" :md="12" :lg="3">
+            <el-button
+              type="primary"
+              plain
+              :icon="Refresh"
+              style="width: 100%"
+              @click="getBits()"
+            >
+              Оновити
+            </el-button>
+          </el-col>
+
+          <!-- Виводити/невиводити "0" номенклатури -->
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="5"
+            :lg="8"
+            style="width: auto"
+            v-if="setting.displaySize == 'large'"
+          >
+            <el-radio-group style="width: 100%" v-model="withoutZeroMat">
+              <el-radio-button value="allMat" label="Всі" />
+              <el-radio-button value="withoutZero" label="Наявні" />
+            </el-radio-group>
+          </el-col>
+        </el-row>
+      </div>
 
       <el-row :gutter="20">
         <el-col :span="24">
@@ -107,7 +105,15 @@
             <el-table-column type="expand">
               <template #default="props">
                 <div class="expand-content">
-                  <el-tag type="success" style="margin: -10px 0 10px 0px">
+                  <el-tag
+                    type="success"
+                    style="
+                      margin-top: -25px;
+                      margin-left: 50%;
+                      transform: translateX(-50%);
+                      border: 1px solid #66bb6a;
+                    "
+                  >
                     <el-icon><PieChart /></el-icon> Залишки по категоріїї:
                     {{ props.row.name_K }}
                   </el-tag>
@@ -115,7 +121,7 @@
                   <el-table
                     :data="props.row.listMater"
                     border="true"
-                    style="width: 98%"
+                    style="width: 100%"
                   >
                     <el-table-column
                       type="index"
@@ -125,7 +131,11 @@
 
                     <el-table-column label="номенклатура" prop="name_M" />
 
-                    <el-table-column label="кількість" width="150" prop="count">
+                    <el-table-column
+                      label="кількість"
+                      :width="setting.displayWidth * 0.22"
+                      prop="count"
+                    >
                       <template #default="props">
                         <div
                           style="padding: 5px 0 5px 10px; background: #c6e2ff69"
