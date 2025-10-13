@@ -278,7 +278,7 @@
 
         <el-table-column
           prop="date"
-          :min-width="setting.displaySize == 'large' ? 45 : 60"
+          :min-width="setting.displaySize == 'large' ? 45 : 33"
           wrap
         >
           <template #header>
@@ -314,24 +314,33 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Коментар" prop="comment"> </el-table-column>
+        <el-table-column
+          label="Коментар"
+          prop="comment"
+          v-if="setting.displaySize == 'large'"
+        />
 
-        <el-table-column label="Сума" prop="suma" min-width="40">
+        <el-table-column
+          :label="setting.displaySize == 'large' ? 'Сума' : 'Дані'"
+          min-width="40"
+        >
           <template #default="scope">
-            <div style="text-align: center">
+            <div style="text-align: left">
               <span
                 >{{
-                  parseFloat(scope.row.suma).toLocaleString("ua")
+                  setting.displaySize == "small" ? `${scope.row.comment}` : ""
                 }}
-                грн.</span
-              >
+              </span>
+              <div style="background: rgb(167 235 167); text-align: center">
+                {{ `${parseFloat(scope.row.suma).toLocaleString("ua")} грн.` }}
+              </div>
             </div>
           </template>
         </el-table-column>
 
         <el-table-column
           label="Дії"
-          :min-width="setting.displaySize == 'large' ? 45 : 40"
+          :min-width="setting.displaySize == 'large' ? 45 : 20"
         >
           <template #default="scope">
             <el-button-group
@@ -371,7 +380,7 @@
             </el-button-group>
 
             <el-switch
-              v-if="+getCurUser.listAccess[5]"
+              v-if="+getCurUser.listAccess[5] && setting.displayWidth >= 800"
               inline-prompt
               active-text="edit"
               inactive-text="edit"
@@ -380,7 +389,7 @@
               style="margin-left: 10px"
             />
             <el-switch
-              v-if="+getCurUser.listAccess[6]"
+              v-if="+getCurUser.listAccess[6] && setting.displayWidth >= 800"
               inline-prompt
               active-text="del"
               inactive-text="del"
@@ -945,7 +954,7 @@ onUnmounted(() => {
 
 <style scoped>
 .demo-tabs > .el-tabs__content {
-  /* padding: 32px; */
+  padding: 15px;
   color: #6b778c;
   font-size: 32px;
   /* font-weight: 600; */
@@ -1046,7 +1055,7 @@ onUnmounted(() => {
   }
 
   .el-tab-pane {
-    margin: 0px -30px 0px -30px;
+    margin: 0px -5px 0px -5px;
   }
 }
 </style>
