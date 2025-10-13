@@ -219,7 +219,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style>
 .box-main {
   height: calc(100vh - 198px);
   overflow: auto;
@@ -232,5 +232,18 @@ onMounted(() => {
   text-align: center;
   margin-top: 10px;
   height: 5px;
+}
+
+.expand-content {
+  padding: 5px;
+  background: #4caf5045;
+  border-radius: 25px;
+  margin: 0px;
+}
+
+.card {
+  border: 1px solid var(--el-border-color);
+  margin-left: 5px;
+  padding: 20px;
 }
 </style>

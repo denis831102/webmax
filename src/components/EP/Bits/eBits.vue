@@ -361,18 +361,6 @@ onUpdated(async () => {
   transform: translateX(-50%);
   width: 50%;
 }
-.expand-content {
-  padding: 5px;
-  background: #4caf5045;
-  border-radius: 25px;
-  margin: 0px;
-}
-
-.card {
-  border: 1px solid var(--el-border-color);
-  margin-left: 5px;
-  padding: 20px;
-}
 
 /* @media (max-width: 1200px) {
   .card {
@@ -387,7 +375,6 @@ onUpdated(async () => {
 
 @media (min-width: 768px) and (max-width: 1200px) {
   .card {
-    /* border: 1px solid var(--el-border-color); */
     margin-left: 5px;
     padding: 5px;
   }

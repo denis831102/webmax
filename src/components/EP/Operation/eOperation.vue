@@ -25,7 +25,7 @@
         </span>
       </template>
 
-      <el-space style="margin-top: -15px">
+      <el-space style="margin-top: -5px">
         <el-card v-if="setting.displaySize == 'large'">
           <el-space :size="0" style="padding: 0px 0px">
             <div class="statistic-card">
