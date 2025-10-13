@@ -18,51 +18,82 @@
           <span>{{ punkt.name }}</span>
         </span>
       </template>
+      <!-- :class="{ card: setting.displaySize == 'large' }" -->
 
-      <el-row :gutter="20" style="margin: 0 0 20px 10px">
-        <el-space :size="10" :class="{ card: setting.displaySize == 'large' }">
-          <el-switch v-model="isFilter" @change="getBits" />
+      <el-space style="margin: 0 0 10px 0">
+        <div class="card">
+          <el-row :gutter="20" wrap>
+            <!-- свич та пошук матеріалів -->
+            <el-col :xs="4" :sm="12" :md="12" :lg="6">
+              <el-switch v-model="isFilter" @change="getBits" />
 
-          <el-input
-            v-model="search"
-            size="normal"
-            placeholder="Пошук матеріала"
-            :prefix-icon="Search"
-            :disabled="!isFilter"
-            v-if="setting.displaySize == 'large'"
-          />
+              <el-input
+                v-model="search"
+                size="normall"
+                style="min-width: 100px; width: 120px"
+                placeholder="Пошук матеріала"
+                :prefix-icon="Search"
+                :disabled="!isFilter"
+                v-if="setting.displaySize == 'large'"
+              />
+            </el-col>
+            <!-- Дата -->
+            <el-col :xs="20" :sm="12" :md="12" :lg="4">
+              <el-date-picker
+                v-model="curDate"
+                type="date"
+                format="DD.MM.YYYY"
+                :start-placeholder="getDate"
+                :end-placeholder="getDate"
+                :disabled="!isFilter"
+                @change="getBits"
+                style="width: 100%"
+                size="normal"
+              />
+            </el-col>
+            <!-- Операціі -->
+            <el-col :xs="24" :sm="12" :md="12" :lg="4">
+              <el-button
+                type="primary"
+                :icon="HomeFilled"
+                @click="getOperation"
+                style="width: 100%"
+              >
+                <el-icon><Connection /></el-icon>
+                <span>Операції</span>
+              </el-button>
+            </el-col>
 
-          <el-date-picker
-            v-model="curDate"
-            type="date"
-            format="DD.MM.YYYY"
-            :start-placeholder="getDate"
-            :end-placeholder="getDate"
-            :disabled="!isFilter"
-            @change="getBits"
-            style="margin-left: 5px; min-width: 100px; width: 120px"
-            size="normal"
-          />
+            <!-- Оновити -->
+            <el-col :xs="24" :sm="12" :md="12" :lg="4">
+              <el-button
+                type="primary"
+                plain
+                :icon="Refresh"
+                style="width: 100%"
+                @click="getBits()"
+              >
+                Оновити
+              </el-button>
+            </el-col>
 
-          <el-button-group>
-            <el-button type="primary" :icon="HomeFilled" @click="getOperation">
-              <el-icon><Connection /></el-icon>
-              <span style="margin-left: 5px">Операції</span>
-            </el-button>
-
-            <el-button type="primary" plain :icon="Refresh" @click="getBits()">
-              Оновити
-            </el-button>
-          </el-button-group>
-
-          <!-- Виводити/невиводити "0" номенклатури -->
-
-          <el-radio-group v-model="withoutZeroMat" style="width: auto">
-            <el-radio-button value="allMat" label="Всі" />
-            <el-radio-button value="withoutZero" label="Наявні" />
-          </el-radio-group>
-        </el-space>
-      </el-row>
+            <!-- Виводити/невиводити "0" номенклатури -->
+            <el-col
+              :xs="24"
+              :sm="12"
+              :md="5"
+              :lg="6"
+              style="width: auto"
+              v-if="setting.displaySize == 'large'"
+            >
+              <el-radio-group style="width: 100%" v-model="withoutZeroMat">
+                <el-radio-button value="allMat" label="Всі" />
+                <el-radio-button value="withoutZero" label="Наявні" />
+              </el-radio-group>
+            </el-col>
+          </el-row>
+        </div>
+      </el-space>
 
       <el-row :gutter="20">
         <el-col :span="24">
@@ -85,9 +116,12 @@
                     :data="props.row.listMater"
                     border="true"
                     style="width: 98%"
-                    show-summary
                   >
-                    <el-table-column type="index" width="60" />
+                    <el-table-column
+                      type="index"
+                      width="60"
+                      v-if="setting.displaySize == 'large'"
+                    />
 
                     <el-table-column label="номенклатура" prop="name_M" />
 
@@ -308,7 +342,7 @@ onUpdated(async () => {
 });
 </script>
 
-<style>
+<style scoped>
 .demo-tabs > .el-tabs__content {
   padding: 32px;
   color: #6b778c;
@@ -327,16 +361,49 @@ onUpdated(async () => {
   transform: translateX(-50%);
   width: 50%;
 }
+.expand-content {
+  padding: 5px;
+  background: #4caf5045;
+  border-radius: 25px;
+  margin: 0px;
+}
 
 .card {
   border: 1px solid var(--el-border-color);
-  margin-left: 10px;
+  margin-left: 5px;
   padding: 20px;
 }
-.expand-content {
-  padding: 20px;
-  background: #4caf5045;
-  border-radius: 25px;
-  margin: 0px 10px;
+
+/* @media (max-width: 1200px) {
+  .card {
+    /* border: 1px   solid var(--el-border-color); 
+    margin-left: 5px;
+    padding: 20px;
+  }
+  .card.active {
+    background-color: var(--el-color-primary-light-9);
+  }
+} */
+
+@media (min-width: 768px) and (max-width: 1200px) {
+  .card {
+    /* border: 1px solid var(--el-border-color); */
+    margin-left: 5px;
+    padding: 5px;
+  }
+  .card.active {
+    background-color: var(--el-color-primary-light-9);
+  }
+}
+
+@media (max-width: 576px) {
+  .card {
+    /* border: 1px solid var(--el-border-color); */
+    margin-left: 5px;
+    padding: 5px;
+  }
+  .card.active {
+    background-color: var(--el-color-primary-light-9);
+  }
 }
 </style>
