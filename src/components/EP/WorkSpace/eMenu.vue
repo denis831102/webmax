@@ -22,6 +22,26 @@
       @close="handleClose"
       @select="handleSelect"
     >
+      <el-sub-menu index="2">
+        <template #title>
+          <el-icon><Grid /></el-icon>
+          <span>Операції</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="2-1">
+            <el-icon><Briefcase /></el-icon>Залишки на ВП
+          </el-menu-item>
+          <el-menu-item index="2-2">
+            <el-icon><CircleCheck /></el-icon>
+            Операції по ВП
+          </el-menu-item>
+          <el-menu-item index="2-3">
+            <el-icon><EditPen /></el-icon>
+            Загальні залишки на ВП
+          </el-menu-item>
+        </el-menu-item-group>
+      </el-sub-menu>
+
       <el-sub-menu index="1" :disabled="isDisabled_UserStatus">
         <template #title>
           <el-icon><Collection /></el-icon>
@@ -66,26 +86,6 @@
             <el-icon><Edit /></el-icon>Компонент ( в розробці)
           </el-menu-item>
         </el-sub-menu>
-      </el-sub-menu>
-
-      <el-sub-menu index="2">
-        <template #title>
-          <el-icon><Grid /></el-icon>
-          <span>Операції</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="2-1">
-            <el-icon><Briefcase /></el-icon>Залишки на ВП
-          </el-menu-item>
-          <el-menu-item index="2-2">
-            <el-icon><CircleCheck /></el-icon>
-            Операції по ВП
-          </el-menu-item>
-          <el-menu-item index="2-3">
-            <el-icon><EditPen /></el-icon>
-            Загальні залишки на ВП
-          </el-menu-item>
-        </el-menu-item-group>
       </el-sub-menu>
 
       <el-sub-menu index="3" :disabled="isDisabled_Monitoring">
