@@ -166,7 +166,7 @@ Class clReport{
 					operation.id_V, operation.isMoveKassa							 	
 				FROM transaction 
 					LEFT JOIN operation ON transaction.id_T = operation.id_T									
-				WHERE transaction.date >= '%1\$s' ",
+				WHERE transaction.date > '%1\$s' ",
 				/*1*/	date('Y-n-d', strtotime($date))															
 			));		
 			$arOpers = [];

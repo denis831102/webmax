@@ -90,7 +90,7 @@ Class clServer{
 	}//_____________________________________________________________________
 	
 	// деструктор класса
-	function __destruct(){
+	function __destruct(){				
 		$this->mysqli->close(); 
 	}//_____________________________________________________________________________
 	
@@ -1005,10 +1005,10 @@ Class clServer{
 		
 		$listDelFilter = $arDel = [];
 		foreach( $listDel as $key => $oper ){
-			if( $oper[is_move_kassa] != -1 ){
+			if( $oper['is_move_kassa'] != -1 ){
 				$listDelFilter[] = $oper;
 			}
-			$arDel[] = $oper[id_O];						
+			$arDel[] = $oper['id_O'];						
 		}
 		
 		$this->setBits( $listDelFilter, $id_P, $id_T, -1);
@@ -1443,10 +1443,10 @@ Class clServer{
 		$this->mysqli->query( sprintf(				
 			"UPDATE transaction SET comment = \"%2\$s\", date = \"%3\$s\", time = \"%4\$s\" 
 			WHERE id_T = %1\$d",
-			/*1*/	$this->_PARAM[_id_T],				
-			/*2*/	$this->_PARAM[_comment],			
-			/*3*/	$this->_PARAM[_date],
-			/*4*/	$this->_PARAM[_time]
+			/*1*/	$this->_PARAM['_id_T'],				
+			/*2*/	$this->_PARAM['_comment'],			
+			/*3*/	$this->_PARAM['_date'],
+			/*4*/	$this->_PARAM['_time']
 		));
 				
 		if ( count( $this->_PARAM[_opersAdd] ) > 0 ) {
@@ -1514,7 +1514,7 @@ Class clServer{
 					operation.id_V, operation.isMoveKassa			 	
 				FROM transaction 
 					LEFT JOIN operation ON transaction.id_T = operation.id_T				
-				WHERE transaction.date >= '%1\$s' AND id_P = %2\$d",
+				WHERE transaction.date > '%1\$s' AND id_P = %2\$d",
 				/*1*/	date('Y-n-d', strtotime($this->_PARAM[_date]) ),
 				/*2*/	$this->_PARAM[_id_P]												
 			));		
@@ -1608,7 +1608,7 @@ Class clServer{
 				operation.id_V, operation.isMoveKassa			 	
 			FROM transaction 
 				LEFT JOIN operation ON transaction.id_T = operation.id_T				
-			WHERE transaction.date >= '%1\$s' AND id_P = %2\$d",
+			WHERE transaction.date > '%1\$s' AND id_P = %2\$d",
 			/*1*/	$date,
 			/*2*/	$id_P												
 		));		
@@ -1712,11 +1712,11 @@ Class clServer{
 			   "UPDATE %1\$s SET count = count + (%4\$f)
 				WHERE id_P = %2\$d AND id_M = %3\$d",
 				/*1*/	$tabl,				
-				/*2*/	($id_P > 0 ? $id_P : $oper[id_P]),				
+				/*2*/	( $id_P > 0 ? $id_P : $oper[id_P] ),				
 				/*3*/	$oper[id_M],			
 				/*4*/	( in_array( $oper[id_V], [4, 5] )
 					?   ( $oper[new_count] * $oper[new_price] - 
-						 $oper[old_count] * $oper[old_price] ) * $this->operVid[ $oper[id_V] ] * $dir
+						  $oper[old_count] * $oper[old_price] ) * $this->operVid[ $oper[id_V] ] * $dir
 					:	$oper[d_count] * $this->operVid[ $oper[id_V] ] * $dir
 				)				
 			));
@@ -1724,18 +1724,17 @@ Class clServer{
 			
 			// дополнительное движение по кассе
 			if ( in_array( $oper[id_V], [1, 3]) && $oper[is_move_kassa] == 1 ){
-				$id_V 	 = ($oper[id_V] == 1 ? 5 : 4 );
-				$id_M 	 = ($oper[id_V] == 1 ? 40 : 80 );
+				$id_V 	 = ( $oper[id_V] == 1 ? 5  : 4 );
+				$id_M 	 = ( $oper[id_V] == 1 ? 40 : 80 );
 				$d_count = ( $oper[new_count] * $oper[new_price] - 
-							 $oper[old_count] * $oper[old_price] ) * 
-							 $this->operVid[ $id_V ] * $dir;
+							 $oper[old_count] * $oper[old_price] ) * $this->operVid[ $id_V ] * $dir;
 				$d_price = 0;
 												
 				$this->mysqli->query( sprintf(				
 					"UPDATE %1\$s SET count = count + (%4\$f)
 					 WHERE id_P = %2\$d AND id_M = %3\$d",
 					/*1*/	$tabl,
-					/*2*/	($id_P > 0 ? $id_P : $oper[id_P]),					
+					/*2*/	( $id_P > 0 ? $id_P : $oper[id_P] ),					
 					/*3*/	$id_M,					
 					/*4*/   $d_count					
 				));	
@@ -1788,7 +1787,7 @@ Class clServer{
 					LEFT JOIN operation ON transaction.id_T = operation.id_T
 					LEFT JOIN punkt ON transaction.id_P = punkt.id_P
 					LEFT JOIN users ON punkt.id_U = users.id				
-				WHERE transaction.date >= '%1\$s' AND users.id IN (%2\$s)",
+				WHERE transaction.date > '%1\$s' AND users.id IN (%2\$s)",
 				/*1*/	date('Y-n-d', strtotime($this->_PARAM[_date]) ),
 				/*2*/	implode(',', $this->_PARAM[_checkManeger])													
 			));		
@@ -2036,6 +2035,108 @@ Class clServer{
 				ar_data  => $ar_data,																
 			]);	
 		}									
+	}////_________________________________________________________________________	
+	
+	// 10.4 получение данных таблицы Загальна КАССА
+	public function getAllKasa(){						
+		$cursor = $this->mysqli->query(sprintf(				
+			"CREATE TEMPORARY TABLE tempMonitoring		
+			SELECT users.id as id_U, users.PIB,	
+			 	   punkt.id_P as id_P, punkt.name as name_P,				
+				   matKategories.id_G as id_G, matKategories.id_K as id_K, matKategories.name as name_K,
+				   material.id_M as id_M, material.name as name_M, material.unit,	
+				   bits.count as count
+			FROM users 				
+			  LEFT JOIN punkt ON users.id = punkt.id_U
+			  LEFT JOIN bits ON punkt.id_P = bits.id_P
+			  LEFT JOIN material ON bits.id_M = material.id_M
+			  LEFT JOIN matKategories ON material.id_K = matKategories.id_K
+			WHERE users.id IN (%1\$s) AND matKategories.id_G = 1					
+			ORDER BY users.PIB, id_P, id_K, id_M, bits.count DESC",
+			/*1*/ 	implode(',', $this->_PARAM[_checkManeger])			
+		));
+		
+		// убираем из учета операции после заданной даты
+		if( !empty($this->_PARAM[_date]) ){			
+			$cursorOper = $this->mysqli->query(sprintf(				
+				"SELECT transaction.*, 
+					operation.id_O, operation.count, operation.price, operation.id_M,  operation.id_V,			 	
+					punkt.id_P AS idPunkt
+				FROM transaction 
+					LEFT JOIN operation ON transaction.id_T = operation.id_T
+					LEFT JOIN punkt ON transaction.id_P = punkt.id_P
+					LEFT JOIN users ON punkt.id_U = users.id	
+					LEFT JOIN material ON operation.id_M = material.id_M
+			  		LEFT JOIN matKategories ON material.id_K = matKategories.id_K			
+				WHERE transaction.date > '%1\$s' AND users.id IN (%2\$s) AND matKategories.id_G = 1",
+				/*1*/	date('Y-n-d', strtotime($this->_PARAM[_date]) ),
+				/*2*/	implode(',', $this->_PARAM[_checkManeger])													
+			));		
+			$arOpers = [];
+			while( $rec = $cursorOper->fetch_array( MYSQLI_ASSOC ) ){			
+				$arOpers[] = [
+					id_M 	 	=> $rec['id_M'],						
+					id_V 	 	=> $rec['id_V'],						
+					d_count 	=> $rec['count'],						
+					d_price 	=> $rec['price'],
+					old_count   => 0,
+	            	old_price   => 0,
+	            	new_count   => $rec['count'],
+	            	new_price   => $rec['price'] == 0 ? ($rec['id_M'] == 40 ? -1 : 1) : $rec['price'],
+	            	id_P		=> $rec['idPunkt'],						
+				];								
+			}
+			$this->setBits( $arOpers, 0, 0, -1, 'tempMonitoring');
+		}
+		
+		$cursor = $this->mysqli->query( 
+			"SELECT id_G, id_U, PIB, id_P, name_P, SUM(count) as summa 
+			 FROM tempMonitoring
+			 -- WHERE id_G = 1
+			 GROUP BY id_U, id_P, id_G
+			 ORDER BY PIB, name_P"
+		);
+					
+		$ar_data = [];				
+		$count = count($this->_PARAM[_checkManeger]);
+				
+		if ( $cursor->num_rows > 0) {
+			$i = $summa  = 0;			
+			$old = [id_U => 0];
+			$listPunkt = [];
+						
+			while( $i <= $cursor->num_rows ){
+				$rec = ( $i < $cursor->num_rows ? $cursor->fetch_array( MYSQLI_ASSOC ) : [id_U => 0]);
+								
+				if( ($old[id_P] <> $rec[id_P] && $old['id_P'] > 0) || ( $old[id_U] <> $rec[id_U] && $old[id_U] > 0)  ){					
+					$listPunkt[] = [
+						id_P 	 	 => $old['id_P'],							
+						namePunkt 	 => $old['name_P'],
+						summa_K  	 => $old['summa'], 							
+					];
+					$summa += $old['summa'];				
+				}											
+				
+				if($old[id_U] <> $rec[id_U] && $old[id_U] > 0 ){
+					$ar_data[] = [
+						id_U 	   	=> $old['id_U'],	
+						pib 	   	=> $old['PIB'],
+						summa_U  	=> $summa, 							
+						listPunkt  => count($listPunkt) > 0 ? $listPunkt : [],											
+					];
+					$listPunkt = [];
+					$summa = 0;							
+				}
+				
+				$old = $rec;
+				$i++;
+			};						
+		};
+		
+		return json_encode([ 
+			ar_data  => $ar_data,
+			count 	 => $count,				
+		]);											
 	}////_________________________________________________________________________	
 	
 	// 11.1 получение данных таблицы ПОКУПАТЕЛЬ

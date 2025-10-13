@@ -130,22 +130,20 @@
       <el-form-item label="Додати операцію">
         <el-col :span="7">
           <!-- clearable -->
-          <div class="responsive-cascader">
-            <el-cascader
-              v-model="selOperation"
-              :options="form.options"
-              :props="form.propsCascader"
-              @change="addOperation"
-              :max-collapse-tags="0"
-              collapse-tags
-              collapse-tags-tooltip
-              clearable
-              placeholder="оберіть..."
-              teleported="setting.value.displaySize == 'large'"
-              popper-class="mobile-cascader"
-              style="width: 100%; max-width: 400px"
-            />
-          </div>
+          <el-cascader
+            v-model="selOperation"
+            :options="form.options"
+            :props="form.propsCascader"
+            @change="addOperation"
+            :max-collapse-tags="0"
+            collapse-tags
+            collapse-tags-tooltip
+            clearable
+            placeholder="оберіть..."
+            teleported="setting.value.displaySize == 'large'"
+            popper-class="mobile-cascader"
+            style="width: 100%; max-width: 400px"
+          />
         </el-col>
 
         <el-col :span="7" v-if="form.visibleContrAgent">
@@ -843,7 +841,7 @@ const getWidth = computed(() => {
 });
 
 const getHeight = computed(() => {
-  let formHeight = setting.value.displayHeight * 0.45;
+  let formHeight = setting.value.displayHeight * 0.4;
 
   return setting.value.displaySize == "large" ? "400" : `${formHeight}px`;
 });
@@ -1081,22 +1079,16 @@ onUnmounted(() => {
 
 <style scoped>
 @media (max-width: 600px) {
-  .mobile-cascader {
-    width: 100vw !important;
-    left: 0 !important;
-    right: 0 !important;
-    position: fixed !important;
-    bottom: 0;
-    top: auto;
-    border-radius: 12px 12px 0 0;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
+  .el-cascader-panel {
+    flex-direction: column !important;
+    max-height: 80vh;
+    overflow-y: auto;
   }
-}
 
-.responsive-cascader {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 10px;
+  .el-cascader-menu {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid #eee;
+  }
 }
 </style>
