@@ -98,7 +98,7 @@
         <el-card
           v-if="setting.displaySize == 'large'"
           style="height: 115px"
-          :body-style="{ padding: '12px 20px 15px 20px' }"
+          :body-style="{ padding: '20px 20px 10px 20px' }"
         >
           <el-row :gutter="0">
             <el-col :span="3">
@@ -216,22 +216,64 @@
         :default-expand-all="+viewOperation"
         stripe
       >
-        <el-table-column type="expand" min-width="15">
+        <el-table-column type="expand">
           <template #default="props">
             <div class="expand-content">
-              <el-tag type="success" style="margin: -10px 0 10px 0px">
-                Транзакція за операцією: <b>{{ props.row.comment }} </b> /
-                {{ props.row.date }} - {{ props.row.time }}
+              <el-tag
+                type="success"
+                style="
+                  margin-top: -15px;
+                  margin-left: 50%;
+                  transform: translate(-50%);
+                  border: solid 1px #4caf50;
+                  max-width: 70vw;
+                  overflow: hidden;
+                "
+              >
+                {{
+                  setting.displaySize == "large"
+                    ? "Транзакція за операцією:"
+                    : ""
+                }}
+                {{
+                  [
+                    props.row.comment,
+                    " / ",
+                    props.row.date,
+                    " - ",
+                    props.row.time,
+                  ]
+                    .join("")
+                    .substring(0, setting.displayWidth <= 700 ? 40 : 300)
+                }}
               </el-tag>
 
               <el-table
                 :data="props.row.listOperMain"
-                border
-                style="background: #c6e2ff"
+                style="background: #c6e2ff; width: 100vw; border-radius: 25px"
                 show-summary
               >
-                <el-table-column label="вид операції" prop="name_V" />
-                <el-table-column label="номенклатура" prop="name_M" />
+                <el-table-column
+                  label="вид операції"
+                  :width="setting.displayWidth <= 700 ? 90 : 400"
+                  style="line-height: 1"
+                >
+                  <template #default="score">
+                    {{ score.row.name_V }}
+                    {{
+                      setting.displayWidth <= 700
+                        ? " / " + score.row.name_M
+                        : ""
+                    }}
+                  </template>
+                </el-table-column>
+
+                <el-table-column
+                  label="номенклатура"
+                  prop="name_M"
+                  v-if="setting.displayWidth > 700"
+                />
+
                 <el-table-column label="кількість" prop="count">
                   <template #default="props">
                     {{ parseFloat(props.row.count).toLocaleString("ua") }}
@@ -1021,10 +1063,11 @@ onUnmounted(() => {
 }
 
 .expand-content {
-  padding: 20px;
+  padding: 5px;
   background: #4caf5045;
   border-radius: 25px;
-  margin: 0px 10px;
+  margin: -7px 2px;
+  border: solid 1px #4caf50;
 }
 
 .el-table {
@@ -1049,7 +1092,7 @@ onUnmounted(() => {
     font-size: 9pt;
     /* font-weight: normal; */
     text-align: left;
-    line-height: 1.2;
+    line-height: 1.1;
     padding: 0;
     margin-top: 0px;
   }
