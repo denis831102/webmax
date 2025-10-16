@@ -56,34 +56,79 @@
         >
           <el-table-column label="Операція" :width="getWidth[1]">
             <template #default="props">
-              <div>
-                {{ props.row.nameOperation }}
-                <span
-                  style="padding: 5px; background: #c6e2ff69; font-weight: bold"
+              {{ props.row.nameOperation }}
+              <el-button
+                type="danger"
+                :icon="Delete"
+                circle
+                style="width: 10px; height: 10px"
+                @click="delOperation(props.row)"
+              />
+
+              <div
+                style="margin-top: 8px"
+                v-if="setting.displaySize == 'large'"
+              >
+                <el-badge
+                  value="було"
+                  class="item"
+                  type="warning"
+                  :offset="[-35, -5]"
                 >
-                  {{ props.row.curCount }} {{ props.row.unit }}
-                </span>
-                <el-button
-                  type="danger"
-                  :icon="Delete"
-                  circle
-                  style="width: 10px; height: 10px"
-                  @click="delOperation(props.row)"
-                />
+                  <el-button size="small">
+                    {{ `${props.row.curCount} ${props.row.unit}` }}
+                  </el-button>
+                </el-badge>
+
+                <el-badge
+                  value="стане"
+                  class="item"
+                  color="green"
+                  :offset="[-38, -5]"
+                  style="margin-left: 5px"
+                >
+                  <el-button size="small">
+                    {{
+                      [2, 3, 5].includes(+props.row.id_V)
+                        ? props.row.curCount -
+                          props.row.count +
+                          (props.row.old ? props.row.old.count : 0)
+                        : props.row.curCount +
+                          props.row.count -
+                          (props.row.old ? props.row.old.count : 0)
+                    }}
+                    {{ props.row.unit }}
+                  </el-button>
+                </el-badge>
               </div>
+
+              <span
+                v-else
+                style="
+                  padding: 5px;
+                  background: #c6e2ff69;
+                  font-weight: bold;
+                  border-radius: 10px;
+                "
+              >
+                {{ `${props.row.curCount} ${props.row.unit}` }}
+              </span>
             </template>
           </el-table-column>
 
+          <!-- :max="props.row.maxCount" -->
           <el-table-column label="Кількість" prop="count">
             <template #default="props">
               <el-input-number
                 v-model="props.row.count"
                 :precision="3"
                 :step="1"
-                :max="props.row.maxCount"
                 :min="props.row.minCount"
                 size="small"
+                :controls="setting.displaySize === 'large'"
                 @focus="clearInp"
+                @blur="() => onBlur(props.row)"
+                @change="() => onBlur(props.row)"
                 style="width: 95%; height: 40px"
               />
             </template>
@@ -98,6 +143,7 @@
                 :step="1"
                 :min="0"
                 size="small"
+                :controls="setting.displaySize === 'large'"
                 @focus="clearInp"
                 style="width: 95%; height: 40px"
               />
@@ -127,51 +173,65 @@
         </el-table>
       </el-form-item>
 
-      <el-form-item label="Додати операцію">
-        <el-col :span="7">
-          <!-- clearable -->
-          <el-cascader
-            v-model="selOperation"
-            :options="form.options"
-            :props="form.propsCascader"
-            @change="addOperation"
-            :max-collapse-tags="0"
-            collapse-tags
-            collapse-tags-tooltip
-            clearable
-            placeholder="оберіть..."
-            teleported="setting.value.displaySize == 'large'"
-            popper-class="mobile-cascader"
-            style="width: 100%; max-width: 400px"
-          />
-        </el-col>
-
-        <el-col :span="7" v-if="form.visibleContrAgent">
-          <el-radio-group
-            v-model="form.modeOtg"
-            v-on:change="getSklad()"
-            :disabled="form.disabledContrAgent"
-            style="font-size: 14pt"
-          >
-            <el-radio-button label="склад ЦМ" value="cm" />
-            <el-radio-button label="покупець" value="ca" />
-          </el-radio-group>
-        </el-col>
-
-        <el-col :span="10" v-if="form.visibleContrAgent">
-          <el-select
-            v-model="form.curContragent"
-            style="width: 100%"
-            :disabled="form.disabledContrAgent"
-          >
-            <el-option
-              v-for="item in form.optionContragent"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
+      <el-form-item label="Додати операцію" style="width: 100%">
+        <el-row :gutter="10" style="width: 100%">
+          <el-col :xs="24" :sm="8" :md="4" :lg="8">
+            <!-- clearable -->
+            <el-cascader
+              v-model="selOperation"
+              :options="form.options"
+              :props="form.propsCascader"
+              @change="addOperation"
+              :max-collapse-tags="0"
+              collapse-tags
+              collapse-tags-tooltip
+              clearable
+              placeholder="оберіть..."
+              teleported="setting.value.displaySize == 'large'"
+              popper-class="mobile-cascader"
+              style="width: 100%"
             />
-          </el-select>
-        </el-col>
+          </el-col>
+
+          <el-col
+            :xs="24"
+            :sm="8"
+            :md="10"
+            :lg="8"
+            v-if="form.visibleContrAgent"
+          >
+            <el-radio-group
+              v-model="form.modeOtg"
+              v-on:change="getSklad()"
+              :disabled="form.disabledContrAgent"
+              style="justify-content: flex-end; display: flex; margin-top: 2px"
+            >
+              <el-radio-button label="склад ЦМ" value="cm" />
+              <el-radio-button label="покупець" value="ca" />
+            </el-radio-group>
+          </el-col>
+
+          <el-col
+            :xs="24"
+            :sm="8"
+            :md="10"
+            :lg="8"
+            v-if="form.visibleContrAgent"
+          >
+            <el-select
+              v-model="form.curContragent"
+              style="width: 100%"
+              :disabled="form.disabledContrAgent"
+            >
+              <el-option
+                v-for="item in form.optionContragent"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-col>
+        </el-row>
       </el-form-item>
 
       <el-form-item label="Коментар">
@@ -836,7 +896,7 @@ const getWidth = computed(() => {
 
   return [
     setting.value.displaySize == "large" ? "800px" : `${formWidth}px`,
-    setting.value.displaySize == "large" ? "200px" : "180px",
+    setting.value.displaySize == "large" ? "310px" : "150px",
   ];
 });
 
@@ -982,6 +1042,21 @@ const autoComment = (mode, name_V) => {
   }
 };
 
+const onBlur = (row) => {
+  if ([2, 3].includes(+row.id_V) && row.count > row.curCount) {
+    const countAdd = row.count - row.curCount;
+    ElMessageBox({
+      title: "Увага!",
+      type: "warning",
+      dangerouslyUseHTMLString: true,
+      message: `Ведена кількість <B>${row.count} ${row.unit}</B> перевищує залишки на складі <B>${row.curCount} ${row.unit}</B>.
+        Кількість автоматично буде змінена на максимальне значення <B>${row.curCount} ${row.unit}</B>.
+        <span style="color: red">Не вистачає ${countAdd} ${row.unit}</span>.`,
+    });
+    row.count = row.curCount;
+  }
+};
+
 const watchTable = (mode) => {
   switch (mode) {
     case "createOperation": {
@@ -1090,5 +1165,10 @@ onUnmounted(() => {
     border-right: none !important;
     border-bottom: 1px solid #eee;
   }
+}
+
+.el-input-number.is-without-controls .el-input__wrapper {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 </style>

@@ -3,6 +3,9 @@
     v-model:visible="setting.dialog['editOperation'].visible"
     :namePunkt="activeName"
     :idPunkt="activeIdPunkt"
+    :style="{
+      transform: 'translateY(-10%)',
+    }"
   />
 
   <eDialog_Sort
