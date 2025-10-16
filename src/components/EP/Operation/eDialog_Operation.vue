@@ -88,16 +88,7 @@
                   style="margin-left: 5px"
                 >
                   <el-button size="small">
-                    {{
-                      [2, 3, 5].includes(+props.row.id_V)
-                        ? props.row.curCount -
-                          props.row.count +
-                          (props.row.old ? props.row.old.count : 0)
-                        : props.row.curCount +
-                          props.row.count -
-                          (props.row.old ? props.row.old.count : 0)
-                    }}
-                    {{ props.row.unit }}
+                    {{ calcCount(props.row) }}
                   </el-button>
                 </el-badge>
               </div>
@@ -896,7 +887,7 @@ const getWidth = computed(() => {
 
   return [
     setting.value.displaySize == "large" ? "800px" : `${formWidth}px`,
-    setting.value.displaySize == "large" ? "310px" : "150px",
+    setting.value.displaySize == "large" ? "320px" : "150px",
   ];
 });
 
@@ -1051,10 +1042,26 @@ const onBlur = (row) => {
       dangerouslyUseHTMLString: true,
       message: `Ведена кількість <B>${row.count} ${row.unit}</B> перевищує залишки на складі <B>${row.curCount} ${row.unit}</B>.
         Кількість автоматично буде змінена на максимальне значення <B>${row.curCount} ${row.unit}</B>.
-        <span style="color: red">Не вистачає ${countAdd} ${row.unit}</span>.`,
+        <span style="color: red">НЕ ВИСТАЧАЄ ${countAdd} ${row.unit}</span>.`,
     });
     row.count = row.curCount;
   }
+};
+
+const calcCount = (row) => {
+  const val = [2, 3].includes(+row.id_V)
+    ? row.curCount - row.count + (row.old ? row.old.count : 0)
+    : +row.id_V == 1
+    ? row.curCount + row.count - (row.old ? row.old.count : 0)
+    : +row.id_V == 4
+    ? row.curCount +
+      row.count * row.price -
+      (row.old ? row.old.count * row.old.price : 0)
+    : row.curCount -
+      row.count * row.price +
+      (row.old ? row.old.count * row.old.price : 0);
+
+  return `${val} ${row.unit}`;
 };
 
 const watchTable = (mode) => {
