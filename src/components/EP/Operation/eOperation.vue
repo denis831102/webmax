@@ -635,9 +635,10 @@ const editTransaction = (ind, row) => {
 
 const delTransaction = async (ind, row) => {
   ElMessageBox.confirm(
-    `Ви точно бажаєте видалити транзакцію '${row.comment.toUpperCase()}' на суму ${
-      row.suma
-    } грн. за ${row.date} - ${row.time}?`
+    `Ви точно бажаєте видалити транзакцію <B>${row.comment}</B> на суму <B>${row.suma} грн.</B> за ${row.date} - ${row.time}?`,
+    {
+      dangerouslyUseHTMLString: true,
+    }
   )
     .then(() => {
       delTransaction_Ok(row);
@@ -670,6 +671,7 @@ const delTransaction_Ok = async (row) => {
       kassa.summa = response.data.kassa;
       kassa.oldSumma = response.data.oldkassa;
       kassa.percent = response.data.percent;
+      ElMessage("Транзакцію видалено");
     } else {
       ElMessage.error("Транзакцію не видалено");
     }
