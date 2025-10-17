@@ -28,7 +28,7 @@
         </span>
       </template>
 
-      <el-space style="margin-top: -5px">
+      <el-space style="margin-top: -5px; width: 100%">
         <el-card v-if="setting.displaySize == 'large'">
           <el-space :size="0" style="padding: 0px 0px">
             <div class="statistic-card">
@@ -209,6 +209,21 @@
             Оновити
           </el-button>
         </component>
+
+        <el-card
+          v-if="setting.displaySize == 'large'"
+          style="height: 112px; align-content: flex-end"
+        >
+          <el-pagination
+            background
+            layout="prev, pager, next"
+            :total="setPagination.total"
+            v-model:page-size="setPagination.sizePage"
+            v-model:current-page="setPagination.currentPage"
+            v-if="setPagination.total > 0"
+            @current-change="getTransaction"
+          />
+        </el-card>
       </el-space>
 
       <!-- <el-scrollbar height="600px"> -->
@@ -1104,6 +1119,12 @@ onUnmounted(() => {
 
   .el-tab-pane {
     margin: 0px -5px 0px -5px;
+  }
+
+  ::v-deep(.cards-space .el-space__item:last-child) {
+    margin-left: auto; /* отталкиваем последний блок вправо */
+    display: flex;
+    justify-content: flex-end; /* чтобы пагинация была у правого края */
   }
 }
 </style>
