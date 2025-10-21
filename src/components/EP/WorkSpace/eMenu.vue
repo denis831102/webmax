@@ -39,6 +39,10 @@
             <el-icon><EditPen /></el-icon>
             Загальні залишки на ВП
           </el-menu-item>
+          <el-menu-item index="2-4">
+            <el-icon><Money /></el-icon>
+            Залишки по коштам на ВП
+          </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
 
@@ -192,6 +196,10 @@ const handleSelect = (key, keyPath) => {
     case "2-3":
       setting.value.comps.curComp = "eAnalitikaM";
       setting.value.titleTable = setting.value.tables["tabAnalitikaM"].title;
+      break;
+    case "2-4":
+      setting.value.comps.curComp = "ezvitMAllP";
+      setting.value.titleTable = setting.value.tables["tabzvitMAllP"].title;
       break;
     case "3-1":
       setting.value.comps.curComp = "eAnalitika";

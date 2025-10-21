@@ -63,6 +63,7 @@ import eOperation from "@/components/EP/Operation/eOperation";
 import eBits from "@/components/EP/Bits/eBits";
 import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
 import eAnalitikaM from "@/components/EP/Analitika/eAnalitikaM";
+import ezvitMAllP from "@/components/EP/Analitika/ezvitMAllP";
 import eEconomist from "@/components/EP/Monitoring/eEconomist";
 import eZvitMoney from "@/components/EP/Monitoring/eZvitMoney";
 import eMoney from "@/components/EP/Monitoring/eMoney";
@@ -118,6 +119,7 @@ const setting = ref({
       eBits,
       eAnalitika,
       eAnalitikaM,
+      ezvitMAllP,
       eEconomist,
       eZvitMoney,
       eMoney,
@@ -178,6 +180,11 @@ const setting = ref({
     },
     tabAnalitikaM: {
       title: "ЗАГАЛЬНІ ЗАЛИШКИ",
+      curRow: {},
+      data: [],
+    },
+    tabzvitMAllP: {
+      title: "ЗАЛИШКИ ПО КОШТАМ НА ВЛАСНИХ ПУНКТАХ",
       curRow: {},
       data: [],
     },

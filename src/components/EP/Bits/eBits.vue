@@ -279,7 +279,7 @@ const getPunktCur = async () => {
     ElMessage("Помилка завантаження пунктів");
   }
 };
-
+//cинтаксический сахар
 const getBits = async () => {
   try {
     loading.value = true;

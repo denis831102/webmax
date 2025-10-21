@@ -666,6 +666,7 @@ const delTransaction = async (ind, row) => {
 
 const delTransaction_Ok = async (row) => {
   try {
+    loading.value = true;
     const response = await HTTP.get("", {
       params: {
         _method: "delTransaction",
@@ -689,10 +690,12 @@ const delTransaction_Ok = async (row) => {
       kassa.summa = response.data.kassa;
       kassa.oldSumma = response.data.oldkassa;
       kassa.percent = response.data.percent;
+
       ElMessage("Транзакцію видалено");
     } else {
       ElMessage.error("Транзакцію не видалено");
     }
+    loading.value = false;
   } catch (e) {
     ElMessage("Помилка видалення транзакції");
   }
