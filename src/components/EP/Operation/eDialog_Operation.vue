@@ -1048,8 +1048,13 @@ const onBlur = (row) => {
   }
 };
 
+const roundTo = (num, decimals = 0) => {
+  const factor = Math.pow(10, decimals);
+  return Math.round((num + Number.EPSILON) * factor) / factor;
+};
+
 const calcCount = (row) => {
-  const val = [2, 3].includes(+row.id_V)
+  let val = [2, 3].includes(+row.id_V)
     ? row.curCount - row.count + (row.old ? row.old.count : 0)
     : +row.id_V == 1
     ? row.curCount + row.count - (row.old ? row.old.count : 0)
@@ -1060,6 +1065,8 @@ const calcCount = (row) => {
     : row.curCount -
       row.count * row.price +
       (row.old ? row.old.count * row.old.price : 0);
+
+  val = roundTo(val, 2);
 
   return `${val} ${row.unit}`;
 };
