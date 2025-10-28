@@ -1034,17 +1034,28 @@ const autoComment = (mode, name_V) => {
 };
 
 const onBlur = (row) => {
-  if ([2, 3].includes(+row.id_V) && row.count > row.curCount) {
-    const countAdd = row.count - row.curCount;
+  if (
+    [2, 3].includes(+row.id_V) &&
+    row.count > row.curCount + (row.old ? row.old.count : 0)
+  ) {
+    const countAdd = roundTo(
+      row.count - row.curCount - (row.old ? row.old.count : 0),
+      3
+    );
+
     ElMessageBox({
       title: "Увага!",
       type: "warning",
       dangerouslyUseHTMLString: true,
-      message: `Ведена кількість <B>${row.count} ${row.unit}</B> перевищує залишки на складі <B>${row.curCount} ${row.unit}</B>.
-        Кількість автоматично буде змінена на максимальне значення <B>${row.curCount} ${row.unit}</B>.
+      message: `Ведена кількість <B>${row.count} ${
+        row.unit
+      }</B> перевищує залишки на складі <B>${row.curCount} ${row.unit}</B>.
+        Кількість автоматично буде змінена на максимальне значення <B>${
+          row.curCount + (row.old ? row.old.count : 0)
+        } ${row.unit}</B>.
         <span style="color: red">НЕ ВИСТАЧАЄ ${countAdd} ${row.unit}</span>.`,
     });
-    row.count = row.curCount;
+    row.count = row.curCount + (row.old ? row.old.count : 0);
   }
 };
 
@@ -1066,7 +1077,7 @@ const calcCount = (row) => {
       row.count * row.price +
       (row.old ? row.old.count * row.old.price : 0);
 
-  val = roundTo(val, 2);
+  val = roundTo(val, 3);
 
   return `${val} ${row.unit}`;
 };

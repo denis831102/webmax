@@ -1099,7 +1099,7 @@ Class clServer{
 		$cursor = $this->mysqli->query( sprintf(				
 			"SELECT transaction.*, 
 				operation.id_O, operation.count, operation.price, operation.id_Bu, 
-				operation.id_cm, operation.id_cm, operation.isMoveKassa, operation.token,
+				operation.id_cm, operation.isMoveKassa, operation.token,
 			 	material.id_M, material.name as name_M, material.unit,
 			 	operVid.id_V, operVid.name as name_V, operVid.dir as dir,
 			 	matKategories.id_K, matKategories.name as name_K,
@@ -1113,17 +1113,16 @@ Class clServer{
 				LEFT JOIN matKategories ON material.id_K = matKategories.id_K
 				LEFT JOIN bits ON bits.id_M = material.id_M AND bits.id_P = transaction.id_P
 				LEFT JOIN users ON transaction.id_U = users.id
-				LEFT JOIN operation AS operChild ON operation.id_T != operChild.id_T AND BINARY operation.token = operChild.token
-			WHERE -- transaction.id_U = %1\$d AND 
-				  transaction.id_P = %2\$d %3\$s %4\$s
-			ORDER BY date DESC, time DESC, id_O",
-			/*1*/	$this->_PARAM[_id_U],
-			/*2*/	$this->_PARAM[_id_P],
-			/*3*/	( mb_strlen($this->_PARAM[_search], 'utf-8') > 0
-						? implode("", ['AND comment LIKE "%', $this->_PARAM[_search], '%" '])
+				-- LEFT JOIN operation AS operChild ON operation.id_T != operChild.id_T AND BINARY operation.token = operChild.token
+				LEFT JOIN operation AS operChild ON operation.id_T != operChild.id_T AND operation.token = operChild.token			
+			WHERE transaction.id_P = %1\$d %2\$s %3\$s
+			ORDER BY date DESC, time DESC, id_O",			
+			/*1*/	$this->_PARAM[_id_P],
+			/*2*/	( mb_strlen($this->_PARAM[_search], 'utf-8') > 0
+						? implode("", ['AND transaction.comment LIKE "%', $this->_PARAM[_search], '%" '])
 						: ""
 					),
-			/*4*/	( $this->_PARAM[_isPeriod]  				
+			/*3*/	( $this->_PARAM[_isPeriod]  				
 						? "AND (transaction.date BETWEEN '{$this->_PARAM[_date_l]}' AND '{$this->_PARAM[_date_r]}' )"
 						: ""
 					)								
@@ -1148,8 +1147,7 @@ Class clServer{
 						comment		=> $old[comment],
 						PIB			=> $old[PIB],						
 						suma		=> round($suma, 3),
-						listOper 	=> count($listOper) > 0 ? $listOper : [],
-						//groupOperation =>  $old[groupOperation],
+						listOper 	=> count($listOper) > 0 ? $listOper : [],						
 						id_Bu 		=> $id_Bu,
 						id_cm 		=> $id_cm,
 						isEdit 		=> $old[isEdit],
@@ -1218,6 +1216,37 @@ Class clServer{
 	// 8.2 получение ТРАНЗАКЦИЙ для экономиста
 	public function getETransaction(){	
 		$strCheckManeger = implode(', ', $this->_PARAM[_checkManeger]);
+		
+		$text = sprintf(				
+			"SELECT punkt.id_U AS idUser, users.PIB AS pib, punkt.name AS namePunkt, 
+			      	transaction.*, 
+			      	operation.id_O, operVid.id_V, operVid.name as name_V, operation.count, 
+			      	operation.price, operation.id_Bu, operation.id_cm, operation.id_M
+			      	-- IF (ISNULL(T2.id_T), 0, T2.id_T) AS id_parent
+			FROM transaction 
+				LEFT JOIN operation ON transaction.id_T = operation.id_T
+				LEFT JOIN operVid ON operation.id_V = operVid.id_V			
+		        LEFT JOIN punkt ON transaction.id_P = punkt.id_P
+		        LEFT JOIN users ON punkt.id_U = users.id
+		        LEFT JOIN transaction AS T2 ON transaction.id_T = T2.id_T_Child
+			WHERE 1=1 %1\$s %2\$s %3\$s AND ISNULL(T2.id_T) AND operation.id_M != 40 
+			ORDER BY users.PIB ASC, punkt.id_P ASC, id_T ASC, id_O, date DESC, time DESC",
+			/*1*/	( count($this->_PARAM[_checkManeger]) > 0 
+						? "AND punkt.id_U IN ({$strCheckManeger})"  
+						: "AND punkt.id_U = 0"
+					),
+			/*2*/	( in_array($this->_PARAM[_checkOperation], [21, 22]) 
+						? "AND operVid.id_V = 2 AND operation.id_" . ( $this->_PARAM[_checkOperation] == 21 ? 'CM' : 'Bu' ) . " > 0 "
+						: ( $this->_PARAM[_checkOperation] > 0
+							? "AND operVid.id_V = {$this->_PARAM[_checkOperation]}"
+							: ""
+						)
+					),			
+			/*3*/	( $this->_PARAM[_isPeriod] == 1  				
+						? "AND (transaction.date BETWEEN '{$this->_PARAM[_date_l]}' AND '{$this->_PARAM[_date_r]}' )"
+						: ""
+					)								
+		);
 																			
 		$cursor = $this->mysqli->query( sprintf(				
 			"SELECT punkt.id_U AS idUser, users.PIB AS pib, punkt.name AS namePunkt, 
@@ -1302,7 +1331,8 @@ Class clServer{
 		};		
 						
 		return json_encode([ 
-			ar_data  => $ar_data,								
+			ar_data  => $ar_data,
+			text => $text								
 		]);								
 	}//_________________________________________________________________________	
 	
@@ -1313,9 +1343,9 @@ Class clServer{
 		if ( $countOper > 0){	
 			$date = new DateTime(); // Получаем текущую дату и время
     												
-			$this->mysqli->query(sprintf(
+			$curQuery = $this->mysqli->query(sprintf(
 				"INSERT INTO transaction (id_U, id_P, date, time, comment, id_T_child, isEdit, isDel, dateCreate)
-				VALUE (%1\$d, %2\$d, '%3\$s', '%4\$s', '%5\$s', %6\$d, %7\$d, %8\$d, '%9\$s') ",
+				VALUE (%1\$d, %2\$d, '%3\$s', '%4\$s', \"%5\$s\", %6\$d, %7\$d, %8\$d, '%9\$s') ",
 				/*1*/	$this->_PARAM[_idUser],
 				/*2*/	$this->_PARAM[_idPunkt],
 				/*3*/	$this->_PARAM[_date],
@@ -1333,7 +1363,7 @@ Class clServer{
 		}						
 		
 		$this->res->data = [];							
-		if ( $countInsert_T == 1){								
+		if ( $curQuery && $countInsert_T == 1){								
 			$bits = $this->setBits( $this->_PARAM[_opers], $this->_PARAM[_idPunkt], $id_T, 1);
 						
 			$this->mysqli->query( sprintf(				
