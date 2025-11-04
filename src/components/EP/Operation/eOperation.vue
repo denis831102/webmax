@@ -210,20 +210,20 @@
           </el-button>
         </component>
 
-        <el-card
+        <!-- <el-card
           v-if="setting.displaySize == 'large'"
           style="height: 112px; align-content: flex-end"
-        >
-          <el-pagination
-            background
-            layout="prev, pager, next"
-            :total="setPagination.total"
-            v-model:page-size="setPagination.sizePage"
-            v-model:current-page="setPagination.currentPage"
-            v-if="setPagination.total > 0"
-            @current-change="getTransaction"
-          />
-        </el-card>
+        > -->
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="setPagination.total"
+          v-model:page-size="setPagination.sizePage"
+          v-model:current-page="setPagination.currentPage"
+          v-if="setPagination.total > 0"
+          @current-change="getTransaction"
+        />
+        <!-- </el-card> -->
       </el-space>
 
       <!-- <el-scrollbar height="600px"> -->

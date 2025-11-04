@@ -3,7 +3,7 @@
     <div class="card">
       <el-row :gutter="10" wrap>
         <!-- Менеджер -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="5">
+        <el-col :xs="24" :sm="12" :md="8" :lg="4">
           <el-select
             v-model="checkManeger"
             multiple
@@ -43,7 +43,7 @@
         </el-col>
 
         <!-- Дата -->
-        <el-col :xs="8" :sm="12" :md="8" :lg="4">
+        <el-col :xs="8" :sm="12" :md="8" :lg="3">
           <el-date-picker
             v-model="curDate"
             type="date"
@@ -58,30 +58,15 @@
         </el-col>
 
         <!-- Виводити/невиводити "0" номенклатури -->
-        <el-col :xs="12" :sm="12" :md="8" :lg="5">
+        <el-col :xs="12" :sm="12" :md="12" :lg="5">
           <el-radio-group v-model="withoutZeroKasa" style="width: auto">
             <el-radio-button value="allKas" label="Всі" />
             <el-radio-button value="withoutZero" label="Наявні" />
           </el-radio-group>
         </el-col>
 
-        <!-- Завантажити -->
-        <el-col :xs="24" :sm="12" :md="8" :lg="5">
-          <input type="file" ref="fileInput" style="display: none" />
-
-          <el-button
-            type="success"
-            :icon="Tickets"
-            @click="openFile"
-            style="width: 100%"
-            :disabled="!+getCurUser.listAccess[11]"
-          >
-            Завантажити аналітику
-          </el-button>
-        </el-col>
-
         <!-- Оновити -->
-        <el-col :xs="24" :sm="24" :md="8" :lg="3">
+        <el-col :xs="24" :sm="24" :md="12" :lg="3">
           <el-button
             type="primary"
             plain
@@ -91,6 +76,37 @@
           >
             Оновити
           </el-button>
+        </el-col>
+
+        <!-- Завантажити -->
+        <el-col :xs="20" :sm="12" :md="12" :lg="5">
+          <input type="file" ref="fileInput" style="display: none" />
+
+          <el-button
+            type="success"
+            @click="openFile"
+            style="width: 100%"
+            :disabled="!+getCurUser.listAccess[11]"
+          >
+            Завантажити аналітику
+          </el-button>
+        </el-col>
+        <!-- диапазон разногласий -->
+        <el-col :xs="4" :sm="12" :md="12" :lg="2">
+          <div class="slider-demo-block">
+            <el-slider
+              v-model="allowed"
+              :step="1"
+              range
+              show-stops
+              :min="-10"
+              :max="10"
+            />
+          </div>
+          <div style="text-align: center; margin-top: 8px">
+            <!-- <strong>Вибрано:</strong> {{ allowed[0] }} → {{ allowed[1] }} -->
+            <strong></strong> {{ stepsBetween }},грн
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -153,7 +169,7 @@
 <script setup>
 import { inject, ref, computed, onActivated, watch } from "vue";
 import { useStore } from "vuex";
-import { User, Refresh, Tickets } from "@element-plus/icons-vue";
+import { User, Refresh } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { HTTP } from "@/hooks/http";
 
@@ -174,6 +190,13 @@ const isFilter = ref(false);
 const curDate = ref(new Date());
 // const fileInput = ref(null);
 const withoutZeroKasa = ref("withoutZero");
+const allowed = ref([-5, 5]);
+const step = 1;
+
+const stepsBetween = computed(() => {
+  const diff = allowed.value[1] - allowed.value[0];
+  return diff / step;
+});
 
 watch(checkManeger, (val) => {
   if (val.length === 0) {
