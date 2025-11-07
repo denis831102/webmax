@@ -80,7 +80,12 @@
 
         <!-- Завантажити -->
         <el-col :xs="20" :sm="12" :md="12" :lg="5">
-          <input type="file" ref="fileInput" style="display: none" />
+          <input
+            type="file"
+            ref="fileInput"
+            style="display: none"
+            @change="onFileSelected"
+          />
 
           <el-button
             type="success"
@@ -105,7 +110,7 @@
           </div>
           <div style="text-align: center; margin-top: 8px">
             <!-- <strong>Вибрано:</strong> {{ allowed[0] }} → {{ allowed[1] }} -->
-            <strong></strong> {{ stepsBetween }},грн
+            <strong></strong> {{ stepsBetween }}, грн
           </div>
         </el-col>
       </el-row>
@@ -170,15 +175,14 @@
 import { inject, ref, computed, onActivated, watch } from "vue";
 import { useStore } from "vuex";
 import { User, Refresh } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
-import { HTTP } from "@/hooks/http";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { HTTP, loadFile } from "@/hooks/http";
 
 const setting = inject("setting");
 const store = useStore();
 
 const getCurUser = computed(() => store.getters.getCurUser);
 const getSettingUser = computed(() => store.getters.getSettingUser);
-
 const checkAll = ref(false);
 const indeterminate = ref(false);
 const checkManeger = ref([]);
@@ -188,7 +192,7 @@ const loading = ref(true);
 // const propsCascader = { multiple: true, expandTrigger: "hover" };
 const isFilter = ref(false);
 const curDate = ref(new Date());
-// const fileInput = ref(null);
+const fileInput = ref(null);
 const withoutZeroKasa = ref("withoutZero");
 const allowed = ref([-5, 5]);
 const step = 1;
@@ -321,53 +325,53 @@ const handleCheckAll = (val) => {
   getAllKasa();
 };
 
-// const onFileSelected = (event) => {
-//   const files = event.target.files;
-//   if (!files || !files.length) return;
-//   loadReport(files[0]);
-// };
+const onFileSelected = (event) => {
+  const files = event.target.files;
+  if (!files || !files.length) return;
+  loadReport(files[0]);
+};
 
-// const openFile = () => {
-//   if (fileInput.value) fileInput.value.value = "";
-//   fileInput.value && fileInput.value.click();
-// };
+const openFile = () => {
+  if (fileInput.value) fileInput.value.value = "";
+  fileInput.value && fileInput.value.click();
+};
 
-// const loadReport = async (file) => {
-//   try {
-//     const formData = new FormData();
-//     formData.append("_file", file);
-//     formData.append("_method", "loadReport");
-//     formData.append("_nameReport", "analitikaResurs");
-//     formData.append("_id_U", getCurUser.value.id);
-//     formData.append("_checkManeger", checkManeger.value);
-//     formData.append("_checkMaterial", checkMaterial.value);
-//     formData.append(
-//       "_date",
-//       isFilter.value ? formatDate(curDate.value, "eng") : ""
-//     );
+const loadReport = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append("_file", file);
+    formData.append("_method", "loadReportMoney");
+    formData.append("_nameReport", "analitikaResurs");
+    formData.append("_id_U", getCurUser.value.id);
+    formData.append("_checkManeger", checkManeger.value);
+    formData.append("_checkAllowed", allowed.value);
+    formData.append(
+      "_date",
+      isFilter.value ? formatDate(curDate.value, "eng") : ""
+    );
 
-//     const response = await HTTP.post("", formData);
+    const response = await HTTP.post("", formData);
 
-//     if (response.data.isSuccesfull) {
-//       loadFile(
-//         response.data.fileName,
-//         response.data.content,
-//         response.data.mime
-//       );
+    if (response.data.isSuccesfull) {
+      loadFile(
+        response.data.fileName,
+        response.data.content,
+        response.data.mime
+      );
 
-//       ElMessageBox({
-//         title: "Увага!",
-//         type: "success",
-//         dangerouslyUseHTMLString: true,
-//         message: response.data.message,
-//       });
-//     } else {
-//       ElMessage.error("Звіт не сформовано");
-//     }
-//   } catch (e) {
-//     ElMessage("Помилка завантаження звіту...");
-//   }
-// };
+      ElMessageBox({
+        title: "Увага!",
+        type: "success",
+        dangerouslyUseHTMLString: true,
+        message: response.data.message,
+      });
+    } else {
+      ElMessage.error("Звіт не сформовано");
+    }
+  } catch (e) {
+    ElMessage("Помилка завантаження звіту...");
+  }
+};
 
 onActivated(async () => {
   await getManeger();
