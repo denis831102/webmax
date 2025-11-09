@@ -31,13 +31,12 @@
               value-format="YYYY-MM-DD"
               :placeholder="getDate"
               style="width: 100%"
+              @change="checkBits"
             />
           </el-col>
 
           <el-col :span="12">
-            <el-tag type="info" size="large" style="font-size: 12pt">{{
-              getTime
-            }}</el-tag>
+            <el-tag type="info" size="large" style="font-size: 12pt">{{ getTime }}</el-tag>
           </el-col>
         </el-row>
       </el-form-item>
@@ -65,16 +64,8 @@
                 @click="delOperation(props.row)"
               />
 
-              <div
-                style="margin-top: 8px"
-                v-if="setting.displaySize == 'large'"
-              >
-                <el-badge
-                  value="було"
-                  class="item"
-                  type="warning"
-                  :offset="[-35, -5]"
-                >
+              <div style="margin-top: 8px" v-if="setting.displaySize == 'large'">
+                <el-badge value="було" class="item" type="warning" :offset="[-35, -5]">
                   <el-button size="small">
                     {{ `${props.row.curCount} ${props.row.unit}` }}
                   </el-button>
@@ -95,12 +86,7 @@
 
               <span
                 v-else
-                style="
-                  padding: 5px;
-                  background: #c6e2ff69;
-                  font-weight: bold;
-                  border-radius: 10px;
-                "
+                style="padding: 5px; background: #c6e2ff69; font-weight: bold; border-radius: 10px"
               >
                 {{ `${props.row.curCount} ${props.row.unit}` }}
               </span>
@@ -184,13 +170,7 @@
             />
           </el-col>
 
-          <el-col
-            :xs="24"
-            :sm="8"
-            :md="10"
-            :lg="8"
-            v-if="form.visibleContrAgent"
-          >
+          <el-col :xs="24" :sm="8" :md="10" :lg="8" v-if="form.visibleContrAgent">
             <el-radio-group
               v-model="form.modeOtg"
               v-on:change="getSklad()"
@@ -202,18 +182,8 @@
             </el-radio-group>
           </el-col>
 
-          <el-col
-            :xs="24"
-            :sm="8"
-            :md="10"
-            :lg="8"
-            v-if="form.visibleContrAgent"
-          >
-            <el-select
-              v-model="form.curContragent"
-              style="width: 100%"
-              :disabled="form.disabledContrAgent"
-            >
+          <el-col :xs="24" :sm="8" :md="10" :lg="8" v-if="form.visibleContrAgent">
+            <el-select v-model="form.curContragent" style="width: 100%" :disabled="form.disabledContrAgent">
               <el-option
                 v-for="item in form.optionContragent"
                 :key="item.id"
@@ -232,16 +202,9 @@
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="clearForm" :disabled="!form.isSave"
-          >Очистити</el-button
-        >
+        <el-button @click="clearForm" :disabled="!form.isSave">Очистити</el-button>
         <el-button @click="closeForm">Вийти</el-button>
-        <el-button
-          type="primary"
-          @click="saveTransaction"
-          :disabled="form.isDisableSave"
-          >Зберегти</el-button
-        >
+        <el-button type="primary" @click="saveTransaction" :disabled="form.isDisableSave">Зберегти</el-button>
       </div>
     </template>
   </el-dialog>
@@ -302,6 +265,7 @@ const form = reactive({
   chnOperation_child: [],
   isDisableSave: false,
   loading: false,
+  allMaterial: [],
 });
 const selOperation = ref([]);
 
@@ -351,9 +315,7 @@ const loadOperation = (isRedactor = false) => {
 
   form.tableOperation = curTransaction.listOper.map((curOper, ind) => {
     return {
-      nameOperation: [curOper.name_V, curOper.name_K, curOper.name_M].join(
-        " / "
-      ),
+      nameOperation: [curOper.name_V, curOper.name_K, curOper.name_M].join(" / "),
       maxCount:
         +curOper.dir == -1 && curOper.id_V != 5
           ? curOper.countBits + (isRedactor ? curOper.count : 0)
@@ -386,19 +348,15 @@ const loadOperation = (isRedactor = false) => {
   });
 
   if (!isRedactor) {
-    form.tableOperation = form.tableOperation.filter(
-      (el) => +el.isMoveKassa != -1
-    );
+    form.tableOperation = form.tableOperation.filter((el) => +el.isMoveKassa != -1);
   }
 
-  form.visibleContrAgent =
-    curTransaction.id_Bu != 0 || curTransaction.id_cm != 0;
+  form.visibleContrAgent = curTransaction.id_Bu != 0 || curTransaction.id_cm != 0;
   form.modeOtg = curTransaction.id_Bu != 0 ? "ca" : "cm";
 
   if (form.visibleContrAgent) {
     form.comment = curTransaction.comment.split(";")[1];
-    form.curContragent =
-      curTransaction.id_Bu != 0 ? curTransaction.id_Bu : curTransaction.id_cm;
+    form.curContragent = curTransaction.id_Bu != 0 ? curTransaction.id_Bu : curTransaction.id_cm;
 
     getSklad(form.curContragent);
   } else {
@@ -413,10 +371,7 @@ const addOperation = () => {
   // const curOper = selOperation.value[selOperation.value.length - 1];
   const curOper = selOperation.value;
 
-  const isNotOtg = form.tableOperation.reduce(
-    (res, el) => res | (el.id_V != 2),
-    false
-  );
+  const isNotOtg = form.tableOperation.reduce((res, el) => res | (el.id_V != 2), false);
 
   if (curOper[0].id == 2 && isNotOtg) {
     // ElMessage.error(
@@ -444,21 +399,17 @@ const addOperation = () => {
     nameOperation: [
       form.options[curOper[0].num].label,
       form.options[curOper[0].num].children[[curOper[1].num]].label,
-      form.options[curOper[0].num].children[[curOper[1].num]].children[
-        [curOper[2].num]
-      ].label,
+      form.options[curOper[0].num].children[[curOper[1].num]].children[[curOper[2].num]].label,
     ].join(" / "),
     maxCount:
       +curOper[2].dir == -1 && curOper[0].id != 5
-        ? form.options[curOper[0].num].children[[curOper[1].num]].children[
-            [curOper[2].num]
-          ].value.count
+        ? form.options[curOper[0].num].children[[curOper[1].num]].children[[curOper[2].num]].value.count
         : 999999999,
     minCount: 0,
     curCount:
-      form.options[curOper[0].num].children[[curOper[1].num]].children[
-        [curOper[2].num]
-      ].value.count,
+      formatDateStr(form.curDate) == formatDateStr(form.date)
+        ? form.options[curOper[0].num].children[[curOper[1].num]].children[[curOper[2].num]].value.count
+        : form.allMaterial.find((mat) => mat.id_M == curOper[2].id).count,
     unit: curOper[2].unit,
     mode: "add",
 
@@ -471,6 +422,7 @@ const addOperation = () => {
     id_M: curOper[2].id,
     token: generateToken(),
     name_V: form.options[curOper[0].num].label,
+    name_M: form.options[curOper[0].num].children[[curOper[1].num]].children[[curOper[2].num]].label,
   };
   // form.tableOperation = [...form.tableOperation, ...newOperation];
   form.tableOperation.push(newOperation);
@@ -486,8 +438,7 @@ const delOperation = (row) => {
 
   if (
     form.tableOperation.length == 1 ||
-    (form.tableOperation.length == 2 &&
-      form.tableOperation.find((el) => [40, 80].includes(+el.id_M)))
+    (form.tableOperation.length == 2 && form.tableOperation.find((el) => [40, 80].includes(+el.id_M)))
   ) {
     ElMessageBox({
       title: "Увага!",
@@ -539,11 +490,7 @@ const delOperation = (row) => {
   selOperation.value = [];
   checkVidOper();
 
-  if (
-    getSettingUser.value.isAutoComment &&
-    countCurOper == 1 &&
-    row.id_V != 2
-  ) {
+  if (getSettingUser.value.isAutoComment && countCurOper == 1 && row.id_V != 2) {
     autoComment("del", row.name_V);
   }
 };
@@ -553,10 +500,7 @@ const checkVidOper = () => {
   // form.tableOperation.forEach((el) => {
   //   vid |= el.id_V == 2;
   // });
-  form.visibleContrAgent = form.tableOperation.reduce(
-    (res, el) => res | (el.id_V == 2),
-    false
-  );
+  form.visibleContrAgent = form.tableOperation.reduce((res, el) => res | (el.id_V == 2), false);
 };
 
 const saveTransaction = () => {
@@ -564,13 +508,8 @@ const saveTransaction = () => {
   // const limitDay = 3;
 
   // if (countDay > limitDay) {
-  if (
-    !checkMonth(form.date, form.curDate) &&
-    !+getCurUser.value.listAccess[10]
-  ) {
-    ElMessage.error(
-      `Транзакція не збережена. Правити дозволено в поточному місяці `
-    );
+  if (!checkMonth(form.date, form.curDate) && !+getCurUser.value.listAccess[10]) {
+    ElMessage.error(`Транзакція не збережена. Правити дозволено в поточному місяці `);
   } else {
     form.isDisableSave = true;
     form.isSave ? addTransaction() : changeTransaction();
@@ -611,10 +550,8 @@ const addTransaction = async () => {
           old_price: 0,
           new_count: oper.count,
           new_price: oper.price,
-          mode_otg:
-            form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
-          id_agent:
-            form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
+          mode_otg: form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
+          id_agent: form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
           is_move_kassa: 1,
           token,
         });
@@ -664,9 +601,7 @@ const addTransaction = async () => {
     }
 
     if (form.optionContragent.length) {
-      nameContragent = form.optionContragent.find(
-        (el) => el.id == form.curContragent
-      ).name;
+      nameContragent = form.optionContragent.find((el) => el.id == form.curContragent).name;
     }
 
     const response = await HTTP.post("", {
@@ -675,10 +610,7 @@ const addTransaction = async () => {
       _idPunkt: props.idPunkt,
       _date: form.date,
       _time: getTime.value,
-      _comment: [
-        form.visibleContrAgent ? `Відвантаження на ${nameContragent};` : "",
-        form.comment,
-      ]
+      _comment: [form.visibleContrAgent ? `Відвантаження на ${nameContragent};` : "", form.comment]
         .join(" ")
         .trim(),
       _idTChild: idTChild,
@@ -715,9 +647,7 @@ const changeTransaction = async () => {
     let id_T = setting.value.tables["tabTransaction"].curRow.id_T;
     let id_T_child = setting.value.tables["tabTransaction"].curRow.id_T_child;
 
-    const contragent = form.optionContragent.find(
-      (el) => el.id == form.curContragent
-    );
+    const contragent = form.optionContragent.find((el) => el.id == form.curContragent);
     const nameContragent = contragent ? contragent.name : "";
 
     form.tableOperation.forEach((oper) => {
@@ -735,12 +665,8 @@ const changeTransaction = async () => {
               old_price: 0,
               new_count: oper.count,
               new_price: oper.price,
-              mode_otg:
-                form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
-              id_agent:
-                form.visibleContrAgent && oper.id_V == 2
-                  ? form.curContragent
-                  : 0,
+              mode_otg: form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
+              id_agent: form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
               is_move_kassa: 1,
               token,
             });
@@ -779,12 +705,8 @@ const changeTransaction = async () => {
               old_price: oper.old.price,
               new_count: oper.count,
               new_price: oper.price,
-              mode_otg:
-                form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
-              id_agent:
-                form.visibleContrAgent && oper.id_V == 2
-                  ? form.curContragent
-                  : 0,
+              mode_otg: form.visibleContrAgent && oper.id_V == 2 ? form.modeOtg : "",
+              id_agent: form.visibleContrAgent && oper.id_V == 2 ? form.curContragent : 0,
               is_move_kassa: 1,
             });
 
@@ -833,10 +755,7 @@ const changeTransaction = async () => {
       _id_T: id_T,
       _date: form.date,
       _time: getTime.value,
-      _comment: [
-        form.visibleContrAgent ? `Відвантаження на ${nameContragent};` : "",
-        form.comment,
-      ]
+      _comment: [form.visibleContrAgent ? `Відвантаження на ${nameContragent};` : "", form.comment]
         .join(" ")
         .trim(),
       _opersDel: form.delOperation,
@@ -904,11 +823,7 @@ const getDate = computed(() => {
     m: form.date.getMonth() + 1,
     y: form.date.getFullYear(),
   };
-  return [
-    (date.d < 10 ? "0" : "") + date.d,
-    (date.m < 10 ? "0" : "") + date.m,
-    date.y,
-  ].join(".");
+  return [(date.d < 10 ? "0" : "") + date.d, (date.m < 10 ? "0" : "") + date.m, date.y].join(".");
 });
 
 const getTime = computed(() => {
@@ -941,6 +856,31 @@ const checkMonth = (date1, date2) => {
   const d1 = new Date(date1);
   const d2 = new Date(date2);
   return d1.getMonth() == d2.getMonth();
+};
+
+const formatDate = (dateStr, mode = "toLocal") => {
+  if (mode === "toISO") {
+    // Из DD.MM.YYYY → YYYY-MM-DD
+    const [day, month, year] = dateStr.split(".");
+    return `${year}-${month}-${day}`;
+  } else if (mode === "toLocal") {
+    // Из YYYY-MM-DD → DD.MM.YYYY
+    const [year, month, day] = dateStr.split("-");
+    return `${day}.${month}.${year}`;
+  } else {
+    throw new Error("Помилковий режим. Используй 'toISO' или 'toLocal'.");
+  }
+};
+
+const formatDateStr = (date) => {
+  if (typeof date == "object") {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  } else {
+    return date;
+  }
 };
 
 const startTimer = () => {
@@ -988,18 +928,9 @@ const generateToken = (length = 8) => {
   let password = "";
 
   // гарантируем по одному символу из каждой группы
-  password +=
-    lower[
-      Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % lower.length)
-    ];
-  password +=
-    upper[
-      Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % upper.length)
-    ];
-  password +=
-    digits[
-      Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % digits.length)
-    ];
+  password += lower[Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % lower.length)];
+  password += upper[Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % upper.length)];
+  password += digits[Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % digits.length)];
   // password +=
   //   special[
   //     Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % special.length)
@@ -1033,29 +964,27 @@ const autoComment = (mode, name_V) => {
   }
 };
 
-const onBlur = (row) => {
-  if (
-    [2, 3].includes(+row.id_V) &&
-    row.count > row.curCount + (row.old ? row.old.count : 0)
-  ) {
-    const countAdd = roundTo(
-      row.count - row.curCount - (row.old ? row.old.count : 0),
-      3
-    );
+const onBlur = (row, isReturn = false) => {
+  if ([2, 3].includes(+row.id_V) && row.count > row.curCount + (row.old ? row.old.count : 0)) {
+    const countAdd = roundTo(row.count - row.curCount - (row.old ? row.old.count : 0), 3);
+    const countNew = row.curCount + (row.old ? row.old.count : 0);
+    const message = `Ведена кількість [${row.name_M}] <B>${row.count} ${row.unit}</B> перевищує залишки на складі
+        <B>${row.curCount} ${row.unit}</B>.
+        Кількість автоматично буде змінена на максимальне значення <B>${countNew} ${row.unit}</B>.
+        <span style="color: red">НЕ ВИСТАЧАЄ ${countAdd} ${row.unit}</span>.`;
 
-    ElMessageBox({
-      title: "Увага!",
-      type: "warning",
-      dangerouslyUseHTMLString: true,
-      message: `Ведена кількість <B>${row.count} ${
-        row.unit
-      }</B> перевищує залишки на складі <B>${row.curCount} ${row.unit}</B>.
-        Кількість автоматично буде змінена на максимальне значення <B>${
-          row.curCount + (row.old ? row.old.count : 0)
-        } ${row.unit}</B>.
-        <span style="color: red">НЕ ВИСТАЧАЄ ${countAdd} ${row.unit}</span>.`,
-    });
-    row.count = row.curCount + (row.old ? row.old.count : 0);
+    row.count = countNew;
+
+    if (!isReturn) {
+      ElMessageBox({
+        title: "Увага!",
+        type: "warning",
+        dangerouslyUseHTMLString: true,
+        message: message,
+      });
+    } else {
+      return message;
+    }
   }
 };
 
@@ -1070,16 +999,56 @@ const calcCount = (row) => {
     : +row.id_V == 1
     ? row.curCount + row.count - (row.old ? row.old.count : 0)
     : +row.id_V == 4
-    ? row.curCount +
-      row.count * row.price -
-      (row.old ? row.old.count * row.old.price : 0)
-    : row.curCount -
-      row.count * row.price +
-      (row.old ? row.old.count * row.old.price : 0);
+    ? row.curCount + row.count * row.price - (row.old ? row.old.count * row.old.price : 0)
+    : row.curCount - row.count * row.price + (row.old ? row.old.count * row.old.price : 0);
 
   val = roundTo(val, 3);
 
   return `${val} ${row.unit}`;
+};
+
+const checkBits = async () => {
+  let num = 1;
+  const arMessage = [];
+
+  const response = await HTTP.get("", {
+    params: {
+      _method: "getBits",
+      _id_U: getCurUser.value.id,
+      _id_P: props.idPunkt,
+      _date: form.date,
+    },
+  });
+
+  form.allMaterial = [].concat(...response.data.map((kat) => kat.listMater));
+
+  let dublicatTableOperation = form.tableOperation;
+  form.tableOperation = [];
+
+  dublicatTableOperation.forEach((oper) => {
+    const material = form.allMaterial.find((mat) => mat.id_M == oper.id_M);
+    const newOper = {
+      ...oper,
+      curCount: material.count,
+    };
+
+    form.tableOperation.push(newOper);
+
+    if (oper.count > material.count) {
+      arMessage.push(`${num++}. ${onBlur(newOper, true)}`);
+    }
+  });
+
+  if (arMessage.length) {
+    ElMessageBox({
+      title: "Увага!",
+      type: "warning",
+      dangerouslyUseHTMLString: true,
+      message:
+        `Перевірка залишків на ${formatDate(form.date, "toLocal")} виконана.<br><br>` +
+        arMessage.join("<br>"),
+    });
+  }
 };
 
 const watchTable = (mode) => {
@@ -1107,9 +1076,7 @@ const watchTable = (mode) => {
               el.price = el.count != 0 ? (el.summa / el.count).toFixed(3) : "";
             }
 
-            const kasaEl = form.tableOperation.find(
-              (fEl) => fEl.token == el.token && fEl.isMoveKassa == -1
-            );
+            const kasaEl = form.tableOperation.find((fEl) => fEl.token == el.token && fEl.isMoveKassa == -1);
             if (kasaEl) kasaEl.count = el.summa * (el.id_V == 1 ? -1 : 1);
           });
         }
