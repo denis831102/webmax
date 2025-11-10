@@ -204,7 +204,9 @@
       <div class="dialog-footer">
         <el-button @click="clearForm" :disabled="!form.isSave">Очистити</el-button>
         <el-button @click="closeForm">Вийти</el-button>
-        <el-button type="primary" @click="saveTransaction" :disabled="form.isDisableSave">Зберегти</el-button>
+        <el-button type="primary" @click="saveTransaction" :disabled="form.isDisableSave || form.loading">
+          Зберегти</el-button
+        >
       </div>
     </template>
   </el-dialog>
@@ -1011,6 +1013,8 @@ const checkBits = async () => {
   let num = 1;
   const arMessage = [];
 
+  form.loading = true;
+
   const response = await HTTP.get("", {
     params: {
       _method: "getBits",
@@ -1038,6 +1042,8 @@ const checkBits = async () => {
       arMessage.push(`${num++}. ${onBlur(newOper, true)}`);
     }
   });
+
+  form.loading = false;
 
   if (arMessage.length) {
     ElMessageBox({
