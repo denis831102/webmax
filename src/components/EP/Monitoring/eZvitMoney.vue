@@ -16,11 +16,7 @@
             @change="getAllKasa()"
           >
             <template #header>
-              <el-checkbox
-                v-model="checkAll"
-                :indeterminate="indeterminate"
-                @change="handleCheckAll"
-              >
+              <el-checkbox v-model="checkAll" :indeterminate="indeterminate" @change="handleCheckAll">
                 Усі
               </el-checkbox>
             </template>
@@ -35,11 +31,7 @@
 
         <!-- Фільтр (перемикач) -->
         <el-col :xs="4" :sm="12" :md="5" :lg="2">
-          <el-switch
-            v-model="isFilter"
-            @change="getAllKasa"
-            style="float: right"
-          />
+          <el-switch v-model="isFilter" @change="getAllKasa" style="float: right" />
         </el-col>
 
         <!-- Дата -->
@@ -67,25 +59,14 @@
 
         <!-- Оновити -->
         <el-col :xs="24" :sm="24" :md="12" :lg="3">
-          <el-button
-            type="primary"
-            plain
-            :icon="Refresh"
-            @click="getAllKasa"
-            style="width: 100%"
-          >
+          <el-button type="primary" plain :icon="Refresh" @click="getAllKasa" style="width: 100%">
             Оновити
           </el-button>
         </el-col>
 
         <!-- Завантажити -->
         <el-col :xs="20" :sm="12" :md="12" :lg="5">
-          <input
-            type="file"
-            ref="fileInput"
-            style="display: none"
-            @change="onFileSelected"
-          />
+          <input type="file" ref="fileInput" style="display: none" @change="onFileSelected" />
 
           <el-button
             type="success"
@@ -99,14 +80,7 @@
         <!-- диапазон разногласий -->
         <el-col :xs="4" :sm="12" :md="12" :lg="2">
           <div class="slider-demo-block">
-            <el-slider
-              v-model="allowed"
-              :step="1"
-              range
-              show-stops
-              :min="-10"
-              :max="10"
-            />
+            <el-slider v-model="allowed" :step="1" range show-stops :min="-10" :max="10" />
           </div>
           <div style="text-align: center; margin-top: 8px">
             <!-- <strong>Вибрано:</strong> {{ allowed[0] }} → {{ allowed[1] }} -->
@@ -144,11 +118,7 @@
           <el-icon><User /></el-icon>
           <span style="margin-left: 10px">{{ scope.row.pib }}</span>
 
-          <el-tag
-            type="success"
-            size="large"
-            style="margin-left: 50px; font-size: large"
-          >
+          <el-tag type="success" size="large" style="margin-left: 50px; font-size: large">
             <el-icon><Money /></el-icon>
             {{ parseFloat(scope.row.summa_U).toLocaleString("rus") }}</el-tag
           >
@@ -221,8 +191,7 @@ const filterTable = computed(() => {
       ...user,
       listPunkt: user.listPunkt.filter(
         (punkt) =>
-          (withoutZeroKasa.value == "withoutZero" &&
-            Math.abs(punkt.summa_K) > 0.99999) ||
+          (withoutZeroKasa.value == "withoutZero" && Math.abs(punkt.summa_K) > 0.99999) ||
           withoutZeroKasa.value == "allKas"
       ),
     };
@@ -260,16 +229,8 @@ const formatDate = (valDate, mode = "ukr") => {
     y: valDate.getFullYear(),
   };
   return mode == "ukr"
-    ? [
-        (date.d < 10 ? "0" : "") + date.d,
-        (date.m < 10 ? "0" : "") + date.m,
-        date.y,
-      ].join(".")
-    : [
-        date.y,
-        (date.m < 10 ? "0" : "") + date.m,
-        (date.d < 10 ? "0" : "") + date.d,
-      ].join("-");
+    ? [(date.d < 10 ? "0" : "") + date.d, (date.m < 10 ? "0" : "") + date.m, date.y].join(".")
+    : [date.y, (date.m < 10 ? "0" : "") + date.m, (date.d < 10 ? "0" : "") + date.d].join("-");
 };
 
 const getAllKasa = async () => {
@@ -286,9 +247,7 @@ const getAllKasa = async () => {
     loading.value = false;
 
     if (+getSettingUser.value.isShowMes) {
-      let limitDate = isFilter.value
-        ? formatDate(curDate.value, "ukr")
-        : formatDate(new Date(), "ukr");
+      let limitDate = isFilter.value ? formatDate(curDate.value, "ukr") : formatDate(new Date(), "ukr");
       ElMessage.success(`Аналітика по касам на ${limitDate} оновлена`);
     }
   } catch (e) {
@@ -340,24 +299,17 @@ const loadReport = async (file) => {
   try {
     const formData = new FormData();
     formData.append("_file", file);
-    formData.append("_method", "loadReportMoney");
-    formData.append("_nameReport", "analitikaResurs");
+    formData.append("_method", "loadReport");
+    formData.append("_nameReport", "analitikaMoney");
     formData.append("_id_U", getCurUser.value.id);
     formData.append("_checkManeger", checkManeger.value);
     formData.append("_checkAllowed", allowed.value);
-    formData.append(
-      "_date",
-      isFilter.value ? formatDate(curDate.value, "eng") : ""
-    );
+    formData.append("_date", isFilter.value ? formatDate(curDate.value, "eng") : "");
 
     const response = await HTTP.post("", formData);
 
     if (response.data.isSuccesfull) {
-      loadFile(
-        response.data.fileName,
-        response.data.content,
-        response.data.mime
-      );
+      loadFile(response.data.fileName, response.data.content, response.data.mime);
 
       ElMessageBox({
         title: "Увага!",
