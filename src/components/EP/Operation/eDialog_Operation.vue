@@ -1039,22 +1039,21 @@ const checkBits = async () => {
     form.tableOperation.push(newOper);
 
     if (oper.count > material.count) {
-      arMessage.push(`${num++}. ${onBlur(newOper, true)}`);
+      let message = onBlur(newOper, true);
+      if (message) arMessage.push(`${num++}. ${message}`);
     }
   });
 
   form.loading = false;
 
-  if (arMessage.length) {
-    ElMessageBox({
-      title: "Увага!",
-      type: "warning",
-      dangerouslyUseHTMLString: true,
-      message:
-        `Перевірка залишків на ${formatDate(form.date, "toLocal")} виконана.<br><br>` +
-        arMessage.join("<br>"),
-    });
-  }
+  ElMessageBox({
+    title: "Увага!",
+    type: "warning",
+    dangerouslyUseHTMLString: true,
+    message:
+      `Перевірка залишків на ${formatDate(form.date, "toLocal")} виконана.` +
+      (arMessage.length ? `<br><br>${arMessage.join("<br>")}` : ""),
+  });
 };
 
 const watchTable = (mode) => {
@@ -1110,6 +1109,7 @@ onUpdated(async () => {
       form.visibleContrAgent = false;
       form.isDisableSave = false;
       form.loading = false;
+
       break;
     }
     case "copyOperation": {
@@ -1123,6 +1123,7 @@ onUpdated(async () => {
       form.disabledContrAgent = false;
       form.isDisableSave = false;
       loadOperation();
+
       break;
     }
     case "editOperation": {
@@ -1139,6 +1140,8 @@ onUpdated(async () => {
       form.disabledContrAgent = true;
       form.isDisableSave = false;
       loadOperation(true);
+      checkBits();
+
       break;
     }
   }
