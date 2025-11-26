@@ -36,6 +36,15 @@ Class clReport{
 	  	else return chr( $int + 64) . chr( $ostatok + 65);
 	}//____________________________________________________________________________________________________________________	
 	
+	// 
+	public function fileNameExt($name){
+		$parts 		= explode('.', $name); 
+		$basename 	= implode('.', array_slice($parts, 0, -1));
+		$extension 	= end($parts);
+		    
+		return [ $basename, $extension];		
+	}//____________________________________________________________________________________________________________________	
+	
 	// функция 
 	public function checkFilters($str){
 		$needles = ["Лом_тяжелый", "Лом цветных металлов", "Вторсырье"];		
@@ -48,7 +57,7 @@ Class clReport{
 		    
 		return '';		
 	}//____________________________________________________________________________________________________________________	
-		
+			
 	// функция для поиска двух дат
 	private function regDate($str){		
 		preg_match_all('/\d{2}\.\d{2}\.\d{4}/', $str, $matches);
@@ -128,12 +137,30 @@ Class clReport{
 				WHERE id_P = %1\$d AND id_M = %2\$d",							
 				/*1*/	$oper[id_P],				
 				/*2*/	$oper[id_M],			
-				/*3*/	( in_array( $oper[id_V], [4, 5] )
-					?   ( $oper[new_count] * $oper[new_price] - 
-						 $oper[old_count] * $oper[old_price] ) * $this->operVid[ $oper[id_V] ] * $dir
-					:	$oper[d_count] * $this->operVid[ $oper[id_V] ] * $dir
+				/*3*/	( in_array( $oper['id_V'], [4, 5] )
+					?   ( $oper['new_count'] * $oper['new_price'] - 
+						 $oper['old_count'] * $oper['old_price'] ) * $this->operVid[ $oper[id_V] ] * $dir
+					:	$oper['d_count'] * $this->operVid[ $oper['id_V'] ] * $dir
 				)				
-			));									
+			));	
+			
+			// дополнительное движение по кассе
+			if ( in_array( $oper['id_V'], [1, 3]) && $oper['is_move_kassa'] == 1 ){
+				$id_V 	 = ( $oper['id_V'] == 1 ? 5  : 4 );
+				$id_M 	 = ( $oper['id_V'] == 1 ? 40 : 80 );
+				$d_count = ( $oper['new_count'] * $oper['new_price'] - 
+							 $oper['old_count'] * $oper['old_price'] ) * $this->operVid[ $id_V ] * $dir;
+				$d_price = 0;
+												
+				$this->mysqli->query( sprintf(				
+					"UPDATE %1\$s SET count = count + (%4\$f)
+					 WHERE id_P = %2\$d AND id_M = %3\$d",
+					/*1*/	"tempBitsPunkt",
+					/*2*/	$oper['id_P'],					
+					/*3*/	$id_M,					
+					/*4*/   $d_count					
+				));				
+			}											
 		}		
 		
 	}//_________________________________________________________________________
@@ -158,6 +185,13 @@ Class clReport{
 			/*1*/	$matKategories								
 		));
 		
+		$this->mysqli->query( sprintf(				
+			"ALTER TABLE tempBitsPunkt
+				  ADD INDEX idx_idM (id_M),
+				  ADD INDEX idx_idP (id_P),
+				  ADD INDEX idx_nameP (name_P)"						
+		));	
+		
 		// убираем из учета операции после заданной даты
 		if( !empty($date) ){
 			$cursorOper = $this->mysqli->query( sprintf(				
@@ -172,16 +206,16 @@ Class clReport{
 			$arOpers = [];
 			while( $rec = $cursorOper->fetch_array( MYSQLI_ASSOC ) ){			
 				$arOpers[] = [
-					id_M 	 	=> $rec[id_M],						
-					id_V 	 	=> $rec[id_V],
-					id_P 	 	=> $rec[id_P],							
-					d_count 	=> $rec[count],						
-					d_price 	=> $rec[price],
+					id_M 	 	=> $rec['id_M'],						
+					id_V 	 	=> $rec['id_V'],
+					id_P 	 	=> $rec['id_P'],							
+					d_count 	=> $rec['count'],						
+					d_price 	=> $rec['price'],
 					old_count   => 0,
 	            	old_price   => 0,
-	            	new_count   => $rec[count],
-	            	new_price   => $rec[price],	
-	            	is_move_kassa => $rec[isMoveKassa],					
+	            	new_count   => $rec['count'],
+	            	new_price   => $rec['price'],	
+	            	is_move_kassa => $rec['isMoveKassa'],					
 				];								
 			}
 			$this->setBits( $arOpers );
@@ -203,6 +237,66 @@ Class clReport{
 			'arPunkt' => $arPunkt,
 		];								
 	}//____________________________________________________________________________________________________________________	
+	
+	// получение ОТСТАТКОВ (касса) на заданный день 
+	public function getKassaOnDay( $date ){		 				
+		$this->mysqli->query( sprintf(				
+			"CREATE TEMPORARY TABLE tempBitsPunkt AS 
+			SELECT bits.id_P, bits.id_M, bits.count, punkt.name as name_P
+			FROM bits
+				LEFT  JOIN punkt ON bits.id_P = punkt.id_P"						
+		));	
+		
+		$this->mysqli->query( sprintf(				
+			"ALTER TABLE tempBitsPunkt
+				  ADD INDEX idx_idM (id_M),
+				  ADD INDEX idx_idP (id_P),
+				  ADD INDEX idx_nameP (name_P)"						
+		));	
+		
+		$arOpers = [];
+		$cursor = $this->mysqli->query( sprintf(				
+			"SELECT transaction.*, 
+				operation.id_O, operation.count, operation.price, operation.id_M,  
+				operation.id_V, operation.isMoveKassa			 	
+			FROM transaction 
+				INNER JOIN operation ON transaction.id_T = operation.id_T				
+			WHERE transaction.date > '%1\$s' ",
+			/*1*/	$date										
+		));		
+		while( $rec = $cursor->fetch_array( MYSQLI_ASSOC ) ){			
+			$arOpers[] = [
+				id_M 	 	  => $rec['id_M'],						
+				id_V 	 	  => $rec['id_V'],
+				id_P 	 	  => $rec['id_P'],							
+				d_count 	  => $rec['count'],						
+				d_price 	  => $rec['price'],
+				old_count     => 0,
+            	old_price     => 0,
+            	new_count     => $rec['count'],
+            	new_price     => $rec['price'],		
+            	is_move_kassa => $rec['isMoveKassa'],					
+			];								
+		}	
+				
+		$this->setBits( $arOpers );		
+		
+		$cursor = $this->mysqli->query(
+			"SELECT name_P, SUM(count) AS count 
+			FROM tempBitsPunkt 
+				JOIN material ON tempBitsPunkt.id_M = material.id_M				
+			WHERE material.id_K in (1, 6)
+			GROUP BY name_P"
+		);
+		
+		if ( $cursor->num_rows > 0) {
+			while(  $rec = $cursor->fetch_array( MYSQLI_ASSOC ) ){																				
+				$arPunkt[ trim($rec['name_P']) ] = $rec['count'];
+			};		
+		};		
+		
+		return $arPunkt;	
+	}//________________________________________________________________
 								
 	// получение отчета "Щоденний звіт по ВЛАСНИМ ПУНКТАМ" 
 	public function getReportEconomist(){		
@@ -215,11 +309,32 @@ Class clReport{
 		
 		$this->xls = $this->xlsReader->load($this->namePattern); 				
 		$this->xlsWriter = new PHPExcel_Writer_Excel2007($this->xls);
-							
+		
+		// зміна параметрів транзакцій					
 		$this->mysqli->query( sprintf("				
-			UPDATE transaction SET isEdit = 0, isDel = 0, isLoadReport = 1
+			UPDATE transaction SET isEdit = 0, isDel = 0
 			WHERE transaction.id_T IN (%1\$s)",
-			/*1*/	implode(", ", $this->_PARAM[_arTransaction])
+			/*1*/	implode(", ", $this->_PARAM['_arTransaction'])
+		));
+		
+		// зміна параметрів операцій у транзакціях					
+		$this->mysqli->query( sprintf("				
+			UPDATE operation 
+			JOIN transaction ON transaction.id_T = operation.id_T
+			SET operation.isLoadReport = 1	
+			WHERE transaction.id_T IN (%1\$s) %2\$s ",
+			/*1*/	implode(", ", $this->_PARAM['_arTransaction']),
+			/*2*/	( in_array($this->_PARAM[_checkOperation], [21, 22]) 
+						? "AND operation.id_V = 2 AND operation.id_" . 
+						  ( $this->_PARAM[_checkOperation] == 21 ? 'CM' : 'Bu' ) . " > 0 "
+						: ( $this->_PARAM[_checkOperation] == 6
+							? "AND operation.id_V IN (6, 7)"
+							: ( $this->_PARAM[_checkOperation] > 0
+								? "AND operation.id_V = {$this->_PARAM[_checkOperation]}"
+								: ""
+							)
+						)
+					)
 		));
 										
 		$cursor = $this->mysqli->query( sprintf(				
@@ -244,7 +359,8 @@ Class clReport{
 			ORDER BY idUser ASC, punkt.id_P ASC, id_T ASC, id_O, date DESC, time DESC",			
 			/*1*/	implode(", ", $this->_PARAM[_arTransaction]),
 			/*2*/	( in_array($this->_PARAM[_checkOperation], [21, 22]) 
-						? "AND operVid.id_V = 2 AND operation.id_" . ( $this->_PARAM[_checkOperation] == 21 ? 'CM' : 'Bu' ) . " > 0 "
+						? "AND operVid.id_V = 2 AND operation.id_" . 
+						  ( $this->_PARAM[_checkOperation] == 21 ? 'CM' : 'Bu' ) . " > 0 "
 						: ( $this->_PARAM[_checkOperation] == 6
 							? "AND operVid.id_V IN (6, 7)"
 							: ( $this->_PARAM[_checkOperation] > 0
@@ -256,15 +372,15 @@ Class clReport{
 		));
 				
 		if ( $cursor->num_rows > 0) {						
-			$old = [id_T => 0];	
+			$old = ['id_T' => 0];	
 			$curSheet = $i = 0;
 			$row = 1;
 			$minDate = '01.01.2100';
 			$maxDate = '01.01.1970';							
 			while( $i <= $cursor->num_rows ){
-				$rec = ( $i < $cursor->num_rows ? $cursor->fetch_array( MYSQLI_ASSOC ) : [id_T => 0]);
+				$rec = ( $i < $cursor->num_rows ? $cursor->fetch_array( MYSQLI_ASSOC ) : ['id_T' => 0]);
 																
-				if( ($old[id_T] <> $rec[id_T]) && $old[id_T] > 0 ){
+				if( ($old['id_T'] <> $rec['id_T']) && $old['id_T'] > 0 ){
 					$sheet = $this->xls->getSheet($curSheet);
 					$num = $curSheet + 1;
 					$sheet->setTitle("$num");
@@ -375,7 +491,7 @@ Class clReport{
 		$period = ($minDate == $maxDate ? $minDate : "{$minDate} - {$maxDate}");
 		$pack = [	
 			isSuccesfull => true,
-			fileName 	 => "{$this->_PARAM[_nameOperation]} {$period}.xlsx", 
+			fileName 	 => "{$this->_PARAM['_nameOperation']} {$period}.xlsx", 
 			//fileName 	 => basename($this->nameReport),
 			mime	     => mime_content_type($this->nameReport),					
 			content		 => base64_encode( file_get_contents($this->nameReport) ),						
@@ -386,19 +502,19 @@ Class clReport{
 	}//____________________________________________________________________________________________________________________	
 	
 	// получение отчета "АНАЛІТИКА ПО НОМЕНКЛАТУРІ НА ВЛАСНИХ ПУНКТАХ"
-	public function getReportAnalitikaResurs(){		
-		
+	public function getReportAnalitikaResurs(){			
 		$uploadDir 		= __DIR__ . '/Report/';
 		$file_name  	= $_FILES['_file']["name"];	  			
 		$file       	= $_FILES['_file']["tmp_name"]; //имя файла во временной папке на сервере
 		$file_dir 		= "{$uploadDir}{$file_name}";
 		
-		$info = explode('.', $file_name); //pathinfo($file_name);
-		$basename   = $info[0]; 		  //$info['filename'];   // имя файла без расширения
-		$extension  = $info[1];           //$info['extension'];  // расширение файла
+		/*$parts = explode('.', $file_name); //pathinfo($file_name);
+		$basename   = $parts[0]; 		  // имя файла без расширения
+		$extension  = $parts[1];          // расширение файла*/
 		
-		$isExistFile	= false;
-		$arPunkt		= [];
+		list($basename, $extension) = $this->fileNameExt($file_name);
+		
+		$isExistFile	= false;		
 		$count_Punkt = $count_Error = 0;
 								  	  
 		if ( move_uploaded_file( $file, $file_dir ) ){  
@@ -456,8 +572,8 @@ Class clReport{
 			message		 => implode('<br>',	[								
 								"<div style='font-size:13pt; font-weight: normal;'>Проаналізовано категорію <b>{$matKategories}</b> по {$dateUkr}." .
 								" Загальна кількість пунктів {$count_Punkt}.",
-								( $count_Error != 0 ? "Кількість з помилковими залишками <span style='color:#FF0000; font-weight: bold;'>{$count_Error}.</span>" : ""),
-								"<BR>Файл '{$basename} (проаналізовано).{$extension}' збережено в директорії для завантаження.</div>"								
+								( $count_Error != 0 ? "Кількість з <span style='color:#FF0000; font-weight: bold;'>помилковими залишками {$count_Error}.</span>" : ""),
+								"<BR>Файл <B>'{$basename} (проаналізовано).{$extension}'</B> збережено в директорії для завантаження.</div>"								
 							]),										
 		];
 		unlink($file_dir);
@@ -466,7 +582,81 @@ Class clReport{
 	}//____________________________________________________________________________________________________________________	
 	
 	// получение отчета "АНАЛІТИКА ПО РУХУ ГРОШОВИХ КОШТІВ ВЛАСНИХ ПУНКТІВ"
-	public function getReportAnalitikaMoney(){		
+	public function getReportAnalitikaMoney( $diapason ){		
+		$uploadDir 		= __DIR__ . '/Report/';
+		$file_name  	= $_FILES['_file']["name"];	  			
+		$file       	= $_FILES['_file']["tmp_name"]; //имя файла во временной папке на сервере
+		$file_dir 		= "{$uploadDir}{$file_name}";
+		
+		//$basename   = pathinfo($file_name, PATHINFO_FILENAME);  // имя файла без расширения
+		//$extension  = pathinfo($file_name, PATHINFO_EXTENSION); // расширение файла
+		
+		list($basename, $extension) = $this->fileNameExt($file_name);
+		
+		$isExistFile	= false;		
+		$count_Punkt = $count_Error = 0;
+								  	  
+		if ( move_uploaded_file( $file, $file_dir ) ){  
+			$isExistFile = true;	  
+		    $this->xls = $this->xlsReader->load($file_dir); 				
+			$this->xlsWriter = new PHPExcel_Writer_Excel2007($this->xls);
 			
+			$sheet = $this->xls->getSheet(0);
+						
+			$date = $this->parseDate( $sheet->getCell( "B2")->getValue());
+			$dateUkr = date('d.m.Y', strtotime($date));		
+
+			$kassaBits = $this->getKassaOnDay($date);
+			
+			list($l, $r) = explode(',', $diapason);
+			
+			for ($i = 11; $i <= 150; $i++){
+				$punkt = trim($sheet->getCell( "B{$i}")->getValue());
+				$count_1C = trim($sheet->getCell( "C{$i}")->getValue());	
+								
+				if( strlen($punkt) > 0 ){
+					$count_Punkt++;					
+					
+					$count_WM = $kassaBits[$punkt];
+					
+					$sheet->setCellValue("E{$i}", $count_WM );
+					
+					$dif = $count_1C - $count_WM;
+					if( $count_WM > 0 &&  ( $dif < $l || $dif > $r ) ){
+						// красный цвет 
+						$sheet->getStyle("E{$i}")->getFill()->applyFromArray(['type' => PHPExcel_Style_Fill::FILL_SOLID,  'startcolor' => ['rgb' => 'FF0000'] ]);
+						$count_Error++;
+						
+						$sheet->setCellValue("F{$i}", ($count_WM - $count_1C) );
+					}					 
+				}				
+				
+				if($punkt == 'Итог') break;
+			}				
+			
+			$this->xlsWriter->save($file_dir);		
+			$this->xls->disconnectWorksheets();  
+			unset($this->xlsReader);
+			unset($this->xlsWriter); 			
+		}
+		unset($this->xls);
+		
+		$newName = "{$basename} (проаналізовано).{$extension}";				
+		$pack = [	
+			isSuccesfull => $isExistFile,
+			fileName 	 => $newName, 
+			mime	     => mime_content_type($file_dir),					
+			content		 => base64_encode( file_get_contents($file_dir) ),
+			message		 => implode('<br>',	[								
+								"<div style='font-size:13pt; font-weight: normal;'>Проаналізовано кошти на власних пунктах по {$dateUkr}." .
+								" Допустимий діапазон розбіжності [{$l}; {$r}] грн.",
+								" Загальна кількість пунктів {$count_Punkt}.",
+								( $count_Error != 0 ? "Кількість з <span style='color:#FF0000; font-weight: bold;'>помилковими залишками {$count_Error}.</span>" : ""),
+								"<BR>Файл <B>'{$newName}'</B> збережено в директорії для завантаження.</div>"								
+							]),										
+		];
+		unlink($file_dir);
+		
+		return $pack;		
 	}//____________________________________________________________________________________________________________________	
 }?>

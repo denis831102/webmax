@@ -937,26 +937,26 @@ Class clServer{
 				LEFT JOIN bits ON  material.id_M = bits.id_M
 			WHERE bits.id_P = %1\$d AND !(material.id_M IN(40, 80))	
 			ORDER BY operVid.id_V, matKategories.id_K, material.id_M",
-			/*1*/	$this->_PARAM[_id_P]							
+			/*1*/	$this->_PARAM['_id_P']							
 		));
 		
-		$this->res->data 	= [];					
+		$this->res->data = [];					
 		
 		if ( $cursor->num_rows > 0) {
 			$i = $num_K = $num_M = $num_O = 0;
-			$old = [idOper => 0];
+			$old = ['idOper' => 0];
 			$listKateg = [];
 			$listMaterial = [];
 			while( $i <= $cursor->num_rows ){
-				$rec = ( $i < $cursor->num_rows ? $cursor->fetch_array( MYSQLI_ASSOC ) : [idOper => 0]);
+				$rec = ( $i < $cursor->num_rows ? $cursor->fetch_array( MYSQLI_ASSOC ) : ['idOper' => 0]);
 								
-				if( ($old[idKateg] <> $rec[idKateg] || ( $old[idOper] <> $rec[idOper] && $old[idOper] > 0) ) 
-					&& strlen( $old[nameKateg] ) > 0 
+				if( ($old['idKateg'] <> $rec['idKateg'] || ( $old['idOper'] <> $rec['idOper'] && $old['idOper'] > 0) ) 
+					&& strlen( $old['nameKateg'] ) > 0 
 				){
 					$listKateg[] = [
-						label 	=> $old[nameKateg],
+						label 	=> $old['nameKateg'],
 						value 	=> [	
-							id  => $old[idKateg],
+							id  => $old['idKateg'],
 							num => $num_K++,
 						],	
 						children => count($listMaterial) > 0 ? $listMaterial : [],
@@ -965,25 +965,25 @@ Class clServer{
 					$num_M = 0;			
 				}	
 				
-				if (strlen( $rec[nameMater] ) > 0 ){
+				if (strlen( $rec['nameMater'] ) > 0 ){
 					$listMaterial[] = [
-						label   => $rec[nameMater],												
+						label   => $rec['nameMater'],												
 						value   => [	
-							id  => $rec[idMater],
+							id  => $rec['idMater'],
 							num => $num_M++,							
-							count => round( $rec[count], 3),
-							unit  => $rec[unit],
-							dir   => $rec[dir],							
+							count => round( $rec['count'], 3),
+							unit  => $rec['unit'],
+							dir   => $rec['dir'],							
 						],	
-						check => ($rec[idMater] == 5 ? true : false ),
+						check => ($rec['idMater'] == 5 ? true : false ),
 					];	
 				}	
 				
-				if( ($old[idOper] <> $rec[idOper]) && $old[idOper] > 0 ){
+				if( ($old['idOper'] <> $rec['idOper']) && $old['idOper'] > 0 ){
 					$this->res->data[] = [
-						label 	=> $old[nameOper],						
+						label 	=> $old['nameOper'],						
 						value 	=> [	
-							id  => $old[idOper],
+							id  => $old['idOper'],
 							num => $num_O++,
 						],	
 						children => count($listKateg) > 0 ? $listKateg : [],
@@ -1099,7 +1099,7 @@ Class clServer{
 		$cursor = $this->mysqli->query( sprintf(				
 			"SELECT transaction.*, 
 				operation.id_O, operation.count, operation.price, operation.id_Bu, 
-				operation.id_cm, operation.isMoveKassa, operation.token,
+				operation.id_cm, operation.isMoveKassa, operation.token, operation.isLoadReport as isLoadReportOper,
 			 	material.id_M, material.name as name_M, material.unit,
 			 	operVid.id_V, operVid.name as name_V, operVid.dir as dir,
 			 	matKategories.id_K, matKategories.name as name_K,
@@ -1130,59 +1130,64 @@ Class clServer{
 		
 		$ar_data = [];		
 		$i = $total = $suma = $kassa = 0;
+		$isLoadReportOper = false;
 				
 		if ( $cursor->num_rows > 0) {						
-			$old = [id_T => 0];
+			$old = ['id_T' => 0];
 			$listOper = [];			
 			while( $i <= $cursor->num_rows ){
-				$rec = ( $i < $cursor->num_rows ? $cursor->fetch_array( MYSQLI_ASSOC ) : [id_T => 0]);
+				$rec = ( $i < $cursor->num_rows ? $cursor->fetch_array( MYSQLI_ASSOC ) : ['id_T' => 0]);
 				
-				if($old[id_T] <> $rec[id_T] && $old[id_T] > 0 ){
+				if($old['id_T'] <> $rec['id_T'] && $old['id_T'] > 0 ){
 					$ar_data[] = [
-						id_T 	 	=> $old[id_T],	
-						id_T_child 	=> $old[id_T_child],	
-						dateCreate 	=> date('d.m.Y', strtotime($old[dateCreate])),				
-						date 	 	=> date('d.m.Y', strtotime($old[date])),
-						time 	 	=> $old[time],
-						comment		=> $old[comment],
-						PIB			=> $old[PIB],						
+						id_T 	 	=> $old['id_T'],	
+						id_T_child 	=> $old['id_T_child'],	
+						dateCreate 	=> date('d.m.Y', strtotime($old['dateCreate'])),				
+						date 	 	=> date('d.m.Y', strtotime($old['date'])),
+						time 	 	=> $old['time'],
+						comment		=> $old['comment'],
+						PIB			=> $old['PIB'],						
 						suma		=> round($suma, 3),
 						listOper 	=> count($listOper) > 0 ? $listOper : [],						
 						id_Bu 		=> $id_Bu,
 						id_cm 		=> $id_cm,
-						isEdit 		=> $old[isEdit],
-						isDel 		=> $old[isDel],	
-						isLoadReport=> $old[isLoadReport] ? 1 : 0,						
+						isEdit 		=> $old['isEdit'],
+						isDel 		=> $old['isDel'],	
+						//isLoadReport=> $old['isLoadReport'] ? 1 : 0,						
+						isLoadReport=> $isLoadReportOper ? 1 : 0,						
 					];
 					$listOper = [];	
 					$total++;
 					$suma = 0;
 					$id_cm = 0;	
-					$id_Bu = 0;								
+					$id_Bu = 0;	
+					$isLoadReportOper = false;							
 				}
-				if (strlen( $rec[name_M] ) > 0 ){
-					$koef = (in_array($rec[id_V], [2, 3, 4])) ? 1 : -1;										
+				if (strlen( $rec['name_M'] ) > 0 ){
+					$koef = (in_array($rec['id_V'], [2, 3, 4])) ? 1 : -1;										
 					$listOper[] = [
-						id_O  	=> $rec[id_O],						
-						count  	=> round($rec[count], 3),						
-						countBits => round($rec[countBits], 3),
-						price 	=> round($rec[price], 3),
-						suma 	=> round($rec[price] * $rec[count], 3) * $koef,						
-						name_M 	=> $rec[name_M],
-						name_V 	=> $rec[name_V],
-						name_K 	=> $rec[name_K],
-						id_M 	=> $rec[id_M],
-						id_V 	=> $rec[id_V],
-						id_K 	=> $rec[id_K],
-						unit 	=> $rec[unit],
-						dir 	=> $rec[dir],
-						isMoveKassa => $rec[isMoveKassa],
-						token   => $rec[token],
-						id_O_child  => $rec[id_O_child],						
+						id_O  	=> $rec['id_O'],						
+						count  	=> round($rec['count'], 3),						
+						countBits => round($rec['countBits'], 3),
+						price 	=> round($rec['price'], 3),
+						suma 	=> round($rec['price'] * $rec['count'], 3) * $koef,						
+						name_M 	=> $rec['name_M'],
+						name_V 	=> $rec['name_V'],
+						name_K 	=> $rec['name_K'],
+						id_M 	=> $rec['id_M'],
+						id_V 	=> $rec['id_V'],
+						id_K 	=> $rec['id_K'],
+						unit 	=> $rec['unit'],
+						dir 	=> $rec['dir'],
+						isMoveKassa => $rec['isMoveKassa'],
+						token   => $rec['token'],
+						id_O_child  => $rec['id_O_child'],						
 					];	
-					$suma += $rec[price] * $rec[count] * $koef;	
-					$id_Bu = $rec[id_V] == 2 ? $rec[id_Bu] : 0;
-					$id_cm = $rec[id_V] == 2 ? $rec[id_cm] : 0;				
+					
+					$isLoadReportOper |= $rec['isLoadReportOper'];
+					$suma += $rec['price'] * $rec['count'] * $koef;	
+					$id_Bu = $rec['id_V'] == 2 ? $rec['id_Bu'] : 0;
+					$id_cm = $rec['id_V'] == 2 ? $rec['id_cm'] : 0;				
 					//$kassa += (in_array($rec[id_K], [1, 6] && $old[id_M] <> $rec[id_M]) ? $rec[countBits] : 0);
 				}				
 				$old = $rec;
@@ -1190,13 +1195,13 @@ Class clServer{
 			};
 			
 			$ar_data = array_slice( $ar_data, 
-				($this->_PARAM[_currentPage] - 1) * $this->_PARAM[_sizePage], 
-				$this->_PARAM[_sizePage]
+				($this->_PARAM['_currentPage'] - 1) * $this->_PARAM['_sizePage'], 
+				$this->_PARAM['_sizePage']
 			);					
 		};		
 				
-		$kassa    = $this->getKassa( $this->_PARAM[_id_P] );
-		$oldKassa = $this->getKassaOnDay( $this->_PARAM[_id_P] );		
+		$kassa    = $this->getKassa( $this->_PARAM['_id_P'] );
+		$oldKassa = $this->getKassaOnDay( $this->_PARAM['_id_P'] );		
 		$percent  = ( $kassa > 0 && $oldKassa > 0
 			? round( ( $kassa - $oldKassa ) / $oldKassa * 100, 1)
 			: 100
@@ -1216,43 +1221,13 @@ Class clServer{
 	// 8.2 получение ТРАНЗАКЦИЙ для экономиста
 	public function getETransaction(){	
 		$strCheckManeger = implode(', ', $this->_PARAM[_checkManeger]);
-		
-		$text = sprintf(				
-			"SELECT punkt.id_U AS idUser, users.PIB AS pib, punkt.name AS namePunkt, 
-			      	transaction.*, 
-			      	operation.id_O, operVid.id_V, operVid.name as name_V, operation.count, 
-			      	operation.price, operation.id_Bu, operation.id_cm, operation.id_M
-			      	-- IF (ISNULL(T2.id_T), 0, T2.id_T) AS id_parent
-			FROM transaction 
-				LEFT JOIN operation ON transaction.id_T = operation.id_T
-				LEFT JOIN operVid ON operation.id_V = operVid.id_V			
-		        LEFT JOIN punkt ON transaction.id_P = punkt.id_P
-		        LEFT JOIN users ON punkt.id_U = users.id
-		        LEFT JOIN transaction AS T2 ON transaction.id_T = T2.id_T_Child
-			WHERE 1=1 %1\$s %2\$s %3\$s AND ISNULL(T2.id_T) AND operation.id_M != 40 
-			ORDER BY users.PIB ASC, punkt.id_P ASC, id_T ASC, id_O, date DESC, time DESC",
-			/*1*/	( count($this->_PARAM[_checkManeger]) > 0 
-						? "AND punkt.id_U IN ({$strCheckManeger})"  
-						: "AND punkt.id_U = 0"
-					),
-			/*2*/	( in_array($this->_PARAM[_checkOperation], [21, 22]) 
-						? "AND operVid.id_V = 2 AND operation.id_" . ( $this->_PARAM[_checkOperation] == 21 ? 'CM' : 'Bu' ) . " > 0 "
-						: ( $this->_PARAM[_checkOperation] > 0
-							? "AND operVid.id_V = {$this->_PARAM[_checkOperation]}"
-							: ""
-						)
-					),			
-			/*3*/	( $this->_PARAM[_isPeriod] == 1  				
-						? "AND (transaction.date BETWEEN '{$this->_PARAM[_date_l]}' AND '{$this->_PARAM[_date_r]}' )"
-						: ""
-					)								
-		);
 																			
 		$cursor = $this->mysqli->query( sprintf(				
 			"SELECT punkt.id_U AS idUser, users.PIB AS pib, punkt.name AS namePunkt, 
 			      	transaction.*, 
 			      	operation.id_O, operVid.id_V, operVid.name as name_V, operation.count, 
-			      	operation.price, operation.id_Bu, operation.id_cm, operation.id_M
+			      	operation.price, operation.id_Bu, operation.id_cm, operation.id_M, 
+			      	operation.isLoadReport as isLoadReportOper
 			      	-- IF (ISNULL(T2.id_T), 0, T2.id_T) AS id_parent
 			FROM transaction 
 				LEFT JOIN operation ON transaction.id_T = operation.id_T
@@ -1262,18 +1237,19 @@ Class clServer{
 		        LEFT JOIN transaction AS T2 ON transaction.id_T = T2.id_T_Child
 			WHERE 1=1 %1\$s %2\$s %3\$s AND ISNULL(T2.id_T) AND operation.id_M != 40 
 			ORDER BY users.PIB ASC, punkt.id_P ASC, id_T ASC, id_O, date DESC, time DESC",
-			/*1*/	( count($this->_PARAM[_checkManeger]) > 0 
+			/*1*/	( count($this->_PARAM['_checkManeger']) > 0 
 						? "AND punkt.id_U IN ({$strCheckManeger})"  
 						: "AND punkt.id_U = 0"
 					),
-			/*2*/	( in_array($this->_PARAM[_checkOperation], [21, 22]) 
-						? "AND operVid.id_V = 2 AND operation.id_" . ( $this->_PARAM[_checkOperation] == 21 ? 'CM' : 'Bu' ) . " > 0 "
-						: ( $this->_PARAM[_checkOperation] > 0
-							? "AND operVid.id_V = {$this->_PARAM[_checkOperation]}"
+			/*2*/	( in_array($this->_PARAM['_checkOperation'], [21, 22]) 
+						? "AND operVid.id_V = 2 AND operation.id_" . 
+						  ( $this->_PARAM['_checkOperation'] == 21 ? 'CM' : 'Bu' ) . " > 0 "
+						: ( $this->_PARAM['_checkOperation'] > 0
+							? "AND operVid.id_V = {$this->_PARAM['_checkOperation']}"
 							: ""
 						)
 					),			
-			/*3*/	( $this->_PARAM[_isPeriod] == 1  				
+			/*3*/	( $this->_PARAM['_isPeriod'] == 1  				
 						? "AND (transaction.date BETWEEN '{$this->_PARAM[_date_l]}' AND '{$this->_PARAM[_date_r]}' )"
 						: ""
 					)								
@@ -1283,56 +1259,54 @@ Class clServer{
 		$i = $total = $suma = $kassa = 0;
 				
 		if ( $cursor->num_rows > 0) {						
-			$old = [id_U => 0];
+			$old = ['id_U' => 0];
 			$listPunkt = $listTransaction = [];					
 			while( $i <= $cursor->num_rows ){
-				$rec = ( $i < $cursor->num_rows ? $cursor->fetch_array( MYSQLI_ASSOC ) : [id_U => 0]);
+				$rec = ( $i < $cursor->num_rows ? $cursor->fetch_array( MYSQLI_ASSOC ) : ['id_U' => 0]);
 				
-				if( ($old[id_T] <> $rec[id_T]) && $old[id_T] > 0 ){
+				if( ($old['id_T'] <> $rec['id_T']) && $old['id_T'] > 0 ){
 					$listTransaction[] = [
-						id_U 	=> $old[idUser],	
-						id_P	=> $old[id_P],	
-						id_T	=> $old[id_T],	
-						id_M	=> $old[id_M],					
-						comment => $old[comment],	
+						id_U 	=> $old['idUser'],	
+						id_P	=> $old['id_P'],	
+						id_T	=> $old['id_T'],	
+						id_M	=> $old['id_M'],					
+						comment => $old['comment'],	
 						suma	=> round($sumaT, 3),
-						date 	=> date('d.m.Y', strtotime($old[date])),
-						isLoad 	=> !$old[isLoadReport],	
-						isLoadReport => $old[isLoadReport],
+						date 	=> date('d.m.Y', strtotime($old['date'])),
+						isLoad 		 => !$old['isLoadReportOper'],	
+						isLoadReport => $old['isLoadReportOper'],
 					];
-					$sumaT = 0;	
-								
+					$sumaT = 0;									
 				}	
 														
-				if( ($old[id_P] <> $rec[id_P]) && $old[id_P] > 0 ){
+				if( ($old['id_P'] <> $rec['id_P']) && $old['id_P'] > 0 ){
 					$listPunkt[] = [
-						id_P			 => $old[id_P],						
-						namePunkt 		 => $old[namePunkt],	
+						id_P			 => $old['id_P'],						
+						namePunkt 		 => $old['namePunkt'],	
 						listTransaction  => count($listTransaction) > 0 ? $listTransaction : [],
 					];
 					$listTransaction = [];																						
 				}
 								
-				if( ($old[idUser] <> $rec[idUser]) && $old[idUser] > 0 ){
+				if( ($old['idUser'] <> $rec['idUser']) && $old['idUser'] > 0 ){
 					$ar_data[] = [						
-						id_U 		=> $old[idUser],					
-						pib 	 	=> $old[pib],
-						name		=> $old[name_V],
-						id_V		=> $old[id_V],							
+						id_U 		=> $old['idUser'],					
+						pib 	 	=> $old['pib'],
+						name		=> $old['name_V'],
+						id_V		=> $old['id_V'],							
 						listPunkt 	=> count($listPunkt) > 0 ? $listPunkt : [],					
 					];
 					$listPunkt = [];																		
 				}				
 				
-				$sumaT += $rec[count] * $rec[price];
+				$sumaT += $rec[count] * $rec[price];				
 				$old = $rec;
 				$i++;
 			};											
 		};		
 						
 		return json_encode([ 
-			ar_data  => $ar_data,
-			text => $text								
+			ar_data  => $ar_data,			
 		]);								
 	}//_________________________________________________________________________	
 	
@@ -1346,14 +1320,14 @@ Class clServer{
 			$curQuery = $this->mysqli->query(sprintf(
 				"INSERT INTO transaction (id_U, id_P, date, time, comment, id_T_child, isEdit, isDel, dateCreate)
 				VALUE (%1\$d, %2\$d, '%3\$s', '%4\$s', \"%5\$s\", %6\$d, %7\$d, %8\$d, '%9\$s') ",
-				/*1*/	$this->_PARAM[_idUser],
-				/*2*/	$this->_PARAM[_idPunkt],
-				/*3*/	$this->_PARAM[_date],
-				/*4*/	$this->_PARAM[_time],			
-				/*5*/	$this->_PARAM[_comment],
-				/*6*/	$this->_PARAM[_idTChild],
-				/*7*/	$this->_PARAM[_isEdit],
-				/*8*/	$this->_PARAM[_isDel],
+				/*1*/	$this->_PARAM['_idUser'],
+				/*2*/	$this->_PARAM['_idPunkt'],
+				/*3*/	$this->_PARAM['_date'],
+				/*4*/	$this->_PARAM['_time'],			
+				/*5*/	$this->_PARAM['_comment'],
+				/*6*/	$this->_PARAM['_idTChild'],
+				/*7*/	$this->_PARAM['_isEdit'],
+				/*8*/	$this->_PARAM['_isDel'],
 				/*9*/	$date->format('Y-m-d'), // Форматируем в нужный вид	// date('Y-m-d')		
 			));
 			$countInsert_T = $this->mysqli->affected_rows;
@@ -1409,25 +1383,28 @@ Class clServer{
 			FROM transaction 
 				LEFT JOIN operation ON transaction.id_T = operation.id_T				
 			WHERE transaction.id_T = %1\$d AND operation.isMoveKassa != -1 ",
-			/*1*/	$this->_PARAM[_id_T]						
+			/*1*/	$this->_PARAM['_id_T']						
 		));		
 		$arOpers = [];
 		while( $rec = $cursor->fetch_array( MYSQLI_ASSOC ) ){			
 			$arOpers[] = [
-				id_M 	 	=> $rec[id_M],						
-				id_V 	 	=> $rec[id_V],						
-				d_count 	=> $rec[count],						
-				d_price 	=> $rec[price],
-				old_count   => 0,
-            	old_price   => 0,
-            	new_count   => $rec[count],
-            	new_price   => $rec[price],	
-            	is_move_kassa => $rec[isMoveKassa],					
+				'id_M' 	 	=> $rec['id_M'],						
+				'id_V' 	 	=> $rec['id_V'],						
+				'd_count' 	=> $rec['count'],						
+				'd_price' 	=> $rec['price'],
+				'old_count'   	=> 0,
+            	'old_price'   	=> 0,
+            	'new_count'   	=> $rec['count'],
+            	'new_price'   	=> $rec['price'],	
+            	'is_move_kassa' => $rec['isMoveKassa'],
+            	'mode_otg'      => '',	
+            	'id_agent'      => '',	            
+            	'id_P' 			=> $rec['id_P'],					
 			];					
-			$id_P = $rec[id_P];
+			$id_P = $rec['id_P'];
 		}	
 				
-		$this->setBits( $arOpers, $id_P, $this->_PARAM[_id_T], -1);
+		$this->setBits( $arOpers, $id_P, $this->_PARAM['_id_T'], -1);
 								
 		$this->mysqli->query( sprintf(				
 			"DELETE transaction, operation
@@ -1729,42 +1706,42 @@ Class clServer{
 				
 		foreach( $arOper as $key => $oper ){
 			//$token = $this->generateToken(4);
-			$token = $oper[token];
+			$token = $oper['token'];
 			
-			$id_Bu = ( $oper[id_V] == 2 && $oper[mode_otg] == 'ca' 
-				? $oper[id_agent] 
-				: ( $oper[id_V] == 3 ? 1 : 0 ) 
+			$id_Bu = ( $oper['id_V'] == 2 && $oper['mode_otg'] == 'ca' 
+				? $oper['id_agent'] 
+				: ( $oper['id_V'] == 3 ? 1 : 0 ) 
 			);				
-			$id_cm = ( $oper[id_V] == 2 && $oper[mode_otg] == 'cm' ? $oper[id_agent] : 0 );						
-			$arValues[] = "({$oper[id_V]}, {$oper[id_M]}, {$id_T}, {$oper[d_count]}, {$oper[d_price]}, {$id_Bu}, {$id_cm}, {$oper[is_move_kassa]}, '{$token}' )";			
+			$id_cm = ( $oper['id_V'] == 2 && $oper['mode_otg'] == 'cm' ? $oper['id_agent'] : 0 );						
+			$arValues[] = "({$oper['id_V']}, {$oper['id_M']}, {$id_T}, {$oper['d_count']}, {$oper['d_price']}, {$id_Bu}, {$id_cm}, {$oper['is_move_kassa']}, '{$token}' )";			
 									
 			$this->mysqli->query( sprintf(				
 			   "UPDATE %1\$s SET count = count + (%4\$f)
 				WHERE id_P = %2\$d AND id_M = %3\$d",
 				/*1*/	$tabl,				
-				/*2*/	( $id_P > 0 ? $id_P : $oper[id_P] ),				
-				/*3*/	$oper[id_M],			
-				/*4*/	( in_array( $oper[id_V], [4, 5] )
-					?   ( $oper[new_count] * $oper[new_price] - 
-						  $oper[old_count] * $oper[old_price] ) * $this->operVid[ $oper[id_V] ] * $dir
-					:	$oper[d_count] * $this->operVid[ $oper[id_V] ] * $dir
+				/*2*/	( $id_P > 0 ? $id_P : $oper['id_P'] ),				
+				/*3*/	$oper['id_M'],			
+				/*4*/	( in_array( $oper['id_V'], [4, 5] )
+					?   ( $oper['new_count'] * $oper['new_price'] - 
+						  $oper['old_count'] * $oper['old_price'] ) * $this->operVid[ $oper['id_V'] ] * $dir
+					:	$oper['d_count'] * $this->operVid[ $oper['id_V'] ] * $dir
 				)				
 			));
 			$countUpdate += $this->mysqli->affected_rows;
 			
 			// дополнительное движение по кассе
-			if ( in_array( $oper[id_V], [1, 3]) && $oper[is_move_kassa] == 1 ){
-				$id_V 	 = ( $oper[id_V] == 1 ? 5  : 4 );
-				$id_M 	 = ( $oper[id_V] == 1 ? 40 : 80 );
-				$d_count = ( $oper[new_count] * $oper[new_price] - 
-							 $oper[old_count] * $oper[old_price] ) * $this->operVid[ $id_V ] * $dir;
+			if ( in_array( $oper['id_V'], [1, 3]) && $oper['is_move_kassa'] == 1 ){
+				$id_V 	 = ( $oper['id_V'] == 1 ? 5  : 4 );
+				$id_M 	 = ( $oper['id_V'] == 1 ? 40 : 80 );
+				$d_count = ( $oper['new_count'] * $oper['new_price'] - 
+							 $oper['old_count'] * $oper['old_price'] ) * $this->operVid[ $id_V ] * $dir;
 				$d_price = 0;
 												
 				$this->mysqli->query( sprintf(				
 					"UPDATE %1\$s SET count = count + (%4\$f)
 					 WHERE id_P = %2\$d AND id_M = %3\$d",
 					/*1*/	$tabl,
-					/*2*/	( $id_P > 0 ? $id_P : $oper[id_P] ),					
+					/*2*/	( $id_P > 0 ? $id_P : $oper['id_P'] ),					
 					/*3*/	$id_M,					
 					/*4*/   $d_count					
 				));	
@@ -2299,7 +2276,7 @@ Class clServer{
 		include_once "clReport.php";		
 		$report = new clReport($this->mysqli, $this->_PARAM);
 				
-		switch ($this->_PARAM[_nameReport]){
+		switch ($this->_PARAM['_nameReport']){
 			// ежедневный отчет экономиста (для экспорта в 1С)
 			case "economist": {
 				$resultReport = $report->getReportEconomist();	
@@ -2310,7 +2287,7 @@ Class clServer{
 				break;
 			}
 			case "analitikaMoney": {							
-				$resultReport = $report->getReportAnalitikaMoney();
+				$resultReport = $report->getReportAnalitikaMoney($this->_PARAM['_checkAllowed']);
 				break;
 			}									
 			default:{						
