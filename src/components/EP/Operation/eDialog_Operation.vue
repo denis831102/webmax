@@ -1141,7 +1141,7 @@ onUpdated(async () => {
       form.isDisableSave = false;
       loadOperation(true);
 
-      if (setting.value.dialog["editOperation"].visible == true) await checkBits();
+      if (setting.value.dialog["editOperation"].visible) await checkBits();
 
       break;
     }
