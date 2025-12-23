@@ -1033,7 +1033,7 @@ Class clServer{
 		$this->mysqli->query( sprintf(				
 			"INSERT INTO operation (id_V, id_M, id_T, count, price, id_Bu, id_cm, isMoveKassa, token)
 			 VALUES %1\$s",
-			/*1*/ implode(", ", $bits[arValues])
+			/*1*/ implode(", ", $bits['arValues'])
 		));
 		$countInsert_O = $this->mysqli->affected_rows;
 		
@@ -1343,7 +1343,7 @@ Class clServer{
 			$this->mysqli->query( sprintf(				
 				"INSERT INTO operation (id_V, id_M, id_T, count, price, id_Bu, id_cm, isMoveKassa, token)
 				 VALUES %1\$s",
-				/*1*/ implode(", ", $bits[arValues])
+				/*1*/ implode(", ", $bits['arValues'])
 			));
 			$countInsert = $this->mysqli->affected_rows;
 			$countInsert = ( $countInsert == -1 ? 0 : $countInsert );			

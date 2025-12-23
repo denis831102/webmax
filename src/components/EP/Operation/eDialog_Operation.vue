@@ -860,19 +860,19 @@ const checkMonth = (date1, date2) => {
   return d1.getMonth() == d2.getMonth();
 };
 
-const formatDate = (dateStr, mode = "toLocal") => {
-  if (mode === "toISO") {
-    // Из DD.MM.YYYY → YYYY-MM-DD
-    const [day, month, year] = dateStr.split(".");
-    return `${year}-${month}-${day}`;
-  } else if (mode === "toLocal") {
-    // Из YYYY-MM-DD → DD.MM.YYYY
-    const [year, month, day] = dateStr.split("-");
-    return `${day}.${month}.${year}`;
-  } else {
-    throw new Error("Помилковий режим. Используй 'toISO' или 'toLocal'.");
-  }
-};
+// const formatDate = (dateStr, mode = "toLocal") => {
+//   if (mode === "toISO") {
+//     // Из DD.MM.YYYY → YYYY-MM-DD
+//     const [day, month, year] = dateStr.split(".");
+//     return `${year}-${month}-${day}`;
+//   } else if (mode === "toLocal") {
+//     // Из YYYY-MM-DD → DD.MM.YYYY
+//     const [year, month, day] = dateStr.split("-");
+//     return `${day}.${month}.${year}`;
+//   } else {
+//     throw new Error("Помилковий режим. Используй 'toISO' или 'toLocal'.");
+//   }
+// };
 
 const formatDateStr = (date) => {
   if (typeof date == "object") {
@@ -1051,7 +1051,7 @@ const checkBits = async () => {
     type: "warning",
     dangerouslyUseHTMLString: true,
     message:
-      `Перевірка залишків на ${formatDate(form.date, "toLocal")} виконана.` +
+      `Перевірка залишків на ${formatDateStr(form.date)} виконана.` +
       (arMessage.length ? `<br><br>${arMessage.join("<br>")}` : ""),
   });
 };
@@ -1073,7 +1073,7 @@ const watchTable = (mode) => {
     case "copyOperation":
     case "editOperation": {
       form.tableOperation.forEach((el) => {
-        if (+el.isMoveKassa != -1) {
+        if (el.isMoveKassa != -1) {
           watchEffect(() => {
             if (getSettingUser.value.colOper == "price") {
               el.summa = (el.count * el.price).toFixed(2);
@@ -1140,7 +1140,8 @@ onUpdated(async () => {
       form.disabledContrAgent = true;
       form.isDisableSave = false;
       loadOperation(true);
-      checkBits();
+
+      if (setting.value.dialog["editOperation"].visible == true) await checkBits();
 
       break;
     }
