@@ -31,7 +31,7 @@
               value-format="YYYY-MM-DD"
               :placeholder="getDate"
               style="width: 100%"
-              @change="checkBits"
+              @change="doCheckBits"
             />
           </el-col>
 
@@ -1054,6 +1054,11 @@ const checkBits = async () => {
       `Перевірка залишків на ${formatDateStr(form.date)} виконана.` +
       (arMessage.length ? `<br><br>${arMessage.join("<br>")}` : ""),
   });
+};
+
+const doCheckBits = async () => {
+  await checkBits();
+  watchTable(setting.value.dialog["editOperation"].initiator);
 };
 
 const watchTable = (mode) => {
