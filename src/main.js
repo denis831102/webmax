@@ -11,32 +11,28 @@ import "element-plus/theme-chalk/dark/css-vars.css";
 // Наши кастомные темы
 import "./theme.css";
 
-import componentsUI from "@/components/UI";
+// import componentsUI from "@/components/UI";
 
 //import VIntersection from "./directives/VIntersection";
-import directives from "./directives";
+// import directives from "./directives";
 
-import pluginSystem from "@/plugins/pluginSystem";
-import { dictonary } from "@/plugins/dictonary";
+// import pluginSystem from "@/plugins/pluginSystem";
+// import { dictonary } from "@/plugins/dictonary";
 
 const app = createApp(App);
 
-componentsUI.forEach((component) => {
-  app.component(component.name, component);
-});
+// componentsUI.forEach((component) => {
+//   app.component(component.name, component);
+// });
 
 // app.directive("intersection", VIntersection);
-directives.forEach((directive) => {
-  app.directive(directive.name, directive);
-});
+// directives.forEach((directive) => {
+//   app.directive(directive.name, directive);
+// });
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);
 }
 
-app
-  .use(pluginSystem, dictonary)
-  .use(router)
-  .use(store)
-  .use(ElementPlus)
-  .mount("#app");
+// app.use(pluginSystem, dictonary).use(router).use(store).use(ElementPlus).mount("#app");
+app.use(router).use(store).use(ElementPlus).mount("#app");

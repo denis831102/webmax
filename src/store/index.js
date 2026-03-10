@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
-import likes from "@/store/modules/likes";
-import { postModule } from "@/store/modules/post";
+// import likes from "@/store/modules/likes";
+// import { postModule } from "@/store/modules/post";
 import authenticated from "@/store/modules/authenticated";
 
 export default createStore({
@@ -8,8 +8,8 @@ export default createStore({
     nameAuth: "Denis",
   }),
   modules: {
-    likes,
+    // likes,
     authenticated,
-    post: postModule,
+    // post: postModule,
   },
 });

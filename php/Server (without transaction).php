@@ -56,10 +56,7 @@ Class clServer{
 	];
 		
 	// конструктор класса с начальной инициализацией
-	public function __construct(){		
-		
-		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-							
+	public function __construct(){							
 	   	$this->mysqli = new mysqli("localhost", $this->login, $this->password, $this->DB);	   	
 	   	$this->headers = getallheaders();
 	   		   	
@@ -1315,15 +1312,11 @@ Class clServer{
 	
 	// 8.3 добавление ТРАНЗАКЦИИ с ОПЕРАЦИЯМИ
 	public function addTransaction(){											
-		$countOper = count($this->_PARAM['_opers']);			
+		$countOper = count($this->_PARAM[_opers]);			
 		
-		// 1. Старт транзакції
-		$this->mysqli->begin_transaction();	
-						
-		if ( $countOper > 0){				
+		if ( $countOper > 0){	
 			$date = new DateTime(); // Получаем текущую дату и время
-    		
-    		// 2. INSERT транзакції для операцій											
+    												
 			$curQuery = $this->mysqli->query(sprintf(
 				"INSERT INTO transaction (id_U, id_P, date, time, comment, id_T_child, isEdit, isDel, dateCreate)
 				VALUE (%1\$d, %2\$d, '%3\$s', '%4\$s', \"%5\$s\", %6\$d, %7\$d, %8\$d, '%9\$s') ",
@@ -1344,59 +1337,30 @@ Class clServer{
 		}						
 		
 		$this->res->data = [];							
-		if ( $curQuery && $countInsert_T == 1){	
+		if ( $curQuery && $countInsert_T == 1){								
+			$bits = $this->setBits( $this->_PARAM[_opers], $this->_PARAM[_idPunkt], $id_T, 1);
+						
+			$this->mysqli->query( sprintf(				
+				"INSERT INTO operation (id_V, id_M, id_T, count, price, id_Bu, id_cm, isMoveKassa, token)
+				 VALUES %1\$s",
+				/*1*/ implode(", ", $bits['arValues'])
+			));
+			$countInsert = $this->mysqli->affected_rows;
+			$countInsert = ( $countInsert == -1 ? 0 : $countInsert );			
 			
-			// 1. Старт транзакції
-    		//$this->mysqli->begin_transaction();	
-    			
-			try {											
-				// 3. UPDATE залишків	
-				$bits = $this->setBits( $this->_PARAM['_opers'], $this->_PARAM['_idPunkt'], $id_T, 1);
+//			if ( $countOper == $countInsert){
 				
-//				if (empty($bits['arValues'])) {
-//			        throw new Exception("Немає даних для INSERT");
-//			    }
-				
-				// 4. INSERT операцій			
-				$this->mysqli->query( sprintf(				
-					"INSERT INTO operation (id_V, id_M, id_T, count, price, id_Bu, id_cm, isMoveKassa, token)
-					 VALUES %1\$s",
-					/*1*/ implode(", ", $bits['arValues'])
-				));
-				
-//				if (!$this->mysqli->query($query)) {
-//			        throw new Exception("INSERT error");
-//			    }
-				
-				$countInsert = $this->mysqli->affected_rows;
-				$countInsert = ( $countInsert == -1 ? 0 : $countInsert );			
-				
-				// 5. Якщо все добре — коміт
-				$this->mysqli->commit();
-				
-	//			if ( $countOper == $countInsert){
-					
 				$this->res->data = [
 					isSuccesfull => 1,	
 					idT			 => $id_T,				
 					message 	 => "Транзакція на {$countInsert} операцій пройшла вдало",									
 				];		
-	//			}else {
-	//				$this->res->data = [
-	//					isSuccesfull => 0,									
-	//					message 	 => "З {$countOper} операцій пройшло вдало {$countInsert}",					
-	//				];
-	//			}	
-			} catch (Throwable $e) {
-				
-				// 6. Якщо щось впало — rollback
-			    $this->mysqli->rollback();
-
-			    $this->res->data = [
-			        isSuccesfull => 0,
-			        message => "Транзакція не збережена по причині: " . $e->getMessage()
-			    ];
-			}		
+//			}else {
+//				$this->res->data = [
+//					isSuccesfull => 0,									
+//					message 	 => "З {$countOper} операцій пройшло вдало {$countInsert}",					
+//				];
+//			}			
 		} else {
 			$this->res->data = [
 				isSuccesfull => 0,									
@@ -1749,27 +1713,20 @@ Class clServer{
 				: ( $oper['id_V'] == 3 ? 1 : 0 ) 
 			);				
 			$id_cm = ( $oper['id_V'] == 2 && $oper['mode_otg'] == 'cm' ? $oper['id_agent'] : 0 );						
-			
 			$arValues[] = "({$oper['id_V']}, {$oper['id_M']}, {$id_T}, {$oper['d_count']}, {$oper['d_price']}, {$id_Bu}, {$id_cm}, {$oper['is_move_kassa']}, '{$token}' )";			
-			$delta = ( in_array($oper['id_V'], [4, 5])
-	            ? ($oper['new_count'] * $oper['new_price'] - 
-	               $oper['old_count'] * $oper['old_price']) * $this->operVid[$oper['id_V']] * $dir
-	            : $oper['d_count'] * $this->operVid[$oper['id_V']] * $dir
-	        );
-											
+									
 			$this->mysqli->query( sprintf(				
 			   "UPDATE %1\$s SET count = count + (%4\$f)
 				WHERE id_P = %2\$d AND id_M = %3\$d",
 				/*1*/	$tabl,				
 				/*2*/	( $id_P > 0 ? $id_P : $oper['id_P'] ),				
 				/*3*/	$oper['id_M'],			
-				/*4*/	$delta 			
+				/*4*/	( in_array( $oper['id_V'], [4, 5] )
+					?   ( $oper['new_count'] * $oper['new_price'] - 
+						  $oper['old_count'] * $oper['old_price'] ) * $this->operVid[ $oper['id_V'] ] * $dir
+					:	$oper['d_count'] * $this->operVid[ $oper['id_V'] ] * $dir
+				)				
 			));
-			
-//			if (!$this->mysqli->query($query)) {
-//	            throw new Exception("UPDATE error");
-//	        }
-			
 			$countUpdate += $this->mysqli->affected_rows;
 			
 			// дополнительное движение по кассе
@@ -1787,12 +1744,7 @@ Class clServer{
 					/*2*/	( $id_P > 0 ? $id_P : $oper['id_P'] ),					
 					/*3*/	$id_M,					
 					/*4*/   $d_count					
-				));
-				
-//				if (!$this->mysqli->query($query)) {
-//	                throw new Exception("Kassa UPDATE error ");
-//	            }
-					
+				));	
 				$countUpdate += $this->mysqli->affected_rows;			
 								
 				$arValues[] = "({$id_V}, {$id_M}, {$id_T}, {$d_count}, {$d_price}, 0, 0, -1, '{$token}' )";							
