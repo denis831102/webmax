@@ -16,11 +16,7 @@
             @change="getMonitoring"
           >
             <template #header>
-              <el-checkbox
-                v-model="checkAll"
-                :indeterminate="indeterminate"
-                @change="handleCheckAll"
-              >
+              <el-checkbox v-model="checkAll" :indeterminate="indeterminate" @change="handleCheckAll">
                 Усі
               </el-checkbox>
             </template>
@@ -50,11 +46,7 @@
 
         <!-- Фільтр (перемикач) -->
         <el-col :xs="4" :sm="12" :md="5" :lg="1">
-          <el-switch
-            v-model="isFilter"
-            @change="getMonitoring"
-            style="float: right"
-          />
+          <el-switch v-model="isFilter" @change="getMonitoring" style="float: right" />
         </el-col>
 
         <!-- Дата -->
@@ -82,12 +74,7 @@
 
         <!-- Завантажити -->
         <el-col :xs="24" :sm="12" :md="8" :lg="5">
-          <input
-            type="file"
-            ref="fileInput"
-            style="display: none"
-            @change="onFileSelected"
-          />
+          <input type="file" ref="fileInput" style="display: none" @change="onFileSelected" />
 
           <el-button
             type="success"
@@ -102,13 +89,7 @@
 
         <!-- Оновити -->
         <el-col :xs="24" :sm="24" :md="8" :lg="3">
-          <el-button
-            type="primary"
-            plain
-            :icon="Refresh"
-            style="width: 100%"
-            @click="getMonitoring()"
-          >
+          <el-button type="primary" plain :icon="Refresh" style="width: 100%" @click="getMonitoring()">
             Оновити
           </el-button>
         </el-col>
@@ -119,68 +100,34 @@
   <el-card v-if="false">
     <div class="demo-progress">
       <el-row :gutter="20">
-        <el-col :span="4"
-          ><el-tag type="primary" style="width: 100%"
-            >Параметр 1</el-tag
-          ></el-col
-        >
+        <el-col :span="4"><el-tag type="primary" style="width: 100%">Параметр 1</el-tag></el-col>
+        <el-col :span="20"><el-progress :text-inside="true" :stroke-width="26" :percentage="70" /></el-col>
+      </el-row>
+
+      <el-row :gutter="20">
+        <el-col :span="4"><el-tag type="primary" style="width: 100%">Параметр 2</el-tag></el-col>
         <el-col :span="20"
-          ><el-progress :text-inside="true" :stroke-width="26" :percentage="70"
+          ><el-progress :text-inside="true" :stroke-width="24" :percentage="100" status="success"
         /></el-col>
       </el-row>
 
       <el-row :gutter="20">
-        <el-col :span="4"
-          ><el-tag type="primary" style="width: 100%"
-            >Параметр 2</el-tag
-          ></el-col
-        >
+        <el-col :span="4"><el-tag type="primary" style="width: 100%">Параметр 3</el-tag></el-col>
         <el-col :span="20"
-          ><el-progress
-            :text-inside="true"
-            :stroke-width="24"
-            :percentage="100"
-            status="success"
+          ><el-progress :text-inside="true" :stroke-width="22" :percentage="80" status="warning"
         /></el-col>
       </el-row>
 
       <el-row :gutter="20">
-        <el-col :span="4"
-          ><el-tag type="primary" style="width: 100%"
-            >Параметр 3</el-tag
-          ></el-col
-        >
-        <el-col :span="20"
-          ><el-progress
-            :text-inside="true"
-            :stroke-width="22"
-            :percentage="80"
-            status="warning"
-        /></el-col>
-      </el-row>
-
-      <el-row :gutter="20">
-        <el-col :span="4"
-          ><el-tag type="primary" style="width: 100%"
-            >Параметр 4</el-tag
-          ></el-col
-        >
+        <el-col :span="4"><el-tag type="primary" style="width: 100%">Параметр 4</el-tag></el-col>
         <el-col :span="20">
-          <el-progress
-            :text-inside="true"
-            :stroke-width="20"
-            :percentage="50"
-            status="exception"
+          <el-progress :text-inside="true" :stroke-width="20" :percentage="50" status="exception"
         /></el-col>
       </el-row>
     </div>
   </el-card>
 
-  <el-table
-    :data="filterTable"
-    row-style="background:#f4f4f5"
-    v-loading="loading"
-  >
+  <el-table :data="filterTable" row-style="background:#f4f4f5" v-loading="loading">
     <el-table-column type="index" v-if="setting.displaySize == 'large'" />
 
     <el-table-column width="200" v-if="setting.displaySize == 'large'">
@@ -207,9 +154,7 @@
             <template #default="props">
               <h3 style="margin: 0px 0 10px 10px">
                 <el-icon><PieChart /></el-icon>
-                <span
-                  style="margin-left: 5px"
-                  v-if="setting.displaySize == 'large'"
+                <span style="margin-left: 5px" v-if="setting.displaySize == 'large'"
                   >Залишки по категоріїї</span
                 >
                 <el-check-tag type="primary" style="margin-left: 10px">
@@ -218,28 +163,19 @@
               </h3>
               <div class="expand-content">
                 <el-table :data="props.row.listMaterial" border="true">
-                  <el-table-column
-                    type="index"
-                    width="60"
-                    v-if="setting.displaySize == 'large'"
-                  />
+                  <el-table-column type="index" width="60" v-if="setting.displaySize == 'large'" />
 
                   <!-- номенклатура -->
                   <el-table-column label="номенклатура" min-width="20">
                     <template #default="elements">
-                      <div
-                        style="padding: 5px 0 5px 10px; background: #c6e2ff69"
-                      >
+                      <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
                         {{ elements.row.name_M }}<BR />
                         <B>
                           {{
                             setting.displaySize == "small"
-                              ? [
-                                  parseFloat(elements.row.count).toLocaleString(
-                                    "ru"
-                                  ),
-                                  elements.row.unit,
-                                ].join(" ")
+                              ? [parseFloat(elements.row.count).toLocaleString("ru"), elements.row.unit].join(
+                                  " "
+                                )
                               : ""
                           }}
                         </B>
@@ -281,9 +217,7 @@
                     v-if="setting.displaySize == 'large'"
                   >
                     <template #default="props">
-                      <div
-                        style="padding: 5px 0 5px 10px; background: #c6e2ff69"
-                      >
+                      <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
                         {{ parseFloat(props.row.count).toLocaleString("ru") }}
                         {{ props.row.unit }}
                       </div>
@@ -304,15 +238,8 @@
                         <el-table-column>
                           <template #header> </template>
                           <template #default="props">
-                            <div
-                              style="
-                                padding: 2px 5px 2px 10px;
-                                background: #c6e2ff69;
-                              "
-                            >
-                              {{
-                                parseFloat(props.row.count).toLocaleString("ru")
-                              }}
+                            <div style="padding: 2px 5px 2px 10px; background: #c6e2ff69">
+                              {{ parseFloat(props.row.count).toLocaleString("ru") }}
                               {{ props.row.unit }}
                             </div>
                           </template>
@@ -428,16 +355,8 @@ const formatDate = (valDate, mode = "ukr") => {
     y: valDate.getFullYear(),
   };
   return mode == "ukr"
-    ? [
-        (date.d < 10 ? "0" : "") + date.d,
-        (date.m < 10 ? "0" : "") + date.m,
-        date.y,
-      ].join(".")
-    : [
-        date.y,
-        (date.m < 10 ? "0" : "") + date.m,
-        (date.d < 10 ? "0" : "") + date.d,
-      ].join("-");
+    ? [(date.d < 10 ? "0" : "") + date.d, (date.m < 10 ? "0" : "") + date.m, date.y].join(".")
+    : [date.y, (date.m < 10 ? "0" : "") + date.m, (date.d < 10 ? "0" : "") + date.d].join("-");
 };
 
 const getMonitoring = async () => {
@@ -455,9 +374,7 @@ const getMonitoring = async () => {
     loading.value = false;
 
     if (+getSettingUser.value.isShowMes) {
-      let limitDate = isFilter.value
-        ? formatDate(curDate.value, "ukr")
-        : formatDate(new Date(), "ukr");
+      let limitDate = isFilter.value ? formatDate(curDate.value, "ukr") : formatDate(new Date(), "ukr");
       ElMessage.success(`Аналітика по номенклатурі на ${limitDate} оновлена`);
     }
   } catch (e) {
@@ -541,19 +458,12 @@ const loadReport = async (file) => {
     formData.append("_id_U", getCurUser.value.id);
     formData.append("_checkManeger", checkManeger.value);
     formData.append("_checkMaterial", checkMaterial.value);
-    formData.append(
-      "_date",
-      isFilter.value ? formatDate(curDate.value, "eng") : ""
-    );
+    formData.append("_date", isFilter.value ? formatDate(curDate.value, "eng") : "");
 
     const response = await HTTP.post("", formData);
 
     if (response.data.isSuccesfull) {
-      loadFile(
-        response.data.fileName,
-        response.data.content,
-        response.data.mime
-      );
+      loadFile(response.data.fileName, response.data.content, response.data.mime);
 
       ElMessageBox({
         title: "Увага!",

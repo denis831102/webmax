@@ -20,9 +20,7 @@
 
               <el-row :gutter="20" style="text-align: center">
                 <el-col :span="19">
-                  <el-text v-if="setting.titleTable.length" tag="b"
-                    >{{ setting.titleTable }}
-                  </el-text>
+                  <el-text v-if="setting.titleTable.length" tag="b">{{ setting.titleTable }} </el-text>
                 </el-col>
                 <el-col :span="5" style="text-align: right">
                   <eDrop_User :user="getCurUser" />
@@ -65,6 +63,7 @@ import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
 import eAnalitikaM from "@/components/EP/Analitika/eAnalitikaM";
 import ezvitMAllP from "@/components/EP/Analitika/ezvitMAllP";
 import eEconomist from "@/components/EP/Monitoring/eEconomist";
+import eZvitKateg from "@/components/EP/Monitoring/eZvitKateg";
 import eZvitMoney from "@/components/EP/Monitoring/eZvitMoney";
 import eMoney from "@/components/EP/Monitoring/eMoney";
 
@@ -122,6 +121,7 @@ const setting = ref({
       ezvitMAllP,
       eEconomist,
       eZvitMoney,
+      eZvitKateg,
       eMoney,
       eSettingUser,
     },
@@ -188,6 +188,7 @@ const setting = ref({
       curRow: {},
       data: [],
     },
+
     tabEconomist: {
       title: "Щоденний звіт по ВЛАСНИМ ПУНКТАМ",
       curRow: {},
@@ -195,6 +196,11 @@ const setting = ref({
     },
     tabMoney: {
       title: "АНАЛІТИКА ПО РУХУ ГРОШОВИХ КОШТІВ ВЛАСНИХ ПУНКТІВ",
+      curRow: {},
+      data: [],
+    },
+    tabZvitKateg: {
+      title: " РУХ НОМЕНКЛАТУРИ НА ВЛАСНИХ ПУНКТІВ",
       curRow: {},
       data: [],
     },
