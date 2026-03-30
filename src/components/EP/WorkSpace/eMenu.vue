@@ -1,10 +1,6 @@
 <template>
   <div>
-    <el-radio-group
-      v-if="props.mode == 'vertical'"
-      v-model="isCollapse"
-      style="margin-bottom: 20px"
-    >
+    <el-radio-group v-if="props.mode == 'vertical'" v-model="isCollapse" style="margin-bottom: 20px">
       <el-radio-button :value="false">
         <el-icon><View /></el-icon>
       </el-radio-button>
@@ -114,6 +110,10 @@
             <el-icon><Document /></el-icon>
             Щоденний звіт економіста
           </el-menu-item>
+          <el-menu-item index="3-5" :disabled="isDisabled_Analitika_1">
+            <el-icon><Guide /></el-icon>
+            Рух номенклатури на власних пунктах
+          </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
 
@@ -216,6 +216,10 @@ const handleSelect = (key, keyPath) => {
     case "3-2":
       setting.value.comps.curComp = "eZvitMoney";
       setting.value.titleTable = setting.value.tables["tabZvitMoney"].title;
+      break;
+    case "3-5":
+      setting.value.comps.curComp = "eZvitKateg";
+      setting.value.titleTable = setting.value.tables["tabZvitKateg"].title;
       break;
 
     case "4":
