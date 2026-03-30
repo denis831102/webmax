@@ -83,7 +83,13 @@
         <el-card style="width: 100%">
           <el-row>
             <el-col :span="11">
-              <el-badge :value="countPeresortOld" style="width: 100%" :offset="[-40, -3]" color="#499efc">
+              <el-badge
+                :value="countPeresortOld"
+                style="width: 100%"
+                :offset="[-40, -3]"
+                max="1000000"
+                color="#499efc"
+              >
                 <el-select v-model="form.name_M_old">
                   <el-option
                     v-for="item in sourceTable_M_old"
@@ -109,6 +115,7 @@
                     :key="item.name_M"
                     :label="item.name_M"
                     :value="item.name_M"
+                    max="1000000"
                   >
                   </el-option>
                 </el-select>
@@ -419,9 +426,11 @@ const sourceTable_M_new = computed(() => {
 });
 
 const countPeresortOld = computed(() => {
-  const obj = setting.value.tables["tabMaterial"].data.find((el) => {
-    return el.name_M == form.name_M_old;
-  });
+  const tabMat = setting.value.tables["tabMaterial"].data,
+    obj = tabMat.find((el) => el.name_M == form.name_M_old);
+
+  if (obj) console.log(obj.count);
+
   return obj ? obj.count : 0;
 });
 
