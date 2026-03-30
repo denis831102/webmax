@@ -428,9 +428,6 @@ const sourceTable_M_new = computed(() => {
 const countPeresortOld = computed(() => {
   const tabMat = setting.value.tables["tabMaterial"].data,
     obj = tabMat.find((el) => el.name_M == form.name_M_old);
-
-  if (obj) console.log(obj.count);
-
   return obj ? obj.count : 0;
 });
 
