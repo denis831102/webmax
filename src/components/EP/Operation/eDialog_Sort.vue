@@ -32,6 +32,7 @@
             value-format="YYYY-MM-DD"
             :placeholder="getDate"
             style="width: 100%"
+            @change="checkBits"
           />
         </el-col>
 
@@ -40,9 +41,7 @@
         </el-col>
 
         <el-col :span="17">
-          <el-tag type="info" size="large" style="font-size: 13pt">{{
-            getTime
-          }}</el-tag>
+          <el-tag type="info" size="large" style="font-size: 13pt">{{ getTime }}</el-tag>
         </el-col>
       </el-form-item>
 
@@ -61,22 +60,13 @@
         </el-col>
 
         <el-col :span="2" v-if="isLessening">
-          <el-icon
-            style="
-              font-size: 20pt;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, 0%);
-            "
+          <el-icon style="font-size: 20pt; top: 50%; left: 50%; transform: translate(-50%, 0%)"
             ><Switch
           /></el-icon>
         </el-col>
 
         <el-col :span="11" v-if="isLessening">
-          <el-select
-            v-model="form.name_K_new"
-            placeholder="оберіть категорію..."
-          >
+          <el-select v-model="form.name_K_new" placeholder="оберіть категорію...">
             <el-option
               v-for="item in sourceTable_K"
               :key="item.name_K"
@@ -93,12 +83,7 @@
         <el-card style="width: 100%">
           <el-row>
             <el-col :span="11">
-              <el-badge
-                :value="countPeresortOld"
-                style="width: 100%"
-                :offset="[-40, -3]"
-                color="#499efc"
-              >
+              <el-badge :value="countPeresortOld" style="width: 100%" :offset="[-40, -3]" color="#499efc">
                 <el-select v-model="form.name_M_old">
                   <el-option
                     v-for="item in sourceTable_M_old"
@@ -111,24 +96,13 @@
             </el-col>
 
             <el-col :span="2">
-              <el-icon
-                style="
-                  font-size: 20pt;
-                  top: 50%;
-                  left: 50%;
-                  transform: translate(-50%, -50%);
-                "
+              <el-icon style="font-size: 20pt; top: 50%; left: 50%; transform: translate(-50%, -50%)"
                 ><Right
               /></el-icon>
             </el-col>
 
             <el-col :span="11">
-              <el-badge
-                :value="countPeresortNew"
-                style="width: 100%"
-                :offset="[-40, -3]"
-                color="#499efc"
-              >
+              <el-badge :value="countPeresortNew" style="width: 100%" :offset="[-40, -3]" color="#499efc">
                 <el-select v-model="form.name_M_new">
                   <el-option
                     v-for="item in sourceTable_M_new"
@@ -177,25 +151,14 @@
       <div class="dialog-footer">
         <el-button @click="clearForm">Очистити</el-button>
         <el-button @click="closeForm">Вийти</el-button>
-        <el-button type="primary" @click="addTransactionPeresort"
-          >Зберегти</el-button
-        >
+        <el-button type="primary" @click="addTransactionPeresort">Зберегти</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import {
-  defineProps,
-  inject,
-  computed,
-  defineEmits,
-  reactive,
-  onUpdated,
-  onUnmounted,
-  watch,
-} from "vue";
+import { defineProps, inject, computed, defineEmits, reactive, onUpdated, onUnmounted, watch } from "vue";
 import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
 import { HTTP } from "@/hooks/http";
@@ -257,11 +220,7 @@ const getDate = computed(() => {
     m: form.curDate.getMonth() + 1,
     y: form.curDate.getFullYear(),
   };
-  return [
-    (date.d < 10 ? "0" : "") + date.d,
-    (date.m < 10 ? "0" : "") + date.m,
-    date.y,
-  ].join(".");
+  return [(date.d < 10 ? "0" : "") + date.d, (date.m < 10 ? "0" : "") + date.m, date.y].join(".");
 });
 
 const getTime = computed(() => {
@@ -334,14 +293,35 @@ const getMaterial = async () => {
   }
 };
 
+const checkBits = async () => {
+  const response = await HTTP.get("", {
+    params: {
+      _method: "getBits",
+      _id_U: getCurUser.value.id,
+      _id_P: props.idPunkt,
+      _date: form.date,
+    },
+  });
+
+  const allMaterial = [].concat(...response.data.map((kat) => kat.listMater));
+
+  let dublicatTableMaterial = setting.value.tables["tabMaterial"].data;
+  setting.value.tables["tabMaterial"].data = [];
+
+  dublicatTableMaterial.forEach((mat) => {
+    const curMater = allMaterial.find((el) => el.id_M == mat.id_M);
+    const newMater = {
+      ...mat,
+      count: curMater ? curMater.count : 0,
+    };
+    setting.value.tables["tabMaterial"].data.push(newMater);
+  });
+};
+
 const addTransactionPeresort = async () => {
   try {
-    const M_old = setting.value.tables["tabMaterial"].data.find(
-      (el) => el.name_M == form.name_M_old
-    );
-    const M_new = setting.value.tables["tabMaterial"].data.find(
-      (el) => el.name_M == form.name_M_new
-    );
+    const M_old = setting.value.tables["tabMaterial"].data.find((el) => el.name_M == form.name_M_old);
+    const M_new = setting.value.tables["tabMaterial"].data.find((el) => el.name_M == form.name_M_new);
 
     if (!M_old || !M_new) {
       ElMessage.error(`Зробіть вибір матеріалу для пересорта!`);
@@ -394,9 +374,7 @@ const addTransactionPeresort = async () => {
       _idPunkt: props.idPunkt,
       _date: form.date,
       _time: getTime.value,
-      _comment: !isLessening.value
-        ? `Пересорт; ${form.comment}`
-        : `Переробка; ${form.comment}`,
+      _comment: !isLessening.value ? `Пересорт; ${form.comment}` : `Переробка; ${form.comment}`,
       _isEdit: 0,
       _isDel: 1,
       _opers: groupOperation,
@@ -436,8 +414,7 @@ const sourceTable_M_new = computed(() => {
 
   return _tab.filter(
     (row) =>
-      row.name_K == (!isLessening.value ? form.name_K : form.name_K_new) &&
-      row.name_M != form.name_M_old
+      row.name_K == (!isLessening.value ? form.name_K : form.name_K_new) && row.name_M != form.name_M_old
   );
 });
 
