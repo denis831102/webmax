@@ -39,6 +39,10 @@
             <el-icon><Money /></el-icon>
             Залишки по коштам на ВП
           </el-menu-item>
+          <el-menu-item index="2-5">
+            <el-icon><Switch /></el-icon>
+            Рух матеріалу на ВП
+          </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
 
@@ -111,7 +115,7 @@
             Щоденний звіт економіста
           </el-menu-item>
           <el-menu-item index="3-5" :disabled="isDisabled_Analitika_1">
-            <el-icon><Guide /></el-icon>
+            <el-icon><Switch /></el-icon>
             Рух номенклатури на власних пунктах
           </el-menu-item>
         </el-menu-item-group>
@@ -200,6 +204,10 @@ const handleSelect = (key, keyPath) => {
     case "2-4":
       setting.value.comps.curComp = "ezvitMAllP";
       setting.value.titleTable = setting.value.tables["tabzvitMAllP"].title;
+      break;
+    case "2-5":
+      setting.value.comps.curComp = "eZvitKategM";
+      setting.value.titleTable = setting.value.tables["tabZvitKategM"].title;
       break;
     case "3-1":
       setting.value.comps.curComp = "eAnalitika";

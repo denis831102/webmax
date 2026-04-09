@@ -1,28 +1,6 @@
 <template>
   <div class="card" style="margin: 0 0 10px 0">
     <el-row wrap>
-      <!-- Менеджер @change="getMonitoring"-->
-      <el-col :xs="24" :sm="12" :md="12" :lg="6">
-        <el-select
-          v-model="checkManeger"
-          multiple
-          clearable
-          collapse-tags
-          placeholder="оберіть менеджера..."
-          popper-class="custom-header"
-          :max-collapse-tags="1"
-          style="width: 100%"
-          @change="getzvitMaterial"
-        >
-          <template #header>
-            <el-checkbox v-model="checkAll" :indeterminate="indeterminate" @change="handleCheckAll">
-              Усі
-            </el-checkbox>
-          </template>
-          <el-option v-for="item in listManeger" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-col>
-
       <!-- Матеріал   -->
       <el-col :xs="24" :sm="12" :md="12" :lg="6">
         <el-cascader
@@ -88,14 +66,10 @@
     </el-row>
   </div>
 
-  <el-table :data="filterTable" :row-style="{ background: '#bad7da' }">
-    <el-table-column type="index"></el-table-column>
+  <el-table :data="filterTable" :show-header="false">
     <!-- //менеджер -->
     <el-table-column>
       <template #default="scope">
-        <el-icon><User /></el-icon>
-        <span style="margin-left: 10px">{{ scope.row.pib }}</span>
-
         <!-- //пункты -->
         <el-table
           :data="scope.row.listPunkt"
@@ -231,9 +205,9 @@
 </template>
 
 <script setup>
-import { inject, ref, computed, onActivated, watch } from "vue";
+import { inject, ref, computed, onActivated } from "vue";
 import { useStore } from "vuex";
-import { User, Refresh } from "@element-plus/icons-vue";
+import { Refresh } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { HTTP } from "@/hooks/http";
 
@@ -242,54 +216,20 @@ const store = useStore();
 const getCurUser = computed(() => store.getters.getCurUser);
 const getSettingUser = computed(() => store.getters.getSettingUser);
 const loading = ref(false);
-const checkAll = ref(false);
-const indeterminate = ref(false);
-const checkManeger = ref([]);
 const checkMaterial = ref([]);
 const options = ref([]);
 const propsCascader = { multiple: true, expandTrigger: "hover" };
-const listManeger = ref([]);
+
 const valueDate = ref([new Date(), new Date()]);
-const isPeriod = ref(false);
+const isPeriod = ref(true);
 const typeP = ref("all");
 const kategotiaLayout = ref("false");
-const punktLayout = ref("false");
+const punktLayout = ref("true");
 
 const forceRenderUser = ref(0);
 
-watch(checkManeger, (val) => {
-  if (val.length === 0) {
-    checkAll.value = false;
-    indeterminate.value = false;
-  } else if (val.length === listManeger.value.length) {
-    checkAll.value = true;
-    indeterminate.value = false;
-  } else {
-    indeterminate.value = true;
-  }
-});
-
 const changeLayout = () => {
   forceRenderUser.value++;
-};
-
-const getManeger = async () => {
-  try {
-    const response = await HTTP.get("", {
-      params: {
-        _method: "getManeger",
-        _id_U: getCurUser.value.id,
-      },
-    });
-
-    listManeger.value = response.data.ar_data;
-
-    if (+getSettingUser.value.isShowMes) {
-      ElMessage.success("Список менеджерів оновлений");
-    }
-  } catch (e) {
-    ElMessage.error("Помилка завантаження менеджеров");
-  }
 };
 
 const getKategories = async () => {
@@ -319,16 +259,6 @@ const getKategories = async () => {
   }
 };
 
-const handleCheckAll = (val) => {
-  indeterminate.value = false;
-  if (val) {
-    checkManeger.value = listManeger.value.map((_) => _.value);
-  } else {
-    checkManeger.value = [];
-  }
-  getzvitMaterial();
-};
-
 const formatDate = (valDate, mode = "ukr") => {
   const date = {
     d: valDate.getDate(),
@@ -341,76 +271,8 @@ const formatDate = (valDate, mode = "ukr") => {
 };
 
 const filterTable = computed(() => {
-  const _tabl = setting.value.tables["tabZvitKateg"].data;
+  const _tabl = setting.value.tables["tabZvitKategM"].data;
 
-  // const _tabl = {
-  //   data: [
-  //     {
-  //       id_U: "1",
-  //       pib: "Дзюба Сергей",
-  //       listPunkt: [
-  //         {
-  //           id: "1",
-  //           namePunkt: "Днепр_Береговая",
-  //           listKateg: [
-  //             {
-  //               id_K: "2",
-  //               name_K: "вторинна сировина",
-  //               listMaterial: [
-  //                 {
-  //                   id_M: "31",
-  //                   name_M: "Макулатура",
-  //                   countZ: "1329.5",
-  //                   countMoneyZ: "3988.5",
-  //                   countV: "2135.5",
-  //                   countMoneyV: "6406.5",
-  //                 },
-  //                 {
-  //                   id_M: "32",
-  //                   name_M: "Пет_бутылка",
-  //                   countZ: "197",
-  //                   countMoneyZ: "591",
-  //                   countV: "0",
-  //                   countMoneyV: "0",
-  //                 },
-  //               ],
-  //               sumacountZ: "1526,5",
-  //               sumacountMoneyZ: "4579,5",
-  //               sumacountV: "2135,5",
-  //               sumacountMoneyV: "6406.5",
-  //             },
-  //             {
-  //               id_K: "3",
-  //               name_K: "кольровий",
-  //               listMaterial: [
-  //                 {
-  //                   id_M: "5",
-  //                   name_M: "медь",
-  //                   countZ: "20",
-  //                   countMoneyZ: "8000",
-  //                   countV: "10",
-  //                   countMoneyV: "10000",
-  //                 },
-  //                 {
-  //                   id_M: "56",
-  //                   name_M: "алюмини",
-  //                   countZ: "230",
-  //                   countMoneyZ: "9500",
-  //                   countV: "50",
-  //                   countMoneyV: "2500",
-  //                 },
-  //               ],
-  //               sumacountZ: "250",
-  //               sumacountMoneyZ: "17500",
-  //               sumacountV: "60",
-  //               sumacountMoneyV: "12500",
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // };
   return _tabl
     .map((user) => {
       return {
@@ -428,9 +290,9 @@ const filterTable = computed(() => {
 
 const getzvitMaterial = async () => {
   try {
-    if (!checkManeger.value.length || isPeriod.value == false) {
-      ElMessage.error("Оберіть менеджера та період звіту");
-      setting.value.tables["tabZvitKateg"].data = [];
+    if (isPeriod.value == false) {
+      ElMessage.error("Оберіть період звіту");
+      setting.value.tables["tabZvitKategM"].data = [];
       return;
     }
     loading.value = true;
@@ -438,14 +300,14 @@ const getzvitMaterial = async () => {
     const response = await HTTP.post("", {
       _method: "getzvitMaterial",
       _id_U: getCurUser.value.id,
-      _checkManeger: checkManeger.value,
+      _checkManeger: [getCurUser.value.id],
       _checkMaterial: checkMaterial.value,
       _date_l: formatDate(valueDate.value[0], "eng"),
       _date_r: formatDate(valueDate.value[1], "eng"),
       _isPeriod: isPeriod.value ? 1 : 0,
     });
 
-    setting.value.tables["tabZvitKateg"].data = response.data.ar_data;
+    setting.value.tables["tabZvitKategM"].data = response.data.ar_data;
     loading.value = false;
   } catch (e) {
     ElMessage.error("Помилка завантаження ");
@@ -453,7 +315,6 @@ const getzvitMaterial = async () => {
 };
 
 onActivated(async () => {
-  await getManeger();
   await getKategories();
   await getzvitMaterial();
 });

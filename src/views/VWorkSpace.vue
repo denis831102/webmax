@@ -64,6 +64,7 @@ import eAnalitikaM from "@/components/EP/Analitika/eAnalitikaM";
 import ezvitMAllP from "@/components/EP/Analitika/ezvitMAllP";
 import eEconomist from "@/components/EP/Monitoring/eEconomist";
 import eZvitKateg from "@/components/EP/Monitoring/eZvitKateg";
+import eZvitKategM from "@/components/EP/Analitika/eZvitKategM";
 import eZvitMoney from "@/components/EP/Monitoring/eZvitMoney";
 import eMoney from "@/components/EP/Monitoring/eMoney";
 
@@ -122,6 +123,7 @@ const setting = ref({
       eEconomist,
       eZvitMoney,
       eZvitKateg,
+      eZvitKategM,
       eMoney,
       eSettingUser,
     },
@@ -201,6 +203,11 @@ const setting = ref({
     },
     tabZvitKateg: {
       title: " РУХ НОМЕНКЛАТУРИ НА ВЛАСНИХ ПУНКТІВ",
+      curRow: {},
+      data: [],
+    },
+    tabZvitKategM: {
+      title: " РУХ МАТЕРІАЛУ НА ВЛАСНИХ ПУНКТІВ",
       curRow: {},
       data: [],
     },
