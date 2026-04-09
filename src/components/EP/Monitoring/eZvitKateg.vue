@@ -151,7 +151,7 @@
                               <div>
                                 {{
                                   element.row.countMoneyZ
-                                    ? `${parseFloat(element.row.countMoneyZ).toLocaleString("ua")} .грн`
+                                    ? `${parseFloat(element.row.countMoneyZ).toLocaleString("ua")} грн`
                                     : "-"
                                 }}
                               </div>
@@ -178,7 +178,7 @@
                               <div>
                                 {{
                                   element.row.countMoneyV
-                                    ? `${parseFloat(element.row.countMoneyV).toLocaleString("ua")} .грн`
+                                    ? `${parseFloat(element.row.countMoneyV).toLocaleString("ua")} грн`
                                     : "-"
                                 }}
                               </div>
@@ -201,7 +201,7 @@
 
                     <el-table-column align="left">
                       <template #default="scope">
-                        {{ `${parseFloat(scope.row.sumacountMoneyZ).toLocaleString("ua")}.грн` }}
+                        {{ `${parseFloat(scope.row.sumacountMoneyZ).toLocaleString("ua")} грн` }}
                       </template>
                     </el-table-column>
                   </el-table-column>
@@ -215,7 +215,7 @@
                     </el-table-column>
                     <el-table-column align="left">
                       <template #default="scope">
-                        {{ `${parseFloat(scope.row.sumacountMoneyV).toLocaleString("ua")}.грн` }}
+                        {{ `${parseFloat(scope.row.sumacountMoneyV).toLocaleString("ua")} грн` }}
                       </template>
                     </el-table-column>
                   </el-table-column>

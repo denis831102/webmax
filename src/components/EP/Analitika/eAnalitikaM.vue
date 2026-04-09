@@ -19,11 +19,7 @@
 
         <!-- Фільтр (перемикач) -->
         <el-col :xs="4" :sm="12" :md="1" :lg="2">
-          <el-switch
-            v-model="isFilter"
-            @change="getMonitoring"
-            style="float: right"
-          />
+          <el-switch v-model="isFilter" @change="getMonitoring" style="float: right" />
         </el-col>
 
         <!-- Дата -->
@@ -43,13 +39,7 @@
 
         <!-- Оновити -->
         <el-col :xs="24" :sm="12" :md="7" :lg="8">
-          <el-button
-            style="width: 100%"
-            type="primary"
-            plain
-            :icon="Refresh"
-            @click="getMonitoring()"
-          >
+          <el-button style="width: 100%" type="primary" plain :icon="Refresh" @click="getMonitoring()">
             Оновити
           </el-button>
         </el-col>
@@ -57,11 +47,7 @@
     </div>
   </el-space>
 
-  <el-table
-    :data="filterTable"
-    row-style="background:#f4f4f5"
-    v-loading="loading"
-  >
+  <el-table :data="filterTable" row-style="background:#f4f4f5" v-loading="loading">
     <el-table-column>
       <template #default="scope">
         <div
@@ -83,23 +69,11 @@
                 </el-check-tag>
               </h3>
               <div class="expand-content">
-                <el-table
-                  :data="props.row.listMaterial"
-                  border="true"
-                  style="width: 100%"
-                >
-                  <el-table-column
-                    type="index"
-                    width="60"
-                    v-if="setting.displaySize == 'large'"
-                  />
+                <el-table :data="props.row.listMaterial" border="true" style="width: 100%">
+                  <el-table-column type="index" width="60" v-if="setting.displaySize == 'large'" />
 
                   <!-- номенклатура -->
-                  <el-table-column
-                    label="номенклатура"
-                    prop="name_M"
-                    min-width="20"
-                  />
+                  <el-table-column label="номенклатура" prop="name_M" min-width="20" />
 
                   <!-- кількість -->
                   <el-table-column
@@ -110,9 +84,7 @@
                     v-if="setting.displaySize == 'large'"
                   >
                     <template #default="props">
-                      <div
-                        style="padding: 5px 0 5px 10px; background: #c6e2ff69"
-                      >
+                      <div style="padding: 5px 0 5px 10px; background: #c6e2ff69">
                         {{ parseFloat(props.row.count).toLocaleString("ru") }}
                         {{ props.row.unit }}
                       </div>
@@ -125,31 +97,16 @@
                       <el-table :data="props.row.listPunkt">
                         <el-table-column label="пункт" prop="name_P" sortable />
 
-                        <el-table-column
-                          label="кількість"
-                          prop="count"
-                          sortable
-                        >
+                        <el-table-column label="кількість" prop="count" sortable>
                           <template #default="props">
-                            <div
-                              style="
-                                padding: 2px 5px 2px 10px;
-                                background: #c6e2ff69;
-                              "
-                            >
-                              {{
-                                parseFloat(props.row.count).toLocaleString("ru")
-                              }}
+                            <div style="padding: 2px 5px 2px 10px; background: #c6e2ff69">
+                              {{ parseFloat(props.row.count).toLocaleString("ru") }}
                               {{ props.row.unit }}
                             </div>
                           </template>
                         </el-table-column>
 
-                        <el-table-column
-                          label="відсоток"
-                          prop="percent"
-                          min-width="40"
-                        >
+                        <el-table-column label="відсоток" prop="percent" min-width="40">
                           <template #default="props">
                             <el-progress
                               :text-inside="true"
@@ -212,9 +169,7 @@ const filterTable = computed(() => {
           .map((kateg) => {
             return {
               ...kateg,
-              listMaterial: kateg.listMaterial.filter(
-                (mater) => mater.count != 0
-              ),
+              listMaterial: kateg.listMaterial.filter((mater) => mater.count != 0),
             };
           })
           .filter((el) => el.listMaterial.length),
@@ -230,16 +185,8 @@ const formatDate = (valDate, mode = "ukr") => {
     y: valDate.getFullYear(),
   };
   return mode == "ukr"
-    ? [
-        (date.d < 10 ? "0" : "") + date.d,
-        (date.m < 10 ? "0" : "") + date.m,
-        date.y,
-      ].join(".")
-    : [
-        date.y,
-        (date.m < 10 ? "0" : "") + date.m,
-        (date.d < 10 ? "0" : "") + date.d,
-      ].join("-");
+    ? [(date.d < 10 ? "0" : "") + date.d, (date.m < 10 ? "0" : "") + date.m, date.y].join(".")
+    : [date.y, (date.m < 10 ? "0" : "") + date.m, (date.d < 10 ? "0" : "") + date.d].join("-");
 };
 
 const getMonitoring = async () => {
@@ -257,9 +204,7 @@ const getMonitoring = async () => {
     loading.value = false;
 
     if (+getSettingUser.value.isShowMes) {
-      let limitDate = isFilter.value
-        ? formatDate(curDate.value, "ukr")
-        : formatDate(new Date(), "ukr");
+      let limitDate = isFilter.value ? formatDate(curDate.value, "ukr") : formatDate(new Date(), "ukr");
       ElMessage.success(`Аналітика по номенклатурі на ${limitDate} оновлена`);
     }
   } catch (e) {

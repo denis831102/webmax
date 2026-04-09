@@ -32,7 +32,7 @@
               <keep-alive> <component :is="curComponent" /> </keep-alive>
             </el-main>
 
-            <el-footer class="box-footer">R@ED 2025</el-footer>
+            <el-footer class="box-footer">R@ED 2025-2026</el-footer>
           </el-container>
         </el-container>
       </el-card>
@@ -161,7 +161,7 @@ const setting = ref({
       data: [],
     },
     tabBits: {
-      title: "ЗАЛИШКИ НА ВЛАСНИМ ПУНКТАХ",
+      title: "ЗАЛИШКИ НА ВЛАСНИХ ПУНКТАХ",
       curRow: {},
       data: [],
     },
@@ -202,12 +202,12 @@ const setting = ref({
       data: [],
     },
     tabZvitKateg: {
-      title: " РУХ НОМЕНКЛАТУРИ НА ВЛАСНИХ ПУНКТІВ",
+      title: " РУХ НОМЕНКЛАТУРИ НА ВЛАСНИХ ПУНКТАХ",
       curRow: {},
       data: [],
     },
     tabZvitKategM: {
-      title: " РУХ МАТЕРІАЛУ НА ВЛАСНИХ ПУНКТІВ",
+      title: " РУХ МАТЕРІАЛУ НА ВЛАСНИХ ПУНКТАХ",
       curRow: {},
       data: [],
     },
