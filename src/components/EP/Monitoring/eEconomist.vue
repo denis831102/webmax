@@ -14,20 +14,11 @@
           @change="getETransaction()"
         >
           <template #header>
-            <el-checkbox
-              v-model="checkAll"
-              :indeterminate="indeterminate"
-              @change="handleCheckAll"
-            >
+            <el-checkbox v-model="checkAll" :indeterminate="indeterminate" @change="handleCheckAll">
               Усі
             </el-checkbox>
           </template>
-          <el-option
-            v-for="item in listManeger"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
+          <el-option v-for="item in listManeger" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
 
         <el-select
@@ -37,40 +28,22 @@
           :max-collapse-tags="1"
           style="width: 45%"
         >
-          <el-option
-            v-for="item in options"
-            :key="item.idV"
-            :label="item.name"
-            :value="item.idV"
-          />
+          <el-option v-for="item in options" :key="item.idV" :label="item.name" :value="item.idV" />
         </el-select>
       </el-col>
       <el-col :xs="8" :sm="8" :md="8" :lg="5" :xl="5">
-        <el-radio-group
-          v-model="userLayout"
-          @change="changeLayout()"
-          style="width: 45%"
-        >
+        <el-radio-group v-model="userLayout" @change="changeLayout()" style="width: 45%">
           <el-radio-button value="false" label="+м" />
           <el-radio-button value="true" label="-м" />
         </el-radio-group>
 
-        <el-radio-group
-          v-model="punktLayout"
-          @change="changeLayout()"
-          style="margin-left: 5px; width: 45%"
-        >
+        <el-radio-group v-model="punktLayout" @change="changeLayout()" style="margin-left: 5px; width: 45%">
           <el-radio-button value="false" label="+п" />
           <el-radio-button value="true" label="-п" />
         </el-radio-group>
       </el-col>
       <el-col :xs="6" :sm="6" :md="6" :lg="3" :xl="3">
-        <el-button
-          type="success"
-          :icon="Tickets"
-          @click="loadReport()"
-          style="width: 90%"
-        >
+        <el-button type="success" :icon="Tickets" @click="loadReport()" style="width: 90%">
           Формувати звіт
         </el-button>
       </el-col>
@@ -101,13 +74,7 @@
         </el-radio-group>
       </el-col>
       <el-col :xs="6" :sm="6" :md="6" :lg="3" :xl="3">
-        <el-button
-          type="primary"
-          plain
-          :icon="Refresh"
-          @click="getETransaction()"
-          style="width: 90%"
-        >
+        <el-button type="primary" plain :icon="Refresh" @click="getETransaction()" style="width: 90%">
           Оновити
         </el-button>
       </el-col>
@@ -146,10 +113,7 @@
                     stripe
                     border
                   >
-                    <el-table-column
-                      type="index"
-                      v-if="setting.displaySize == 'large'"
-                    />
+                    <el-table-column type="index" v-if="setting.displaySize == 'large'" />
 
                     <el-table-column label="врахувати" min-width="20">
                       <template #default="transaction">
@@ -157,10 +121,7 @@
                           :modelValue="transaction.row.isLoad == 1"
                           @change="changeCheck(transaction.row)"
                           inline-prompt
-                          style="
-                            --el-switch-on-color: #13ce66;
-                            --el-switch-off-color: #e48c18;
-                          "
+                          style="--el-switch-on-color: #13ce66; --el-switch-off-color: #e48c18"
                           active-text="+"
                           inactive-text="-"
                         />
@@ -175,15 +136,12 @@
 
                       <template #default="index">
                         <div style="display: flex; align-items: center">
-                          <span style="margin-left: 10px">
-                            {{ index.row.date }}</span
-                          >
+                          <span style="margin-left: 10px"> {{ index.row.date }}</span>
                         </div>
                       </template>
                     </el-table-column>
 
-                    <el-table-column label="Коментар" prop="comment">
-                    </el-table-column>
+                    <el-table-column label="Коментар" prop="comment"> </el-table-column>
 
                     <el-table-column label="Сума" prop="suma">
                       <template #default="props">
@@ -340,12 +298,8 @@ const getETransaction = async () => {
     loading.value = false;
 
     if (+getSettingUser.value.isShowMes) {
-      const info = setting.value.tables["tabEconomist"].data.length
-        ? "ЗАВАНТАЖЕНИЙ"
-        : "ПУСТИЙ";
-      const type = setting.value.tables["tabEconomist"].data.length
-        ? "success"
-        : "error";
+      const info = setting.value.tables["tabEconomist"].data.length ? "ЗАВАНТАЖЕНИЙ" : "ПУСТИЙ";
+      const type = setting.value.tables["tabEconomist"].data.length ? "success" : "error";
       ElMessage({
         message: `Список з пунктами та транзакціями ${info}`,
         type,
@@ -401,16 +355,8 @@ const formatDate = (valDate, mode = "ukr") => {
     y: valDate.getFullYear(),
   };
   return mode == "ukr"
-    ? [
-        (date.d < 10 ? "0" : "") + date.d,
-        (date.m < 10 ? "0" : "") + date.m,
-        date.y,
-      ].join(".")
-    : [
-        date.y,
-        (date.m < 10 ? "0" : "") + date.m,
-        (date.d < 10 ? "0" : "") + date.d,
-      ].join("-");
+    ? [(date.d < 10 ? "0" : "") + date.d, (date.m < 10 ? "0" : "") + date.m, date.y].join(".")
+    : [date.y, (date.m < 10 ? "0" : "") + date.m, (date.d < 10 ? "0" : "") + date.d].join("-");
 };
 
 const changeCheck = (rowT) => {
@@ -447,9 +393,7 @@ const loadReport = async () => {
       return;
     }
 
-    const nameOperation = options.value.find(
-      (el) => el.idV == checkOperation.value
-    ).name;
+    const nameOperation = options.value.find((el) => el.idV == checkOperation.value).name;
 
     const response = await HTTP.post("", {
       _method: "loadReport",
@@ -461,11 +405,7 @@ const loadReport = async () => {
     });
 
     if (response.data.isSuccesfull) {
-      loadFile(
-        response.data.fileName,
-        response.data.content,
-        response.data.mime
-      );
+      loadFile(response.data.fileName, response.data.content, response.data.mime);
 
       ElMessage.success("Звіт сформовано");
     } else {
