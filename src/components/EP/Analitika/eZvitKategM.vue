@@ -31,6 +31,12 @@
           <el-radio-button value="true" label="-Пункт" />
         </el-radio-group>
       </el-col>
+
+      <el-col :xs="12" :sm="12" :md="12" :lg="6">
+        <el-button type="success" style="margin-left: 10px" @click="isSummaryVisible = !isSummaryVisible">
+          {{ isSummaryVisible ? "Приховати підсумок" : "Показати підсумок" }}
+        </el-button>
+      </el-col>
     </el-row>
 
     <el-row wrap>
@@ -64,6 +70,36 @@
         </el-radio-group>
       </el-col>
     </el-row>
+  </div>
+  <div
+    class="card"
+    style="box-shadow: inset 14px 4px 25px 9px var(--el-color-success)"
+    v-show="isSummaryVisible"
+  >
+    <h3 style="margin-bottom: 10px" align="center">Підсумок по категоріях (всі пункти)</h3>
+    <el-table :data="summaryByKategory">
+      <el-table-column label="категории" prop="name_K" align="center"> </el-table-column>
+      <el-table-column label="Надходження (Заг.)" align="center">
+        <el-table-column align="right">
+          <template #default="scope">
+            {{ scope.row.sumZ.toLocaleString("uk-UA") }} {{ scope.row.unit }}
+          </template>
+        </el-table-column>
+        <el-table-column align="left">
+          <template #default="scope"> {{ scope.row.sumMoneyZ.toLocaleString("uk-UA") }} грн </template>
+        </el-table-column>
+      </el-table-column>
+      <el-table-column label="Відвантаження  (Заг.)" align="center">
+        <el-table-column align="right">
+          <template #default="scope">
+            {{ scope.row.sumV.toLocaleString("uk-UA") }} {{ scope.row.unit }}
+          </template>
+        </el-table-column>
+        <el-table-column align="left">
+          <template #default="scope"> {{ scope.row.sumMoneyV.toLocaleString("uk-UA") }} грн </template>
+        </el-table-column>
+      </el-table-column>
+    </el-table>
   </div>
 
   <el-table :data="filterTable" :show-header="false">
@@ -219,7 +255,7 @@ const loading = ref(false);
 const checkMaterial = ref([]);
 const options = ref([]);
 const propsCascader = { multiple: true, expandTrigger: "hover" };
-
+const isSummaryVisible = ref(false);
 const valueDate = ref([new Date(), new Date()]);
 const isPeriod = ref(true);
 const typeP = ref("all");
@@ -286,6 +322,40 @@ const filterTable = computed(() => {
       };
     })
     .filter((el) => el.listPunkt.length);
+});
+
+const summaryByKategory = computed(() => {
+  const summary = {};
+  // Проходим по всем менеджерам/строкам в основной таблице
+  filterTable.value.forEach((manager) => {
+    // Проходим по всем пунктам внутри менеджера
+    manager.listPunkt?.forEach((punkt) => {
+      // Проходим по всем категориям внутри пункта
+      punkt.listKateg?.forEach((kateg) => {
+        const name = kateg.name_K;
+
+        if (!summary[name]) {
+          summary[name] = {
+            name_K: name,
+            sumZ: 0,
+            sumMoneyZ: 0,
+            sumV: 0,
+            sumMoneyV: 0,
+            unit: kateg.unit || "",
+          };
+        }
+
+        // Плюсуем значения (приводим к числу на всякий случай)
+        summary[name].sumZ += parseFloat(kateg.sumacountZ || 0);
+        summary[name].sumMoneyZ += parseFloat(kateg.sumacountMoneyZ || 0);
+        summary[name].sumV += parseFloat(kateg.sumacountV || 0);
+        summary[name].sumMoneyV += parseFloat(kateg.sumacountMoneyV || 0);
+      });
+    });
+  });
+
+  // Превращаем объект обратно в массив для таблицы
+  return Object.values(summary);
 });
 
 const getzvitMaterial = async () => {
