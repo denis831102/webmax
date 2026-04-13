@@ -57,8 +57,8 @@
 
     <el-row wrap>
       <!-- Період формування -->
-      <el-col :xs="24" :sm="12" :md="12" :lg="12">
-        <el-switch v-model="isPeriod" style="margin-left: 20px" />
+      <el-col :xs="24" :sm="12" :md="6" :lg="6">
+        <el-switch v-model="isPeriod" style="margin-left: 5px" />
         <el-date-picker
           v-model="valueDate"
           type="daterange"
@@ -67,13 +67,19 @@
           :end-placeholder="getDate"
           :disabled="!isPeriod"
           :shortcuts="shortCuts"
-          style="margin-left: 5px"
+          style="margin-left: 5px; width: 85%"
           @change="getzvitMaterial"
         />
       </el-col>
 
       <el-col :xs="12" :sm="12" :md="6" :lg="6">
-        <el-button type="primary" plain :icon="Refresh" style="width: 100%" @click="getzvitMaterial">
+        <el-button
+          type="primary"
+          plain
+          :icon="Refresh"
+          style="margin-left: 10px; width: 70%"
+          @click="getzvitMaterial"
+        >
           Оновити
         </el-button>
       </el-col>
@@ -85,7 +91,44 @@
           <el-radio-button value="true" label="-Категорія" />
         </el-radio-group>
       </el-col>
+
+      <el-col :xs="12" :sm="12" :md="6" :lg="6">
+        <el-button type="success" style="margin-left: 5px" @click="isSummaryVisible = !isSummaryVisible">
+          {{ isSummaryVisible ? "Приховати підсумок" : "Показати підсумок" }}
+        </el-button>
+      </el-col>
     </el-row>
+  </div>
+
+  <div
+    class="card"
+    style="box-shadow: inset 14px 4px 25px 9px var(--el-color-success)"
+    v-show="isSummaryVisible"
+  >
+    <h3 style="margin-bottom: 10px" align="center">Підсумок по категоріях (всі пункти)</h3>
+    <el-table :data="summaryByKategory">
+      <el-table-column label="категории" prop="name_K" align="center"> </el-table-column>
+      <el-table-column label="Надходження (Заг.)" align="center">
+        <el-table-column align="right">
+          <template #default="scope">
+            {{ scope.row.sumZ.toLocaleString("uk-UA") }} {{ scope.row.unit }}
+          </template>
+        </el-table-column>
+        <el-table-column align="left">
+          <template #default="scope"> {{ scope.row.sumMoneyZ.toLocaleString("uk-UA") }} грн </template>
+        </el-table-column>
+      </el-table-column>
+      <el-table-column label="Відвантаження  (Заг.)" align="center">
+        <el-table-column align="right">
+          <template #default="scope">
+            {{ scope.row.sumV.toLocaleString("uk-UA") }} {{ scope.row.unit }}
+          </template>
+        </el-table-column>
+        <el-table-column align="left">
+          <template #default="scope"> {{ scope.row.sumMoneyV.toLocaleString("uk-UA") }} грн </template>
+        </el-table-column>
+      </el-table-column>
+    </el-table>
   </div>
 
   <el-table :data="filterTable" :row-style="{ background: '#bad7da' }">
@@ -254,7 +297,7 @@ const isPeriod = ref(false);
 const typeP = ref("all");
 const kategotiaLayout = ref("false");
 const punktLayout = ref("false");
-
+const isSummaryVisible = ref(false);
 const forceRenderUser = ref(0);
 
 watch(checkManeger, (val) => {
@@ -424,6 +467,40 @@ const filterTable = computed(() => {
       };
     })
     .filter((el) => el.listPunkt.length);
+});
+
+const summaryByKategory = computed(() => {
+  const summary = {};
+  // Проходим по всем менеджерам/строкам в основной таблице
+  filterTable.value.forEach((manager) => {
+    // Проходим по всем пунктам внутри менеджера
+    manager.listPunkt?.forEach((punkt) => {
+      // Проходим по всем категориям внутри пункта
+      punkt.listKateg?.forEach((kateg) => {
+        const name = kateg.name_K;
+
+        if (!summary[name]) {
+          summary[name] = {
+            name_K: name,
+            sumZ: 0,
+            sumMoneyZ: 0,
+            sumV: 0,
+            sumMoneyV: 0,
+            unit: kateg.unit || "",
+          };
+        }
+
+        // Плюсуем значения (приводим к числу на всякий случай)
+        summary[name].sumZ += parseFloat(kateg.sumacountZ || 0);
+        summary[name].sumMoneyZ += parseFloat(kateg.sumacountMoneyZ || 0);
+        summary[name].sumV += parseFloat(kateg.sumacountV || 0);
+        summary[name].sumMoneyV += parseFloat(kateg.sumacountMoneyV || 0);
+      });
+    });
+  });
+
+  // Превращаем объект обратно в массив для таблицы
+  return Object.values(summary);
 });
 
 const getzvitMaterial = async () => {
