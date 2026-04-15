@@ -191,7 +191,7 @@ const loading = ref(false);
 const punktLayout = ref("false");
 const ruxhLayout = ref("false");
 const forceRenderUser = ref(0);
-const isSummaryVisible = ref(false);
+const isSummaryVisible = ref(true);
 
 const filterTable = computed(() => {
   const _tabl = setting.value.tables["tabZvitMoneyM"];
