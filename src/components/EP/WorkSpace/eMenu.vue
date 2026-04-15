@@ -43,6 +43,10 @@
             <el-icon><Switch /></el-icon>
             Рух матеріалу на ВП
           </el-menu-item>
+          <el-menu-item index="2-6">
+            <el-icon><Money /></el-icon>
+            Рух коштів на ВП
+          </el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
 
@@ -209,6 +213,11 @@ const handleSelect = (key, keyPath) => {
       setting.value.comps.curComp = "eZvitKategM";
       setting.value.titleTable = setting.value.tables["tabZvitKategM"].title;
       break;
+    case "2-6":
+      setting.value.comps.curComp = "eZvitMoneyM";
+      setting.value.titleTable = setting.value.tables["tabZvitMoneyM"].title;
+      break;
+
     case "3-1":
       setting.value.comps.curComp = "eAnalitika";
       setting.value.titleTable = setting.value.tables["tabAnalitika"].title;

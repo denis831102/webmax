@@ -61,6 +61,7 @@ import eOperation from "@/components/EP/Operation/eOperation";
 import eBits from "@/components/EP/Bits/eBits";
 import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
 import eAnalitikaM from "@/components/EP/Analitika/eAnalitikaM";
+import eZvitMoneyM from "@/components/EP/Analitika/eZvitMoneyM";
 import ezvitMAllP from "@/components/EP/Analitika/ezvitMAllP";
 import eEconomist from "@/components/EP/Monitoring/eEconomist";
 import eZvitKateg from "@/components/EP/Monitoring/eZvitKateg";
@@ -122,6 +123,7 @@ const setting = ref({
       ezvitMAllP,
       eEconomist,
       eZvitMoney,
+      eZvitMoneyM,
       eZvitKateg,
       eZvitKategM,
       eMoney,
@@ -180,6 +182,12 @@ const setting = ref({
       curRow: {},
       data: [],
     },
+    tabZvitMoneyM: {
+      title: "РУХ ПО КОШТАМ НА ВЛАСНИХ ПУНКТАХ",
+      curRow: {},
+      data: [],
+    },
+
     tabAnalitikaM: {
       title: "ЗАГАЛЬНІ ЗАЛИШКИ",
       curRow: {},
