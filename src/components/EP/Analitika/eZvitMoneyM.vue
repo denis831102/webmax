@@ -55,8 +55,8 @@
     style="box-shadow: inset 14px 4px 25px 9px var(--el-color-success)"
     v-show="isSummaryVisible"
   >
-    <h3 style="margin-bottom: 10px" align="center">Підсумок по надходженням та витратам (всі пункти)</h3>
-    <el-table :data="summaryByMoney">
+    <h3 style="margin-bottom: 5px" align="center">Підсумок по надходженням та витратам (всі пункти)</h3>
+    <el-table :data="summaryByMoney" style="border-radius: 25px">
       <el-table-column prop="nameVidKassa" align="center"> </el-table-column>
       <el-table-column align="left">
         <template #default="scope"> {{ scope.row.sumVidKassa.toLocaleString("uk-UA") }} грн </template>
@@ -83,7 +83,7 @@
                   <el-table
                     :data="scope.row.listVidKasa"
                     :default-sort="{ prop: 'date', order: 'ascending' }"
-                    style="margin-left: 5%; background: #124578; width: 95%"
+                    style="margin-left: 3%; background: #124578; width: 95%"
                     :show-header="true"
                     stripe
                     border
@@ -102,7 +102,7 @@
                           <el-table-column>
                             <template #default="scope">
                               <div style="display: flex; align-items: center">
-                                <span style="margin-left: 5%">{{ scope.row.nameN }}</span>
+                                <span style="margin-left: 2%">{{ scope.row.nameN }}</span>
                               </div>
                             </template>
                           </el-table-column>
@@ -371,7 +371,7 @@ const getMoney = async () => {
 
 <style>
 .expand-contentBig {
-  padding: 10px;
+  padding: 5px;
   background: #4caf5045;
   border-radius: 25px;
   margin: 0px 5px;
