@@ -14,12 +14,7 @@
     :idPunkt="activeIdPunkt"
   />
 
-  <el-tabs
-    v-model="activeName"
-    @tab-change="changeTab"
-    type="border-card"
-    class="demo-tabs"
-  >
+  <el-tabs v-model="activeName" @tab-change="changeTab" type="border-card" class="demo-tabs">
     <el-tab-pane v-for="punkt in punkts" :key="punkt.id" :name="punkt.name">
       <template #label>
         <span class="custom-tabs-label">
@@ -32,20 +27,10 @@
         <el-card v-if="setting.displaySize == 'large'">
           <el-space :size="0" style="padding: 0px 0px">
             <div class="statistic-card">
-              <el-statistic
-                :value="kassa.summa"
-                title=""
-                precision="2"
-                group-separator=" "
-              >
+              <el-statistic :value="kassa.summa" title="" precision="2" group-separator=" ">
                 <template #title>
                   <div
-                    style="
-                      display: inline-flex;
-                      align-items: center;
-                      font-size: 20px;
-                      font-style: oblique;
-                    "
+                    style="display: inline-flex; align-items: center; font-size: 20px; font-style: oblique"
                   >
                     Загальна каса, грн.
                   </div>
@@ -55,15 +40,8 @@
               <div class="statistic-footer">
                 <div class="footer-item">
                   <span>з минулим днем: </span>
-                  <span
-                    :class="[kassa.percent > 0 ? 'green' : 'red']"
-                    :title="`${kassa.oldSumma} грн.`"
-                  >
-                    {{
-                      parseFloat(
-                        (kassa.summa - kassa.oldSumma).toFixed(1)
-                      ).toLocaleString("rus")
-                    }}
+                  <span :class="[kassa.percent > 0 ? 'green' : 'red']" :title="`${kassa.oldSumma} грн.`">
+                    {{ parseFloat((kassa.summa - kassa.oldSumma).toFixed(1)).toLocaleString("rus") }}
                     грн. ({{ kassa.percent }}%)
                     <el-icon>
                       <CaretTop v-if="kassa.percent > 0" />
@@ -81,20 +59,10 @@
             plain
             @click="getBits"
           >
-            <el-icon
-              style="position: relative; left: 24pt; top: -8px; font-size: 30pt"
+            <el-icon style="position: relative; left: 24pt; top: -8px; font-size: 30pt"
               ><ShoppingCartFull
             /></el-icon>
-            <div
-              style="
-                position: relative;
-                left: -20px;
-                top: 24px;
-                font-size: 13pt;
-              "
-            >
-              Залишки
-            </div>
+            <div style="position: relative; left: -20px; top: 24px; font-size: 13pt">Залишки</div>
           </el-button>
         </el-card>
 
@@ -151,12 +119,7 @@
           :is="setting.displaySize == 'large' ? ElSpace : ElButtonGroup"
           v-bind="{ direction: 'vertical' }"
         >
-          <el-button
-            v-if="setting.displaySize == 'small'"
-            style="width: 110px"
-            plain
-            @click="getBits"
-          >
+          <el-button v-if="setting.displaySize == 'small'" style="width: 110px" plain @click="getBits">
             <el-icon><Money /></el-icon>
             <span>{{ kassa.summa }}</span>
           </el-button>
@@ -228,12 +191,7 @@
 
       <!-- <el-scrollbar height="600px"> -->
 
-      <el-table
-        :data="filterTable"
-        v-loading="loading"
-        :default-expand-all="+viewOperation"
-        stripe
-      >
+      <el-table :data="filterTable" v-loading="loading" :default-expand-all="+viewOperation" stripe>
         <el-table-column type="expand">
           <template #default="props">
             <div class="expand-content">
@@ -248,19 +206,9 @@
                   overflow: hidden;
                 "
               >
+                {{ setting.displaySize == "large" ? "Транзакція за операцією:" : "" }}
                 {{
-                  setting.displaySize == "large"
-                    ? "Транзакція за операцією:"
-                    : ""
-                }}
-                {{
-                  [
-                    props.row.comment,
-                    " / ",
-                    props.row.date,
-                    " - ",
-                    props.row.time,
-                  ]
+                  [props.row.comment, " / ", props.row.date, " - ", props.row.time]
                     .join("")
                     .substring(0, setting.displayWidth <= 700 ? 40 : 300)
                 }}
@@ -278,19 +226,11 @@
                 >
                   <template #default="score">
                     {{ score.row.name_V }}
-                    {{
-                      setting.displayWidth <= 700
-                        ? " / " + score.row.name_M
-                        : ""
-                    }}
+                    {{ setting.displayWidth <= 700 ? " / " + score.row.name_M : "" }}
                   </template>
                 </el-table-column>
 
-                <el-table-column
-                  label="номенклатура"
-                  prop="name_M"
-                  v-if="setting.displayWidth > 700"
-                />
+                <el-table-column label="номенклатура" prop="name_M" v-if="setting.displayWidth > 700" />
 
                 <el-table-column label="кількість" prop="count">
                   <template #default="props">
@@ -302,11 +242,7 @@
                 <el-table-column label="ціна одиниці">
                   <template #default="props">
                     {{ parseFloat(props.row.price).toLocaleString("ua") }}
-                    {{
-                      props.row.unit == "грн"
-                        ? props.row.unit
-                        : `грн/${props.row.unit}`
-                    }}
+                    {{ props.row.unit == "грн" ? props.row.unit : `грн/${props.row.unit}` }}
                   </template>
                 </el-table-column>
 
@@ -326,21 +262,14 @@
           <template #header>
             <span>в 1С</span>
           </template>
-          <template #default="scope">
-            <el-icon
-              size="20"
-              v-if="scope.row.isLoadReport"
-              color="var(--el-border-color)"
+          <template #default="transact">
+            <el-icon size="20" v-if="transact.row.isLoadReport" color="var(--el-border-color)"
               ><CircleCheckFilled
             /></el-icon>
           </template>
         </el-table-column>
 
-        <el-table-column
-          prop="date"
-          :min-width="setting.displaySize == 'large' ? 45 : 33"
-          wrap
-        >
+        <el-table-column prop="date" :min-width="setting.displaySize == 'large' ? 45 : 33" wrap>
           <template #header>
             <span style="margin-left: 10px">Дата</span>
           </template>
@@ -355,42 +284,25 @@
                 </template>
                 <div>
                   <el-icon
-                    v-if="
-                      scope.row.isLoadReport && setting.displaySize == 'small'
-                    "
+                    v-if="scope.row.isLoadReport && setting.displaySize == 'small'"
                     size="20"
                     color="var(--el-border-color)"
                     ><CircleCheckFilled
                   /></el-icon>
                   {{ scope.row.date }}
-                  {{
-                    setting.displaySize == "large"
-                      ? ` - ${scope.row.time}`
-                      : `\n ${scope.row.time}`
-                  }}
+                  {{ setting.displaySize == "large" ? ` - ${scope.row.time}` : `\n ${scope.row.time}` }}
                 </div>
               </el-tooltip>
             </div>
           </template>
         </el-table-column>
 
-        <el-table-column
-          label="Коментар"
-          prop="comment"
-          v-if="setting.displaySize == 'large'"
-        />
+        <el-table-column label="Коментар" prop="comment" v-if="setting.displaySize == 'large'" />
 
-        <el-table-column
-          :label="setting.displaySize == 'large' ? 'Сума' : 'Дані'"
-          min-width="40"
-        >
+        <el-table-column :label="setting.displaySize == 'large' ? 'Сума' : 'Дані'" min-width="40">
           <template #default="scope">
             <div style="text-align: left">
-              <span
-                >{{
-                  setting.displaySize == "small" ? `${scope.row.comment}` : ""
-                }}
-              </span>
+              <span>{{ setting.displaySize == "small" ? `${scope.row.comment}` : "" }} </span>
               <div style="background: rgb(167 235 167); text-align: center">
                 {{ `${parseFloat(scope.row.suma).toLocaleString("ua")} грн.` }}
               </div>
@@ -398,17 +310,13 @@
           </template>
         </el-table-column>
 
-        <el-table-column
-          label="Дії"
-          :min-width="setting.displaySize == 'large' ? 45 : 20"
-        >
+        <el-table-column label="Дії" :min-width="setting.displaySize == 'large' ? 45 : 20">
           <template #default="scope">
             <el-button-group
               class="ml-4"
               v-if="
                 setting.dialog['editManeger'].chooseUser == 'user' ||
-                (setting.dialog['editManeger'].chooseUser == 'maneger' &&
-                  +getCurUser.listAccess[9])
+                (setting.dialog['editManeger'].chooseUser == 'maneger' && +getCurUser.listAccess[9])
               "
             >
               <el-button
@@ -478,17 +386,7 @@
 </template>
 
 <script setup>
-import {
-  inject,
-  ref,
-  computed,
-  watch,
-  onActivated,
-  onUpdated,
-  reactive,
-  onUnmounted,
-  h,
-} from "vue";
+import { inject, ref, computed, watch, onActivated, onUpdated, reactive, onUnmounted, h } from "vue";
 import { useStore } from "vuex";
 import {
   Search,
@@ -557,10 +455,7 @@ watch(
 );
 
 watch(
-  () => [
-    setting.value.dialog["editManeger"].chooseUser,
-    setting.value.dialog["editManeger"].idManeger,
-  ],
+  () => [setting.value.dialog["editManeger"].chooseUser, setting.value.dialog["editManeger"].idManeger],
   () => getPunktCur()
 );
 
@@ -582,9 +477,7 @@ const getPunktCur = async () => {
       setting.value.dialog["editManeger"].chooseUser == "user"
         ? getCurUser.value.PIB.toUpperCase()
         : setting.value.tables["tabUser"].data
-            .find(
-              (el) => el.id == setting.value.dialog["editManeger"].idManeger
-            )
+            .find((el) => el.id == setting.value.dialog["editManeger"].idManeger)
             .PIB.toUpperCase();
 
     setting.value.titleTable = `${setting.value.tables["tabTransaction"].title} ${nameUser}`;
@@ -595,11 +488,7 @@ const getPunktCur = async () => {
 };
 
 const getTransaction = async () => {
-  if (
-    setting.value.dialog["editOperation"].visible ||
-    setting.value.dialog["createPeresort"].visible
-  )
-    return;
+  if (setting.value.dialog["editOperation"].visible || setting.value.dialog["createPeresort"].visible) return;
 
   try {
     loading.value = true;
@@ -627,12 +516,8 @@ const getTransaction = async () => {
     if (+getSettingUser.value.isShowMes) {
       ElMessage.success(
         response.data.total > 0
-          ? `Транзакції ${getCurUser.value.PIB.toUpperCase()} для ${
-              activeName.value
-            } оновлені`
-          : `Транзакції ${getCurUser.value.PIB.toUpperCase()} для ${
-              activeName.value
-            } відсутні`
+          ? `Транзакції ${getCurUser.value.PIB.toUpperCase()} для ${activeName.value} оновлені`
+          : `Транзакції ${getCurUser.value.PIB.toUpperCase()} для ${activeName.value} відсутні`
       );
     }
   } catch (e) {
@@ -740,10 +625,8 @@ const filterTable = computed(() => {
             ...el,
             listOperMain: el.listOperMain.filter(
               (oper) =>
-                ((isFilterOper.value && oper.id_V == checkOperation.value[0]) ||
-                  !isFilterOper.value) &&
-                ((isFilterMat.value && oper.id_M == checkMaterial.value[1]) ||
-                  !isFilterMat.value)
+                ((isFilterOper.value && oper.id_V == checkOperation.value[0]) || !isFilterOper.value) &&
+                ((isFilterMat.value && oper.id_M == checkMaterial.value[1]) || !isFilterMat.value)
             ),
           };
         })
@@ -767,16 +650,8 @@ const formatDate = (valDate, mode = "ukr") => {
     y: valDate.getFullYear(),
   };
   return mode == "ukr"
-    ? [
-        (date.d < 10 ? "0" : "") + date.d,
-        (date.m < 10 ? "0" : "") + date.m,
-        date.y,
-      ].join(".")
-    : [
-        date.y,
-        (date.m < 10 ? "0" : "") + date.m,
-        (date.d < 10 ? "0" : "") + date.d,
-      ].join("-");
+    ? [(date.d < 10 ? "0" : "") + date.d, (date.m < 10 ? "0" : "") + date.m, date.y].join(".")
+    : [date.y, (date.m < 10 ? "0" : "") + date.m, (date.d < 10 ? "0" : "") + date.d].join("-");
 };
 
 const loadFiltr = () => {

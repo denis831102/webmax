@@ -433,6 +433,8 @@ const addOperation = () => {
   if (getSettingUser.value.isAutoComment && curOper[0].id != 2) {
     autoComment("add", form.options[curOper[0].num].label);
   }
+
+  watchTable(setting.value.dialog["editOperation"].initiator);
 };
 
 const delOperation = (row) => {
