@@ -90,8 +90,8 @@
           <el-menu-item index="1-5-1"
             ><el-icon><ShoppingCart /></el-icon> Покупці
           </el-menu-item>
-          <el-menu-item index="1-5-2" :disabled="true">
-            <el-icon><Edit /></el-icon>Компонент ( в розробці)
+          <el-menu-item index="1-5-2">
+            <el-icon><Edit /></el-icon> Покупці кольрового
           </el-menu-item>
         </el-sub-menu>
       </el-sub-menu>
@@ -193,6 +193,11 @@ const handleSelect = (key, keyPath) => {
       setting.value.comps.curComp = "eTable_Buyers";
       setting.value.titleTable = setting.value.tables["tabBuyers"].title;
       break;
+    case "1-5-2":
+      setting.value.comps.curComp = "eTable_BuyersColor";
+      setting.value.titleTable = setting.value.tables["tabBuyersColor"].title;
+      break;
+
     case "2-1":
       setting.value.comps.curComp = "eBits";
       setting.value.titleTable = setting.value.tables["tabBits"].title;

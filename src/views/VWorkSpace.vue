@@ -57,6 +57,7 @@ import eTable_Punkt from "@/components/EP/Punkt/eTable_Punkt";
 import eTable_Material from "@/components/EP/Material/eTable_Material";
 import eTable_Kategories from "@/components/EP/Kategories/eTable_Kategories";
 import eTable_Buyers from "@/components/EP/Buyers/eTable_Buyers";
+import eTable_BuyersColor from "@/components/EP/BuyersColor/eTable_BuyersColor";
 import eOperation from "@/components/EP/Operation/eOperation";
 import eBits from "@/components/EP/Bits/eBits";
 import eAnalitika from "@/components/EP/Monitoring/eAnalitika";
@@ -104,6 +105,7 @@ const setting = ref({
     editOperation: { visible: false, initiator: "" },
     editMaterial: { visible: false, initiator: "" },
     editBuyers: { visible: false, initiator: "" },
+    editBuyersColor: { visible: false, initiator: "" },
     editBits: { visible: false, initiator: "" },
     createPeresort: { visible: false, initiator: "" },
   },
@@ -116,6 +118,7 @@ const setting = ref({
       eTable_Material,
       eTable_Kategories,
       eTable_Buyers,
+      eTable_BuyersColor,
       eOperation,
       eBits,
       eAnalitika,
@@ -159,6 +162,11 @@ const setting = ref({
     },
     tabBuyers: {
       title: "ПОКУПЦІ",
+      curRow: {},
+      data: [],
+    },
+    tabBuyersColor: {
+      title: "ПОКУПЦІ КОЛЬОРОВОГО",
       curRow: {},
       data: [],
     },
